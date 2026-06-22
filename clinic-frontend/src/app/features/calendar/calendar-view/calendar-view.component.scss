@@ -1,0 +1,10 @@
+.month-badge { font-weight: 600; color: var(--text-muted); margin-inline-end: 8px; }
+.calendar-card { padding: 0; overflow: hidden; }
+.calendar-row { display: grid; grid-template-columns: 100px 1fr auto auto; gap: 16px; align-items: center; padding: 14px 20px; border-bottom: 1px solid var(--line); }
+.cal-actions { display: flex; gap: 4px; }
+.calendar-row:last-child { border-bottom: 0; }
+.cal-date { display: flex; flex-direction: column; }
+.cal-date span { font-size: 12px; color: var(--text-muted); }
+.cal-title { font-weight: 600; }
+.cal-meta { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+.status-badge { background: var(--accent-soft); color: var(--accent-dark, var(--accent)); padding: 4px 10px; border-radius: 999px; font-size: 12px; white-space: nowrap; }

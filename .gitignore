@@ -1,0 +1,29 @@
+# Maven / Java
+**/target/
+**/.classpath
+**/.project
+**/.settings/
+*.iml
+.idea/
+*.class
+
+# Node / Angular
+**/node_modules/
+**/dist/
+**/.angular/
+.npm
+*.tsbuildinfo
+
+# Runtime / secrets
+.runtime/
+**/run-backend.secrets.ps1
+.env
+.env.*
+!.env.example
+
+# IDE / OS
+.vscode/
+.DS_Store
+Thumbs.db
+*.log
+tmp/

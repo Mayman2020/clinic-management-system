@@ -1,0 +1,12 @@
+:host { display: block; min-height: 100vh; background: #0e1f33; color: #fff; }
+.tv-shell { padding: 32px; }
+.tv-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
+.tv-header h1 { margin: 0; font-size: 2rem; color: #f4e7c4; }
+.tv-now { text-align: center; }
+.tv-now span { display: block; font-size: 14px; opacity: 0.7; }
+.tv-now strong { font-size: 96px; color: #cca55b; line-height: 1; }
+.tv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 24px; }
+.tv-token { background: rgba(255,255,255,0.08); border-radius: 16px; padding: 24px; text-align: center; }
+.tv-token.is-called { background: rgba(204,165,91,0.25); border: 2px solid #cca55b; }
+.tv-token .n { font-size: 56px; font-weight: 700; color: #cca55b; }
+.tv-token .status { margin-top: 8px; opacity: 0.85; }

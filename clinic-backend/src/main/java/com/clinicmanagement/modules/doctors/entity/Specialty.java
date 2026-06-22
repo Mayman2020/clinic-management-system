@@ -1,0 +1,5 @@
+package com.clinicmanagement.modules.doctors.entity;
+public enum Specialty {
+    GENERAL_MEDICINE, PEDIATRICS, DENTAL, DERMATOLOGY, CARDIOLOGY, ORTHOPEDICS,
+    OPHTHALMOLOGY, ENT, GYNECOLOGY, NEUROLOGY, PSYCHIATRY, UROLOGY, OTHER
+}

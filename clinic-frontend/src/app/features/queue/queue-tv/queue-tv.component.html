@@ -1,0 +1,17 @@
+<div class="tv-shell">
+  <header class="tv-header">
+    <h1>{{ 'QUEUE.TITLE' | translate }}</h1>
+    <div class="tv-now" *ngIf="called">
+      <span>{{ 'QUEUE.CURRENT' | translate }}</span>
+      <strong>{{ called.tokenNumber }}</strong>
+      <span class="name" *ngIf="called.patientName">{{ called.patientName }}</span>
+    </div>
+  </header>
+  <div class="tv-grid">
+    <div class="tv-token" *ngFor="let t of tokens" [class.is-called]="t.status === 'CALLED' || t.status === 'IN_SERVICE'">
+      <div class="n">{{ t.tokenNumber }}</div>
+      <div class="name" *ngIf="t.patientName">{{ t.patientName }}</div>
+      <div class="status">{{ t.status | tk:'STATUS' }}</div>
+    </div>
+  </div>
+</div>

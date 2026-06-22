@@ -1,0 +1,31 @@
+<div class="page-shell">
+  <app-page-header [title]="'BILLING.TITLE' | translate">
+    <button *appCan="'billing'; appCanAction: 'create'" mat-flat-button color="primary" type="button" (click)="onCreate()"><span class="material-icons">add</span>{{ 'BILLING.NEW' | translate }}</button>
+    <button mat-stroked-button type="button" (click)="load()"><span class="material-icons">refresh</span>{{ 'COMMON.REFRESH' | translate }}</button>
+  </app-page-header>
+  <div class="estate-card" *ngIf="!loading; else loadingTpl">
+    <table mat-table [dataSource]="rows" class="app-data-table">
+      <ng-container *ngFor="let col of columns" [matColumnDef]="col.key">
+        <th mat-header-cell *matHeaderCellDef>{{ col.labelKey | translate }}</th>
+        <td mat-cell *matCellDef="let row">
+          <ng-container [ngSwitch]="col.key">
+            <span *ngSwitchCase="'status'">{{ row.status | tk:'STATUS' }}</span>
+            <span *ngSwitchDefault>{{ row[col.key] }}</span>
+          </ng-container>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>{{ 'COMMON.ACTIONS' | translate }}</th>
+        <td mat-cell *matCellDef="let row">
+          <button *appCan="'billing'; appCanAction: 'export'" mat-icon-button type="button" (click)="onPrint(row)"><span class="material-icons">print</span></button>
+          <button *appCan="'billing'; appCanAction: 'approve'" mat-stroked-button type="button" (click)="onPay(row)" [disabled]="row.status === 'PAID'">{{ 'BILLING.PAY' | translate }}</button>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+    <p *ngIf="!rows.length" class="empty-state">{{ 'COMMON.NO_DATA' | translate }}</p>
+    <mat-paginator [length]="total" [pageSize]="size" [pageIndex]="page" [pageSizeOptions]="[10,20,50]" (page)="onPage($event)"></mat-paginator>
+  </div>
+  <ng-template #loadingTpl><mat-spinner diameter="40"></mat-spinner></ng-template>
+</div>

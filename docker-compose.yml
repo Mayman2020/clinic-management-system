@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: clinic-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - clinic_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: ./clinic-backend
+    container_name: clinic-backend
+    restart: unless-stopped
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/postgres?currentSchema=clinic_mgmt
+      DB_USER: postgres
+      DB_PASS: admin
+      UPLOAD_DIR: /data/uploads
+      FILE_BASE_URL: http://localhost:8082/api/v1
+    ports:
+      - "8082:8082"
+    volumes:
+      - clinic_uploads:/data/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  frontend:
+    build: ./clinic-frontend
+    container_name: clinic-frontend
+    restart: unless-stopped
+    environment:
+      CM_API_URL: /api/v1
+      CM_FILE_URL: /api/v1/files
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend
+
+volumes:
+  clinic_pg_data:
+  clinic_uploads:

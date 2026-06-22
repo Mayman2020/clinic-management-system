@@ -1,0 +1,119 @@
+import { environment } from '../../../environments/environment';
+import { getRuntimeFileBaseUrl } from '../utils/file-url-utils';
+
+type RuntimeWindow = Window & { __CM_API_URL__?: string };
+
+function getRuntimeApiBaseUrl(): string {
+  const runtimeApiUrl = typeof window !== 'undefined' ? (window as RuntimeWindow).__CM_API_URL__ : undefined;
+  return runtimeApiUrl?.trim() || environment.apiUrl;
+}
+
+export const HTTP_HEADERS = { ACTIVE_ROLE: 'X-Active-Role' } as const;
+
+export const AppConstants = {
+  PERSISTED_KEYS: {
+    ACCESS_TOKEN: 'cm_access_token',
+    REFRESH_TOKEN: 'cm_refresh_token',
+    CURRENT_USER: 'cm_current_user',
+  },
+  API: {
+    baseURL: getRuntimeApiBaseUrl(),
+    fileBaseURL: getRuntimeFileBaseUrl(),
+    FILES_UPLOAD: '/files/upload',
+    AUTH_LOGIN: '/auth/login',
+    AUTH_LOGOUT: '/auth/logout',
+    AUTH_REFRESH: '/auth/refresh',
+    USERS: '/users',
+    USER_BY_ID: (id: number) => `/users/${id}`,
+    USERS_ME: '/users/me',
+    USERS_ME_CHANGE_PASSWORD: '/users/me/change-password',
+    USERS_TOGGLE_ACTIVE: (id: number) => `/users/${id}/toggle-active`,
+    USERS_ROLE: (id: number) => `/users/${id}/role`,
+    ROLE_PERMISSIONS_ME: '/role-permissions/me',
+    ROLE_PERMISSIONS: '/role-permissions',
+    ROLE_PERMISSIONS_BY_ROLE: (role: string) => `/role-permissions/${role}`,
+    SCREEN_SETTINGS: '/screen-settings',
+    SCREEN_SETTING_BY_KEY: (screenKey: string) => `/screen-settings/${screenKey}`,
+    PATIENTS: '/patients',
+    PATIENT_BY_ID: (id: number) => `/patients/${id}`,
+    PATIENT_ARCHIVE: (id: number) => `/patients/${id}/archive`,
+    PATIENT_SEARCH: '/patients/search',
+    PATIENT_DOCUMENTS: (id: number) => `/patients/${id}/documents`,
+    PATIENT_DOCUMENTS_UPLOAD: '/patients/documents',
+    DOCTORS: '/doctors',
+    DOCTORS_ACTIVE: '/doctors/active',
+    DOCTOR_BY_ID: (id: number) => `/doctors/${id}`,
+    DOCTOR_SCHEDULES: (id: number) => `/doctors/${id}/schedules`,
+    DOCTOR_SCHEDULE_BY_ID: (doctorId: number, scheduleId: number) => `/doctors/${doctorId}/schedules/${scheduleId}`,
+    APPOINTMENTS: '/appointments',
+    APPOINTMENT_BY_ID: (id: number) => `/appointments/${id}`,
+    APPOINTMENTS_BOOK: '/appointments/book',
+    APPOINTMENTS_WALK_IN: '/appointments/walk-in',
+    APPOINTMENT_STATUS: (id: number) => `/appointments/${id}/status`,
+    APPOINTMENT_CANCEL: (id: number) => `/appointments/${id}/cancel`,
+    APPOINTMENT_CONFIRM: (id: number) => `/appointments/${id}/confirm`,
+    APPOINTMENT_RESCHEDULE: (id: number) => `/appointments/${id}/reschedule`,
+    APPOINTMENTS_CALENDAR: '/appointments/calendar',
+    APPOINTMENTS_BY_PATIENT: (patientId: number) => `/appointments/patient/${patientId}`,
+    APPOINTMENTS_BY_DOCTOR: (doctorId: number) => `/appointments/doctor/${doctorId}`,
+    QUEUE: '/queue',
+    QUEUE_TODAY: '/queue/today',
+    QUEUE_TOKENS: '/queue/tokens',
+    QUEUE_TOKEN_BY_ID: (id: number) => `/queue/tokens/${id}`,
+    QUEUE_CALL_NEXT: '/queue/call-next',
+    QUEUE_TV_DISPLAY: '/queue/tv-display',
+    QUEUE_STREAM: '/queue/stream',
+    QUEUE_TV_STREAM: '/queue/tv/stream',
+    QUEUE_TOKEN_STATUS: (id: number) => `/queue/tokens/${id}/status`,
+    CONSULTATIONS: '/consultations',
+    CONSULTATION_BY_ID: (id: number) => `/consultations/${id}`,
+    CONSULTATIONS_BY_PATIENT: (patientId: number) => `/consultations/patient/${patientId}`,
+    PRESCRIPTIONS: '/prescriptions',
+    PRESCRIPTION_BY_ID: (id: number) => `/prescriptions/${id}`,
+    PRESCRIPTION_PRINT: (id: number) => `/prescriptions/${id}/print`,
+    PRESCRIPTION_ITEMS: (id: number) => `/prescriptions/${id}/items`,
+    LAB: '/lab',
+    LAB_REQUESTS: '/lab/requests',
+    LAB_REQUEST_BY_ID: (id: number) => `/lab/${id}`,
+    LAB_REQUEST_STATUS: (id: number) => `/lab/${id}/status`,
+    RADIOLOGY: '/radiology',
+    RADIOLOGY_REQUESTS: '/radiology',
+    RADIOLOGY_REQUEST_BY_ID: (id: number) => `/radiology/${id}`,
+    RADIOLOGY_REQUEST_STATUS: (id: number) => `/radiology/${id}/status`,
+    INVOICES: '/billing/invoices',
+    INVOICE_BY_ID: (id: number) => `/billing/invoices/${id}`,
+    INVOICE_PRINT: (id: number) => `/billing/invoices/${id}/print`,
+    INVOICE_ITEMS: (id: number) => `/billing/invoices/${id}/items`,
+    PAYMENTS: '/billing/payments',
+    PAYMENT_BY_ID: (id: number) => `/billing/payments/${id}`,
+    PAYMENTS_BY_INVOICE: (invoiceId: number) => `/billing/invoices/${invoiceId}/payments`,
+    INVOICE_MIXED_PAYMENT: (id: number) => `/billing/invoices/${id}/payments/mixed`,
+    INSURANCE_PROVIDERS: '/insurance/providers',
+    INSURANCE_PROVIDER_BY_ID: (id: number) => `/insurance/providers/${id}`,
+    INSURANCE_CLAIMS: '/insurance/claims',
+    INSURANCE_CLAIM_BY_ID: (id: number) => `/insurance/claims/${id}`,
+    INSURANCE_CLAIM_STATUS: (id: number) => `/insurance/claims/${id}/status`,
+    DASHBOARD_STATS: '/dashboard/stats',
+    DASHBOARD_REVENUE: '/dashboard/revenue',
+    DASHBOARD_APPOINTMENTS: '/dashboard/appointments',
+    DASHBOARD_QUEUE_SUMMARY: '/dashboard/queue-summary',
+    REPORTS_APPOINTMENTS: '/reports/appointments',
+    REPORTS_REVENUE: '/reports/revenue',
+    REPORTS_PATIENTS: '/reports/patients',
+    REPORTS_DOCTORS: '/reports/doctors',
+    SETTINGS: '/settings',
+    SETTINGS_BY_KEY: (key: string) => `/settings/${key}`,
+    AUDIT_LOGS: '/audit-logs',
+    NOTIFICATIONS_MY: '/notifications/my',
+    NOTIFICATIONS_UNREAD_COUNT: '/notifications/my/unread-count',
+    NOTIFICATIONS_READ_ALL: '/notifications/my/read-all',
+    NOTIFICATION_MARK_READ: (id: number) => `/notifications/${id}/read`,
+  },
+} as const;
+
+export function shouldSkipGlobalLoaderForUpload(url: string, method: string): boolean {
+  const u = url ?? '';
+  const m = (method ?? '').toUpperCase();
+  if (u.includes(AppConstants.API.FILES_UPLOAD)) return true;
+  return false;
+}

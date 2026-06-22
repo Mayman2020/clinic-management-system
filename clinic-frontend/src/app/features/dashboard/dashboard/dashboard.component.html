@@ -1,0 +1,17 @@
+<div class="page-shell dashboard-page">
+  <app-page-header [title]="'DASHBOARD.TITLE' | translate"></app-page-header>
+  <mat-spinner *ngIf="loading" diameter="40"></mat-spinner>
+  <ng-container *ngIf="!loading">
+    <div class="estate-stat-grid">
+      <div class="estate-stat-card"><span class="estate-stat-label">{{ 'DASHBOARD.PATIENTS_TODAY' | translate }}</span><span class="estate-stat-value">{{ stats?.patientsToday ?? 0 }}</span></div>
+      <div class="estate-stat-card"><span class="estate-stat-label">{{ 'DASHBOARD.APPOINTMENTS' | translate }}</span><span class="estate-stat-value">{{ stats?.appointmentsToday ?? 0 }}</span></div>
+      <div class="estate-stat-card"><span class="estate-stat-label">{{ 'DASHBOARD.QUEUE_WAITING' | translate }}</span><span class="estate-stat-value">{{ stats?.queueWaiting ?? 0 }}</span></div>
+      <div class="estate-stat-card"><span class="estate-stat-label">{{ 'DASHBOARD.DAILY_REVENUE' | translate }}</span><span class="estate-stat-value">{{ stats?.revenueToday ?? 0 | number:'1.0-0' }}</span></div>
+      <div class="estate-stat-card"><span class="estate-stat-label">{{ 'DASHBOARD.MONTHLY_REVENUE' | translate }}</span><span class="estate-stat-value">{{ stats?.revenueMonth ?? 0 | number:'1.0-0' }}</span></div>
+    </div>
+    <div class="dashboard-charts">
+      <div class="estate-card chart-card"><h3>{{ 'DASHBOARD.REVENUE' | translate }}</h3><div class="chart-wrap"><canvas baseChart [data]="revenueChart" [options]="lineOptions" type="line"></canvas></div></div>
+      <div class="estate-card chart-card"><h3>{{ 'DASHBOARD.APPOINTMENTS' | translate }}</h3><div class="chart-wrap"><canvas baseChart [data]="appointmentsChart" [options]="barOptions" type="bar"></canvas></div></div>
+    </div>
+  </ng-container>
+</div>

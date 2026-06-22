@@ -1,0 +1,35 @@
+<div class="page-shell">
+  <app-page-header [title]="'REPORTS.TITLE' | translate"></app-page-header>
+  <div *ngIf="loading" class="loading-wrap">{{ 'COMMON.LOADING' | translate }}</div>
+  <div class="reports-grid" *ngIf="!loading">
+    <div class="estate-card chart-card">
+      <h3>{{ 'REPORTS.REVENUE' | translate }}</h3>
+      <div class="chart-wrap"><canvas baseChart [data]="revenue" [options]="opts" type="bar"></canvas></div>
+    </div>
+    <div class="estate-card chart-card">
+      <h3>{{ 'REPORTS.APPOINTMENTS' | translate }}</h3>
+      <div class="chart-wrap"><canvas baseChart [data]="appointments" [options]="opts" type="line"></canvas></div>
+    </div>
+    <div class="estate-card chart-card">
+      <h3>{{ 'REPORTS.PATIENTS' | translate }}</h3>
+      <div class="chart-wrap"><canvas baseChart [data]="patients" [options]="opts" type="doughnut"></canvas></div>
+    </div>
+    <div class="estate-card chart-card">
+      <div class="chart-header">
+        <h3>{{ 'REPORTS.DOCTORS' | translate }}</h3>
+        <div class="date-filters">
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'REPORTS.FROM' | translate }}</mat-label>
+            <input matInput type="date" [(ngModel)]="dateFrom">
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'REPORTS.TO' | translate }}</mat-label>
+            <input matInput type="date" [(ngModel)]="dateTo">
+          </mat-form-field>
+          <button mat-stroked-button type="button" (click)="reloadDoctors()">{{ 'COMMON.APPLY' | translate }}</button>
+        </div>
+      </div>
+      <div class="chart-wrap"><canvas baseChart [data]="doctors" [options]="opts" type="bar"></canvas></div>
+    </div>
+  </div>
+</div>

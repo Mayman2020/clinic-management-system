@@ -1,0 +1,20 @@
+<header class="topbar">
+  <div class="topbar-start">
+    <button class="tb-action-btn" (click)="sidebarToggle.emit()" [matTooltip]="'TOPBAR.TOGGLE_MENU' | translate"><span class="material-icons">{{ sidebarCollapsed ? 'menu_open' : 'menu' }}</span></button>
+  </div>
+  <div class="topbar-end">
+    <button class="tb-action-btn" [matMenuTriggerFor]="langMenu"><img class="flag" [src]="activeLanguage.flagUrl" alt=""><span class="lang-name">{{ activeLanguage.nativeLabel }}</span></button>
+    <mat-menu #langMenu="matMenu"><button mat-menu-item *ngFor="let lang of languages" (click)="switchLang(lang)"><img class="flag" [src]="lang.flagUrl" alt=""><span>{{ lang.nativeLabel }}</span></button></mat-menu>
+    <button class="tb-action-btn" (click)="toggleTheme()" [matTooltip]="((theme.isDark$ | async) ? 'TOPBAR.LIGHT_MODE' : 'TOPBAR.DARK_MODE') | translate"><span class="material-icons">{{ (theme.isDark$ | async) ? 'light_mode' : 'dark_mode' }}</span></button>
+    <a class="tb-action-btn" routerLink="/admin/notifications" [matTooltip]="'NOTIFICATIONS.TITLE' | translate" [matBadge]="unreadCount > 0 ? unreadCount : null" matBadgeColor="warn" matBadgeSize="small">
+      <span class="material-icons">notifications</span>
+    </a>
+    <button class="tb-action-btn" [matMenuTriggerFor]="roleMenu" *ngIf="switchableRoles.length > 1"><span class="material-icons">manage_accounts</span></button>
+    <mat-menu #roleMenu="matMenu"><button mat-menu-item *ngFor="let role of switchableRoles" (click)="switchRole(role)" [disabled]="isRoleActive(role)">{{ ('ROLE.' + role) | translate }}</button></mat-menu>
+    <button class="tb-user-btn" [matMenuTriggerFor]="userMenu"><div class="tb-avatar">{{ currentUser?.initials || ('COMMON.USER_INITIAL' | translate) }}</div><span class="tb-user-name">{{ currentUserDisplayName }}</span></button>
+    <mat-menu #userMenu="matMenu">
+      <a mat-menu-item routerLink="/admin/profile"><span class="material-icons">person</span>{{ 'NAV.PROFILE' | translate }}</a>
+      <button mat-menu-item (click)="logout()"><span class="material-icons">logout</span>{{ 'AUTH.LOGOUT' | translate }}</button>
+    </mat-menu>
+  </div>
+</header>

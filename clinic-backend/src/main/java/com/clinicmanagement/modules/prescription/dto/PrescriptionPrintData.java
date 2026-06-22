@@ -1,0 +1,18 @@
+package com.clinicmanagement.modules.prescription.dto;
+import lombok.Builder;
+import lombok.Data;
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Data @Builder
+public class PrescriptionPrintData {
+    private String prescriptionNo;
+    private Long patientId;
+    private String patientName;
+    private Long doctorId;
+    private String doctorName;
+    private String notes;
+    private LocalDateTime issuedAt;
+    private List<PrescriptionItemResponse> items;
+    private String clinicName;
+}

@@ -1,0 +1,36 @@
+<h2 mat-dialog-title>{{ (data?.id ? 'COMMON.EDIT' : 'PATIENTS.NEW') | translate }}</h2>
+<form [formGroup]="form" (ngSubmit)="save()">
+  <mat-dialog-content class="dialog-grid">
+    <mat-form-field appearance="outline"><mat-label>{{ 'PATIENTS.NAME' | translate }}</mat-label><input matInput formControlName="firstName"></mat-form-field>
+    <mat-form-field appearance="outline"><mat-label>{{ 'PATIENTS.LAST_NAME' | translate }}</mat-label><input matInput formControlName="lastName"></mat-form-field>
+    <mat-form-field appearance="outline"><mat-label>{{ 'PATIENTS.PHONE' | translate }}</mat-label><input matInput formControlName="phone"></mat-form-field>
+    <mat-form-field appearance="outline"><mat-label>{{ 'PATIENTS.EMAIL' | translate }}</mat-label><input matInput formControlName="email"></mat-form-field>
+    <mat-form-field appearance="outline"><mat-label>{{ 'PATIENTS.NATIONAL_ID' | translate }}</mat-label><input matInput formControlName="nationalId"></mat-form-field>
+    <mat-form-field appearance="outline"><mat-label>{{ 'PATIENTS.DATE_OF_BIRTH' | translate }}</mat-label><input matInput type="date" formControlName="dateOfBirth"></mat-form-field>
+    <mat-form-field appearance="outline"><mat-label>{{ 'PATIENTS.GENDER' | translate }}</mat-label>
+      <mat-select formControlName="gender">
+        <mat-option value="MALE">{{ 'GENDER.MALE' | translate }}</mat-option>
+        <mat-option value="FEMALE">{{ 'GENDER.FEMALE' | translate }}</mat-option>
+        <mat-option value="OTHER">{{ 'GENDER.OTHER' | translate }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full"><mat-label>{{ 'PATIENTS.ADDRESS' | translate }}</mat-label><textarea matInput rows="2" formControlName="address"></textarea></mat-form-field>
+    <mat-form-field appearance="outline" class="full"><mat-label>{{ 'PATIENTS.ALLERGIES' | translate }}</mat-label><textarea matInput rows="2" formControlName="allergies"></textarea></mat-form-field>
+    <mat-form-field appearance="outline" class="full"><mat-label>{{ 'PATIENTS.CHRONIC' | translate }}</mat-label><textarea matInput rows="2" formControlName="chronicDiseases"></textarea></mat-form-field>
+    <div class="full upload-row">
+      <label class="upload-btn"><span class="material-icons">upload_file</span>{{ 'PATIENTS.UPLOAD_DOC' | translate }}
+        <input type="file" hidden (change)="onFileSelected($event)" accept=".pdf,.jpg,.jpeg,.png">
+      </label>
+      <span *ngIf="uploading">{{ 'COMMON.LOADING' | translate }}</span>
+      <span *ngIf="form.value.documentUrl">{{ 'COMMON.SAVED' | translate }}</span>
+    </div>
+    <ul class="full doc-list" *ngIf="documents.length">
+      <li *ngFor="let d of documents"><a [href]="d.fileUrl" target="_blank" rel="noopener">{{ d.fileName || d.documentType }}</a></li>
+    </ul>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" mat-dialog-close>{{ 'COMMON.CANCEL' | translate }}</button>
+    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid">{{ 'COMMON.SAVE' | translate }}</button>
+  </mat-dialog-actions>
+</form>
+<style>.dialog-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; } .full { grid-column: 1 / -1; } .upload-row { display: flex; align-items: center; gap: 12px; } .upload-btn { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; color: var(--accent); } .doc-list { margin: 0; padding-inline-start: 20px; }</style>

@@ -1,0 +1,34 @@
+<div class="page-shell">
+  <app-page-header [title]="'QUEUE.TITLE' | translate">
+    <button mat-flat-button color="primary" type="button" (click)="onGenerate()"><span class="material-icons">add</span>{{ 'QUEUE.GENERATE' | translate }}</button>
+    <button mat-flat-button color="accent" type="button" (click)="callNext()">{{ 'QUEUE.CALL_NEXT' | translate }}</button>
+    <a mat-stroked-button routerLink="/queue/tv">{{ 'QUEUE.TV_MODE' | translate }}</a>
+  </app-page-header>
+  <div class="estate-card admin-filters">
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'APPOINTMENTS.DOCTOR' | translate }}</mat-label>
+      <mat-select [(ngModel)]="doctorId" (selectionChange)="onDoctorFilter()">
+        <mat-option [value]="undefined">{{ 'COMMON.ALL' | translate }}</mat-option>
+        <mat-option *ngFor="let d of doctors" [value]="d.id">{{ d.firstName }} {{ d.lastName }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <div class="estate-card current-token" *ngIf="current">
+    <span class="label">{{ 'QUEUE.CURRENT' | translate }}</span>
+    <span class="num">{{ current.tokenNumber }}</span>
+    <span class="meta" *ngIf="current.patientName">{{ current.patientName }}</span>
+  </div>
+  <div class="estate-card queue-grid">
+    <div class="queue-token" *ngFor="let t of tokens">
+      <div class="num">{{ t.tokenNumber }}</div>
+      <div class="meta">{{ t.patientName || ('#' + t.patientId) }}</div>
+      <div class="meta subtle" *ngIf="t.doctorName">{{ t.doctorName }}</div>
+      <div class="status">{{ t.status | tk:'STATUS' }}</div>
+      <div class="actions">
+        <button *ngIf="t.status === 'CALLED'" mat-icon-button type="button" (click)="setStatus(t, 'IN_SERVICE')" [attr.aria-label]="'QUEUE.START_SERVICE' | translate"><span class="material-icons">play_arrow</span></button>
+        <button *ngIf="t.status === 'CALLED' || t.status === 'IN_SERVICE'" mat-icon-button type="button" (click)="setStatus(t, 'COMPLETED')" [attr.aria-label]="'QUEUE.COMPLETE' | translate"><span class="material-icons">done</span></button>
+      </div>
+    </div>
+    <p *ngIf="!tokens.length" class="empty-state">{{ 'COMMON.NO_DATA' | translate }}</p>
+  </div>
+</div>

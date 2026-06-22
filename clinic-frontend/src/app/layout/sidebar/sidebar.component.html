@@ -1,0 +1,31 @@
+<aside class="sidebar" [class.collapsed]="collapsed">
+  <div class="sidebar-brand">
+    <div class="brand-icon"><span class="material-icons">local_hospital</span></div>
+    <div class="brand-text" *ngIf="!collapsed">
+      <span class="brand-name">{{ 'APP.NAME' | translate }}</span>
+      <span class="brand-tagline">{{ 'APP.TAGLINE_SHORT' | translate }}</span>
+    </div>
+    <button class="collapse-btn" type="button" (click)="collapseToggle.emit()"><span class="material-icons">{{ collapsed ? 'chevron_right' : 'chevron_left' }}</span></button>
+  </div>
+  <nav class="sidebar-nav">
+    <ng-container *ngFor="let section of visibleSections; trackBy: trackBySection">
+      <button class="nav-section-toggle" *ngIf="!collapsed" type="button" (click)="toggleSection(section.key)">
+        <span class="nav-section-label">{{ section.key | translate }}</span>
+      </button>
+      <div class="nav-section-items">
+        <a class="nav-item" *ngFor="let item of section.items; trackBy: trackByRoute" [routerLink]="item.route" routerLinkActive="active" [class.active]="isForcedActive(item)" [matTooltip]="collapsed ? (item.labelKey | translate) : ''">
+          <span class="nav-icon material-icons">{{ item.icon }}</span>
+          <span class="nav-label" *ngIf="!collapsed">{{ item.labelKey | translate }}</span>
+        </a>
+      </div>
+    </ng-container>
+  </nav>
+  <div class="sidebar-user">
+    <div class="user-avatar">{{ currentUser?.initials || 'U' }}</div>
+    <div class="user-info" *ngIf="!collapsed">
+      <span class="user-name">{{ currentUserDisplayName || '-' }}</span>
+      <span class="user-role" *ngIf="roleKey">{{ roleKey | translate }}</span>
+    </div>
+  </div>
+  <button class="sidebar-logout" (click)="logout()"><span class="material-icons">logout</span><span *ngIf="!collapsed">{{ 'AUTH.LOGOUT' | translate }}</span></button>
+</aside>

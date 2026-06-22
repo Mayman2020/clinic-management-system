@@ -1,0 +1,23 @@
+<div class="page-shell">
+  <app-page-header [title]="'NAV.CALENDAR' | translate">
+    <span class="month-badge">{{ monthLabel }}</span>
+    <button mat-stroked-button type="button" (click)="load()"><span class="material-icons">refresh</span>{{ 'COMMON.REFRESH' | translate }}</button>
+  </app-page-header>
+  <div class="estate-card calendar-card" *ngIf="!loading; else loadingTpl">
+    <div class="calendar-row" *ngFor="let a of rows">
+      <div class="cal-date"><strong>{{ a.appointmentDate | date:'dd/MM' }}</strong><span>{{ a.startTime }}</span></div>
+      <div class="cal-body">
+        <div class="cal-title">{{ a.appointmentNo }}</div>
+        <div class="cal-meta">{{ a.patientName || ('APPOINTMENTS.PATIENT' | translate) + ' #' + a.patientId }} · {{ a.doctorName || ('APPOINTMENTS.DOCTOR' | translate) + ' #' + a.doctorId }}</div>
+      </div>
+      <span class="status-badge">{{ a.status | tk:'STATUS' }}</span>
+      <div class="cal-actions">
+        <button *appCan="'appointments'; appCanAction: 'edit'" mat-icon-button type="button" (click)="onReschedule(a)" [disabled]="a.status === 'CANCELLED'"><span class="material-icons">event</span></button>
+        <button *appCan="'appointments'; appCanAction: 'approve'" mat-icon-button type="button" (click)="onConfirm(a)" [disabled]="a.status === 'CONFIRMED' || a.status === 'CANCELLED'"><span class="material-icons">check_circle</span></button>
+        <button *appCan="'appointments'; appCanAction: 'edit'" mat-icon-button type="button" (click)="onCancel(a)" [disabled]="a.status === 'CANCELLED'"><span class="material-icons">cancel</span></button>
+      </div>
+    </div>
+    <p *ngIf="!rows.length" class="empty-state">{{ 'COMMON.NO_DATA' | translate }}</p>
+  </div>
+  <ng-template #loadingTpl><p>{{ 'COMMON.LOADING' | translate }}</p></ng-template>
+</div>

@@ -1,0 +1,1 @@
+export interface ClinicSetting { key: string; value: string; label?: string; }

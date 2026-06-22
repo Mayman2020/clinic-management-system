@@ -1,0 +1,39 @@
+<div class="estate-login">
+  <section class="estate-login-hero">
+    <div class="hero-brand">
+      <div class="hero-brand-mark"><span class="material-icons">local_hospital</span></div>
+      <div><div class="hero-brand-name">{{ 'APP.NAME' | translate }}</div><div class="hero-brand-sub">{{ 'APP.TAGLINE_SHORT' | translate }}</div></div>
+    </div>
+    <div class="hero-copy">
+      <div class="hero-eyebrow">{{ 'INLINE_TEXT.COMMAND_CENTER' | translate }}</div>
+      <h1>{{ 'LOGIN.HERO_TITLE_1' | translate }}<br><em>{{ 'LOGIN.HERO_TITLE_2' | translate }}</em></h1>
+      <p>{{ 'LOGIN.HERO_SUBTITLE' | translate }}</p>
+    </div>
+  </section>
+  <section class="estate-login-panel">
+    <div class="login-toolbar">
+      <button type="button" class="login-toolbar-btn" (click)="switchLang(i18n.currentLang === 'ar' ? 'en' : 'ar')" [matTooltip]="'TOPBAR.LANGUAGE' | translate">
+        <span class="material-icons">language</span>
+      </button>
+      <button type="button" class="login-toolbar-btn" (click)="toggleTheme()" [matTooltip]="((theme.isDark$ | async) ? 'TOPBAR.LIGHT_MODE' : 'TOPBAR.DARK_MODE') | translate">
+        <span class="material-icons">{{ (theme.isDark$ | async) ? 'light_mode' : 'dark_mode' }}</span>
+      </button>
+    </div>
+    <div class="login-shell">
+      <div class="login-title">{{ 'AUTH.LOGIN' | translate }}</div>
+      <p class="login-subtitle">{{ 'LOGIN.FORM_SUBTITLE' | translate }}</p>
+      <form [formGroup]="form" (ngSubmit)="submit()" class="login-form">
+        <label class="field-label">{{ 'AUTH.USERNAME' | translate }}</label>
+        <div class="login-field"><span class="material-icons">person</span><input formControlName="username" type="text" autocomplete="username"></div>
+        <label class="field-label">{{ 'AUTH.PASSWORD' | translate }}</label>
+        <div class="login-field">
+          <span class="material-icons">lock</span>
+          <input formControlName="password" [type]="showPassword ? 'text' : 'password'">
+          <button type="button" class="field-icon-btn" (click)="showPassword = !showPassword"><span class="material-icons">{{ showPassword ? 'visibility_off' : 'visibility' }}</span></button>
+        </div>
+        <div class="login-error" *ngIf="error"><span class="material-icons">error_outline</span>{{ error }}</div>
+        <button type="submit" class="login-submit" [disabled]="form.invalid || loading">{{ loading ? ('COMMON.LOADING' | translate) : ('AUTH.ENTER' | translate) }}</button>
+      </form>
+    </div>
+  </section>
+</div>

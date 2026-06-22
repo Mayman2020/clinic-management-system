@@ -1,0 +1,8 @@
+.current-token { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; padding: 20px; }
+.current-token .label { color: var(--text-muted); text-transform: uppercase; font-size: 12px; letter-spacing: 0.1em; }
+.current-token .num { font-size: 48px; font-weight: 700; color: var(--accent); }
+.queue-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+.queue-token { border: 1px solid var(--line); border-radius: 12px; padding: 12px; text-align: center; background: var(--surface); }
+.queue-token .num { font-size: 28px; font-weight: 700; color: var(--accent); }
+.queue-token .meta { font-size: 12px; color: var(--text-muted); }
+.queue-token .status { margin-top: 4px; font-size: 12px; }
