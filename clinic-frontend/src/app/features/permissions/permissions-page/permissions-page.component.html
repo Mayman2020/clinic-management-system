@@ -1,0 +1,41 @@
+<div class="page-shell permissions-page">
+  <app-page-header [title]="'PERMISSIONS.TITLE' | translate" [subtitle]="'PERMISSIONS.SUBTITLE' | translate"></app-page-header>
+
+  <div class="loading-wrap" *ngIf="loading">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
+  <div class="estate-card permissions-card directory-table-card" *ngIf="!loading">
+    <div class="app-card-header permissions-toolbar">
+      <span class="app-card-title">{{ 'PERMISSIONS.SELECT_ROLE' | translate }}</span>
+      <button mat-flat-button color="primary" type="button" (click)="save()" [disabled]="saving || loading">{{ 'COMMON.SAVE' | translate }}</button>
+    </div>
+    <div class="role-field-wrap">
+      <mat-form-field appearance="outline" class="filter-lov">
+        <mat-label>{{ 'PERMISSIONS.SELECT_ROLE' | translate }}</mat-label>
+        <mat-select [(ngModel)]="selectedRole" (selectionChange)="onRoleChange()">
+          <mat-option *ngFor="let r of roles" [value]="r">{{ ('ROLE.' + r) | translate }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="perm-grid" *ngIf="modules.length; else emptyPerms">
+      <div class="perm-header">
+        <span>{{ 'PERMISSIONS.MODULE' | translate }}</span>
+        <span *ngFor="let a of actions">{{ ('PERMISSIONS.' + a.toUpperCase()) | translate }}</span>
+      </div>
+      <div class="perm-row" *ngFor="let m of modules">
+        <span class="module-name">{{ m }}</span>
+        <mat-checkbox *ngFor="let a of actions"
+          [checked]="isChecked(m, a)"
+          (change)="toggle(m, a, $event.checked)">
+        </mat-checkbox>
+      </div>
+    </div>
+    <ng-template #emptyPerms>
+      <div class="panel-empty">
+        <p class="empty-state">{{ 'COMMON.NO_DATA' | translate }}</p>
+      </div>
+    </ng-template>
+  </div>
+</div>

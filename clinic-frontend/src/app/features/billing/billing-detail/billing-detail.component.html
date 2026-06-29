@@ -1,0 +1,80 @@
+<div class="page-shell billing-detail-page" *ngIf="!loading && invoice; else loadingTpl">
+  <app-page-header [title]="'BILLING_DETAIL.TITLE' | translate">
+    <button *appCan="'billing'; appCanAction: 'export'" mat-stroked-button type="button" (click)="onPrint()"><span class="material-icons">print</span>{{ 'COMMON.PRINT' | translate }}</button>
+    <button *appCan="'billing'; appCanAction: 'export'" mat-stroked-button type="button" (click)="onDownloadPdf()"><span class="material-icons">picture_as_pdf</span>{{ 'BILLING.DOWNLOAD_PDF' | translate }}</button>
+    <button *appCan="'billing'; appCanAction: 'approve'" mat-flat-button color="primary" type="button" (click)="onPay()" [disabled]="invoice.status === 'PAID'">{{ 'BILLING.PAY' | translate }}</button>
+    <button *appCan="'billing'; appCanAction: 'approve'" mat-stroked-button type="button" (click)="onMixedPay()" [disabled]="invoice.status === 'PAID'">{{ 'BILLING.MIXED_PAYMENT' | translate }}</button>
+  </app-page-header>
+
+  <section class="estate-card summary-card">
+    <div class="app-card-header">
+      <span class="app-card-title">{{ invoice.invoiceNo }}</span>
+      <span class="status-badge">{{ invoice.status | tk:'STATUS' }}</span>
+    </div>
+    <div class="summary-grid">
+      <div class="summary-row"><span>{{ 'APPOINTMENTS.PATIENT' | translate }}</span><strong>{{ invoice.patientName }}</strong></div>
+      <div class="summary-row"><span>{{ 'BILLING.SUBTOTAL' | translate }}</span><strong>{{ invoice.subtotal ?? 0 | number:'1.2-2' }}</strong></div>
+      <div class="summary-row"><span>{{ 'BILLING.DISCOUNT' | translate }}</span><strong>{{ invoice.discount ?? 0 | number:'1.2-2' }}</strong></div>
+      <div class="summary-row"><span>{{ 'BILLING.TAX' | translate }}</span><strong>{{ invoice.tax ?? 0 | number:'1.2-2' }}</strong></div>
+      <div class="summary-row total"><span>{{ 'BILLING.TOTAL' | translate }}</span><strong>{{ invoice.total | number:'1.2-2' }}</strong></div>
+      <div class="summary-row"><span>{{ 'BILLING.PAID' | translate }}</span><strong>{{ invoice.paidAmount ?? 0 | number:'1.2-2' }}</strong></div>
+    </div>
+  </section>
+
+  <section class="estate-card detail-table-card directory-table-card">
+    <div class="app-card-header">
+      <span class="app-card-title">{{ 'BILLING_DETAIL.ITEMS' | translate }}</span>
+    </div>
+    <div class="app-table-wrap">
+      <table mat-table [dataSource]="items" class="app-data-table" *ngIf="items.length; else noItems">
+        <ng-container matColumnDef="description">
+          <th mat-header-cell *matHeaderCellDef>{{ 'PRINT.DESCRIPTION' | translate }}</th>
+          <td mat-cell *matCellDef="let row">{{ row.description || row.itemType }}</td>
+        </ng-container>
+        <ng-container matColumnDef="quantity">
+          <th mat-header-cell *matHeaderCellDef>{{ 'PRINT.QTY' | translate }}</th>
+          <td mat-cell *matCellDef="let row">{{ row.quantity ?? 1 }}</td>
+        </ng-container>
+        <ng-container matColumnDef="unitPrice">
+          <th mat-header-cell *matHeaderCellDef>{{ 'PRINT.UNIT' | translate }}</th>
+          <td mat-cell *matCellDef="let row">{{ row.unitPrice ?? 0 | number:'1.2-2' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="totalPrice">
+          <th mat-header-cell *matHeaderCellDef>{{ 'PRINT.TOTAL' | translate }}</th>
+          <td mat-cell *matCellDef="let row">{{ row.totalPrice ?? 0 | number:'1.2-2' }}</td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="itemColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: itemColumns"></tr>
+      </table>
+      <ng-template #noItems><p class="empty-state">{{ 'COMMON.NO_DATA' | translate }}</p></ng-template>
+    </div>
+  </section>
+
+  <section class="estate-card detail-table-card directory-table-card">
+    <div class="app-card-header">
+      <span class="app-card-title">{{ 'BILLING.PAYMENTS' | translate }}</span>
+    </div>
+    <div class="app-table-wrap">
+      <table mat-table [dataSource]="payments" class="app-data-table" *ngIf="payments.length; else noPayments">
+        <ng-container matColumnDef="paidAt">
+          <th mat-header-cell *matHeaderCellDef>{{ 'COMMON.DATE' | translate }}</th>
+          <td mat-cell *matCellDef="let row">{{ row.paidAt | rmsDate:'datetime' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="amount">
+          <th mat-header-cell *matHeaderCellDef>{{ 'BILLING.AMOUNT' | translate }}</th>
+          <td mat-cell *matCellDef="let row">{{ row.amount | number:'1.2-2' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="paymentMethod">
+          <th mat-header-cell *matHeaderCellDef>{{ 'BILLING.METHOD' | translate }}</th>
+          <td mat-cell *matCellDef="let row">{{ row.paymentMethod | tk:'PAYMENT_METHOD' }}</td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="paymentColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: paymentColumns"></tr>
+      </table>
+      <ng-template #noPayments><p class="empty-state">{{ 'COMMON.NO_DATA' | translate }}</p></ng-template>
+    </div>
+  </section>
+</div>
+<ng-template #loadingTpl>
+  <div class="page-shell loading-wrap"><mat-spinner diameter="48"></mat-spinner></div>
+</ng-template>

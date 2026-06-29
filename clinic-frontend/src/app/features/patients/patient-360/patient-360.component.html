@@ -1,0 +1,143 @@
+<div class="page-shell patient-360-page" *ngIf="!loading && patient; else loadingTpl">
+  <app-page-header [title]="'PATIENTS.PATIENT_360' | translate">
+    <button mat-stroked-button type="button" (click)="refresh()"><span class="material-icons">refresh</span>{{ 'COMMON.REFRESH' | translate }}</button>
+  </app-page-header>
+
+  <section class="estate-card patient-hero">
+    <div class="hero-avatar">{{ patient.firstName.charAt(0) }}{{ patient.lastName.charAt(0) }}</div>
+    <div class="hero-body">
+      <h1>{{ patient.firstName }} {{ patient.lastName }}</h1>
+      <p class="hero-meta">
+        <span>{{ patient.patientCode }}</span>
+        <span *ngIf="patient.phone">· {{ patient.phone }}</span>
+        <span *ngIf="patient.gender">· {{ patient.gender | tk:'GENDER' }}</span>
+      </p>
+      <div class="hero-chips" *ngIf="patient.allergies || patient.chronicDiseases">
+        <mat-chip *ngIf="patient.allergies" class="chip-warn">{{ 'PATIENTS.ALLERGIES' | translate }}: {{ patient.allergies }}</mat-chip>
+        <mat-chip *ngIf="patient.chronicDiseases" class="chip-info">{{ 'PATIENTS.CHRONIC' | translate }}: {{ patient.chronicDiseases }}</mat-chip>
+      </div>
+    </div>
+    <div class="hero-actions">
+      <button mat-flat-button color="primary" type="button" (click)="bookAppointment()"><span class="material-icons">event</span>{{ 'APPOINTMENTS.BOOK' | translate }}</button>
+      <button mat-stroked-button type="button" (click)="startConsultation()"><span class="material-icons">medical_information</span>{{ 'WORKFLOW.START_CONSULTATION' | translate }}</button>
+      <button mat-stroked-button type="button" (click)="newInvoice()"><span class="material-icons">receipt</span>{{ 'BILLING.NEW' | translate }}</button>
+    </div>
+  </section>
+
+  <section class="estate-stat-grid patient-kpi">
+    <article class="estate-stat-card navy">
+      <div class="estate-stat-top"><span class="estate-stat-label">{{ 'APPOINTMENTS.TITLE' | translate }}</span><span class="estate-stat-icon material-icons">event</span></div>
+      <div class="estate-stat-value">{{ appointments.length }}</div>
+    </article>
+    <article class="estate-stat-card teal">
+      <div class="estate-stat-top"><span class="estate-stat-label">{{ 'CONSULTATION.TITLE' | translate }}</span><span class="estate-stat-icon material-icons">medical_information</span></div>
+      <div class="estate-stat-value">{{ consultations.length }}</div>
+    </article>
+    <article class="estate-stat-card gold">
+      <div class="estate-stat-top"><span class="estate-stat-label">{{ 'LAB.TITLE' | translate }}</span><span class="estate-stat-icon material-icons">science</span></div>
+      <div class="estate-stat-value">{{ labRequests.length }}</div>
+    </article>
+    <article class="estate-stat-card danger">
+      <div class="estate-stat-top"><span class="estate-stat-label">{{ 'BILLING.INVOICES' | translate }}</span><span class="estate-stat-icon material-icons">receipt_long</span></div>
+      <div class="estate-stat-value">{{ invoices.length }}</div>
+    </article>
+  </section>
+
+  <section class="estate-card timeline-card directory-table-card">
+    <mat-tab-group>
+      <mat-tab [label]="'CONSULTATION.TITLE' | translate">
+        <div class="tab-panel">
+          <div class="timeline-item" *ngFor="let c of consultations">
+            <div class="timeline-date">{{ c.createdAt | rmsDate:'date' }}</div>
+            <div class="timeline-body">
+              <strong>{{ c.diagnosis || ('COMMON.UNKNOWN' | translate) }}</strong>
+              <div class="timeline-meta">{{ c.doctorName }} · {{ c.status | tk:'STATUS' }}</div>
+              <p *ngIf="c.symptoms">{{ c.symptoms }}</p>
+            </div>
+          </div>
+          <p *ngIf="!consultations.length" class="empty-state">{{ 'COMMON.NO_DATA' | translate }}</p>
+        </div>
+      </mat-tab>
+      <mat-tab [label]="'APPOINTMENTS.TITLE' | translate">
+        <div class="tab-panel">
+          <div class="timeline-item" *ngFor="let a of appointments">
+            <div class="timeline-date">{{ a.appointmentDate }}</div>
+            <div class="timeline-body">
+              <strong>{{ a.appointmentNo }}</strong>
+              <div class="timeline-meta">{{ a.doctorName }} · {{ a.startTime }} · {{ a.status | tk:'STATUS' }}</div>
+              <div class="tab-actions">
+                <button mat-icon-button type="button" [matTooltip]="'WORKFLOW.CHECK_IN' | translate" (click)="onCheckIn(a)" [disabled]="!canCheckIn(a)"><span class="material-icons">how_to_reg</span></button>
+                <button mat-icon-button type="button" [matTooltip]="'WORKFLOW.SEND_REMINDER' | translate" (click)="onSendReminder(a)" [disabled]="!canRemind(a)"><span class="material-icons">sms</span></button>
+              </div>
+            </div>
+          </div>
+          <p *ngIf="!appointments.length" class="empty-state">{{ 'COMMON.NO_DATA' | translate }}</p>
+        </div>
+      </mat-tab>
+      <mat-tab [label]="'LAB.TITLE' | translate">
+        <div class="tab-panel">
+          <div class="timeline-item" *ngFor="let l of labRequests">
+            <div class="timeline-date">{{ l.requestedAt || '—' }}</div>
+            <div class="timeline-body">
+              <strong>{{ l.testType }}</strong>
+              <div class="timeline-meta">{{ l.requestNo }} · {{ l.status | tk:'STATUS' }}</div>
+            </div>
+          </div>
+          <p *ngIf="!labRequests.length" class="empty-state">{{ 'COMMON.NO_DATA' | translate }}</p>
+        </div>
+      </mat-tab>
+      <mat-tab [label]="'RADIOLOGY.TITLE' | translate">
+        <div class="tab-panel">
+          <div class="timeline-item" *ngFor="let r of radiologyRequests">
+            <div class="timeline-date">{{ r.scheduledAt || '—' }}</div>
+            <div class="timeline-body">
+              <strong>{{ r.studyType }}</strong>
+              <div class="timeline-meta">{{ r.requestNo }} · {{ r.status | tk:'STATUS' }}</div>
+            </div>
+          </div>
+          <p *ngIf="!radiologyRequests.length" class="empty-state">{{ 'COMMON.NO_DATA' | translate }}</p>
+        </div>
+      </mat-tab>
+      <mat-tab [label]="'BILLING.TITLE' | translate">
+        <div class="tab-panel">
+          <div class="timeline-item" *ngFor="let inv of invoices">
+            <div class="timeline-date">{{ inv.createdAt | rmsDate:'date' }}</div>
+            <div class="timeline-body">
+              <a class="row-link" [routerLink]="['/admin/billing', inv.id]"><strong>{{ inv.invoiceNo }}</strong></a>
+              <div class="timeline-meta">{{ inv.total | number:'1.2-2' }} · {{ inv.status | tk:'STATUS' }}</div>
+            </div>
+          </div>
+          <p *ngIf="!invoices.length" class="empty-state">{{ 'COMMON.NO_DATA' | translate }}</p>
+        </div>
+      </mat-tab>
+      <mat-tab [label]="'NAV.PRESCRIPTION' | translate">
+        <div class="tab-panel"><p class="empty-state">{{ 'PATIENTS.NO_PRESCRIPTIONS_API' | translate }}</p></div>
+      </mat-tab>
+      <mat-tab [label]="'INSURANCE.CLAIMS' | translate">
+        <div class="tab-panel">
+          <div class="timeline-item" *ngFor="let c of insuranceClaims">
+            <div class="timeline-date">{{ c.claimNo }}</div>
+            <div class="timeline-body">
+              <strong>{{ c.amount | number:'1.2-2' }}</strong>
+              <div class="timeline-meta">{{ c.status | tk:'STATUS' }}</div>
+            </div>
+          </div>
+          <p *ngIf="!insuranceClaims.length" class="empty-state">{{ 'COMMON.NO_DATA' | translate }}</p>
+        </div>
+      </mat-tab>
+      <mat-tab [label]="'PATIENTS.DOCUMENTS' | translate">
+        <div class="tab-panel">
+          <ul class="doc-list" *ngIf="documents.length; else noDocs">
+            <li *ngFor="let d of documents">
+              <a [href]="d.fileUrl" target="_blank" rel="noopener">{{ d.fileName || d.documentType }}</a>
+            </li>
+          </ul>
+          <ng-template #noDocs><p class="empty-state">{{ 'COMMON.NO_DATA' | translate }}</p></ng-template>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </section>
+</div>
+<ng-template #loadingTpl>
+  <div class="page-shell loading-wrap"><mat-spinner diameter="48"></mat-spinner></div>
+</ng-template>

@@ -1,0 +1,16 @@
+.cm-form-dialog mat-dialog-content,
+.cm-form-dialog.dialog-body {
+  display: block;
+}
+
+.cm-form-dialog mat-form-field,
+.cm-form-dialog app-patient-search-field,
+.cm-form-dialog app-doctor-search-field,
+.cm-form-dialog app-lookup-select {
+  width: 100%;
+}
+
+mat-dialog-actions {
+  padding-top: 8px;
+  gap: 8px;
+}

@@ -1,5 +1,7 @@
 package com.clinicmanagement.modules.radiology.service;
+import com.clinicmanagement.shared.util.SearchQueryUtil;
 import com.clinicmanagement.modules.audit.annotation.Auditable;
+import com.clinicmanagement.modules.billing.service.BillingService;
 import com.clinicmanagement.modules.radiology.dto.RadiologyRequestDto;
 import com.clinicmanagement.modules.radiology.entity.*;
 import com.clinicmanagement.modules.radiology.repository.RadiologyRequestRepository;
@@ -9,12 +11,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service @RequiredArgsConstructor
 public class RadiologyService {
     private final RadiologyRequestRepository repository;
+    private final BillingService billingService;
 
     public Page<RadiologyRequestDto> list(Pageable pageable, RadiologyStatus status, String q) {
         return repository.search(trim(q), status, pageable).map(this::toResponse);
@@ -28,8 +32,19 @@ public class RadiologyService {
     @Transactional @Auditable(action = "CREATE", entityType = "RadiologyRequest")
     public RadiologyRequestDto create(RadiologyRequestDto dto) {
         RadiologyRequest r = RadiologyRequest.builder().requestNo("RAD-" + String.format("%06d", repository.count() + 1))
-            .patientId(dto.getPatientId()).doctorId(dto.getDoctorId()).studyType(dto.getStudyType())
+            .patientId(dto.getPatientId()).doctorId(dto.getDoctorId()).consultationId(dto.getConsultationId())
+            .studyType(dto.getStudyType())
             .status(RadiologyStatus.REQUESTED).notes(dto.getNotes()).build();
+        return toResponse(repository.save(r));
+    }
+
+    @Transactional @Auditable(action = "UPDATE", entityType = "RadiologyRequest")
+    public RadiologyRequestDto updateAttachment(Long id, String imageUrl) {
+        if (imageUrl == null || imageUrl.isBlank()) {
+            throw AppException.badRequest("Attachment URL is required", "ATTACHMENT_URL_REQUIRED");
+        }
+        RadiologyRequest r = find(id);
+        r.setImageUrl(imageUrl);
         return toResponse(repository.save(r));
     }
 
@@ -45,7 +60,15 @@ public class RadiologyService {
         if (reportText != null) r.setReportText(reportText);
         if (imageUrl != null) r.setImageUrl(imageUrl);
         if (status == RadiologyStatus.COMPLETED) r.setCompletedAt(LocalDateTime.now());
-        return toResponse(repository.save(r));
+        RadiologyRequest saved = repository.save(r);
+        RadiologyRequestDto response = toResponse(saved);
+        if (status == RadiologyStatus.COMPLETED) {
+            BigDecimal fee = billingService.resolveDefaultFee("radiology_default_fee", new BigDecimal("300"));
+            billingService.createServiceLineIfAbsent(saved.getPatientId(), saved.getConsultationId(), "RADIOLOGY",
+                "Radiology — " + saved.getStudyType(), fee, saved.getId())
+                .ifPresent(inv -> response.setGeneratedInvoiceId(inv.getId()));
+        }
+        return response;
     }
 
     private void validateTransition(RadiologyStatus from, RadiologyStatus to) {
@@ -67,10 +90,10 @@ public class RadiologyService {
 
     public RadiologyRequestDto toResponse(RadiologyRequest r) {
         return RadiologyRequestDto.builder().id(r.getId()).requestNo(r.getRequestNo()).patientId(r.getPatientId())
-            .doctorId(r.getDoctorId()).studyType(r.getStudyType()).status(r.getStatus())
+            .doctorId(r.getDoctorId()).consultationId(r.getConsultationId()).studyType(r.getStudyType()).status(r.getStatus())
             .scheduledAt(r.getScheduledAt()).reportText(r.getReportText()).imageUrl(r.getImageUrl())
             .notes(r.getNotes()).completedAt(r.getCompletedAt()).build();
     }
 
-    private static String trim(String q) { return q == null || q.isBlank() ? null : q.trim(); }
+    private static String trim(String q) { return SearchQueryUtil.normalize(q); }
 }

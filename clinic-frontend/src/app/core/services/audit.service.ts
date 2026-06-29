@@ -9,7 +9,9 @@ import { AuditLog } from '../models/audit.model';
 export class AuditService {
   constructor(private readonly api: ApiService) {}
 
-  list(page = 0, size = 20): Observable<ApiResponse<PagedResponse<AuditLog>>> {
-    return this.api.get<ApiResponse<PagedResponse<AuditLog>>>(AppConstants.API.AUDIT_LOGS, { page, size });
+  list(page = 0, size = 20, q = ''): Observable<ApiResponse<PagedResponse<AuditLog>>> {
+    const params: Record<string, string | number> = { page, size };
+    if (q?.trim()) params['q'] = q.trim();
+    return this.api.get<ApiResponse<PagedResponse<AuditLog>>>(AppConstants.API.AUDIT_LOGS, params);
   }
 }

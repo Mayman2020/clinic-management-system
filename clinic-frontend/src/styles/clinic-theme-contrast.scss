@@ -1,0 +1,131 @@
+/* Theme contrast — sidebar labels, Material tables, stat pills (Clinic) */
+
+.page-shell,
+.app-page,
+.main-content {
+  color: var(--ink-900);
+}
+
+.app-page-title,
+.stat-pill strong {
+  color: var(--ink-900);
+  -webkit-text-fill-color: var(--ink-900);
+}
+
+.stat-pill .stat-label {
+  color: var(--ink-500);
+  -webkit-text-fill-color: var(--ink-500);
+}
+
+/* Material table — mat-table ignores thead/tbody rules; target MDC rows/cells */
+.app-data-table.mat-mdc-table {
+  width: 100%;
+  background: transparent;
+}
+
+.app-data-table .mat-mdc-header-row {
+  background: var(--table-header-bg);
+}
+
+.app-data-table .mat-mdc-row {
+  background: var(--surface);
+  transition: background var(--t-fast);
+}
+
+.app-data-table .mat-mdc-row:hover {
+  background: var(--table-row-hover);
+}
+
+.app-data-table .mat-mdc-header-cell {
+  padding: 12px 16px;
+  text-align: start;
+  font-weight: 600;
+  color: var(--table-header-color);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  border-bottom: 1px solid var(--table-border);
+  border-inline-end: 1px solid var(--table-border);
+  white-space: nowrap;
+}
+
+.app-data-table .mat-mdc-cell {
+  padding: 14px 16px;
+  color: var(--text-main);
+  vertical-align: middle;
+  border-bottom: 1px solid var(--line-2);
+  border-inline-end: 1px solid var(--line-2);
+  text-align: start;
+}
+
+.app-data-table .mat-mdc-header-cell:last-child,
+.app-data-table .mat-mdc-cell:last-child {
+  border-inline-end: none;
+}
+
+.app-data-table .mat-mdc-cell.action-cell,
+.app-data-table .mat-mdc-header-cell.mat-column-actions {
+  text-align: center;
+}
+
+.app-data-table .mat-mdc-cell.action-cell .mat-mdc-icon-button,
+.app-data-table .mat-mdc-cell.action-cell .material-icons {
+  color: var(--ink-600);
+}
+
+.app-data-table .mat-mdc-cell.action-cell .mat-mdc-icon-button:hover .material-icons {
+  color: var(--blue-600);
+}
+
+html.dark-theme,
+.dark-theme {
+  .app-data-table .mat-mdc-row {
+    background: var(--surface);
+  }
+
+  .app-data-table .mat-mdc-row:hover {
+    background: var(--paper-3);
+  }
+
+  .app-data-table .mat-mdc-cell {
+    color: var(--ink-800);
+  }
+
+  .stat-pill {
+    background: var(--surface);
+    border-color: var(--line);
+  }
+
+  .app-page-header {
+    border-color: var(--line);
+    box-shadow: var(--shadow-soft);
+  }
+}
+
+html.light-theme,
+.light-theme {
+  .app-data-table .mat-mdc-row:hover {
+    background: var(--accent-soft, var(--paper-2));
+  }
+}
+
+.app-page-header .page-header-leading {
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+  flex: 1;
+  min-width: 0;
+}
+
+.app-page-header .page-header-leading .page-heading {
+  flex: 1;
+  min-width: 0;
+}
+
+.page-back-btn {
+  flex-shrink: 0;
+}
+
+[dir='rtl'] .page-back-btn .material-icons {
+  transform: scaleX(-1);
+}

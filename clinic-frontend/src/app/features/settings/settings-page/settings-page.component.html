@@ -1,0 +1,48 @@
+<div class="page-shell settings-page">
+  <app-page-header [title]="'SETTINGS.TITLE' | translate" [subtitle]="'SETTINGS.SUBTITLE' | translate"></app-page-header>
+
+  <section class="estate-card settings-group">
+    <div class="app-card-header">
+      <span class="app-card-title">{{ 'SETTINGS.CLINIC_INFO' | translate }}</span>
+    </div>
+    <div class="app-card-body settings-fields">
+      <div class="settings-field" *ngFor="let key of clinicKeys">
+        <label [for]="key">{{ settingLabel({ key, value: '' }) }}</label>
+        <input [id]="key" [ngModel]="valueFor(key)" (ngModelChange)="setValue(key, $event)">
+      </div>
+      <div class="settings-actions">
+        <button mat-flat-button color="primary" type="button" (click)="saveGroup(clinicKeys)">{{ 'COMMON.SAVE' | translate }}</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="estate-card settings-group">
+    <div class="app-card-header">
+      <span class="app-card-title">{{ 'SETTINGS.FEES' | translate }}</span>
+    </div>
+    <div class="app-card-body settings-fields">
+      <div class="settings-field" *ngFor="let key of feeKeys">
+        <label [for]="key">{{ settingLabel({ key, value: '' }) }}</label>
+        <input [id]="key" type="number" [ngModel]="valueFor(key)" (ngModelChange)="setValue(key, $event)">
+      </div>
+      <div class="settings-actions">
+        <button mat-flat-button color="primary" type="button" (click)="saveGroup(feeKeys)">{{ 'COMMON.SAVE' | translate }}</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="estate-card settings-group">
+    <div class="app-card-header">
+      <span class="app-card-title">{{ 'SETTINGS.SMS_SECTION' | translate }}</span>
+    </div>
+    <div class="app-card-body settings-fields">
+      <div class="settings-field" *ngFor="let key of smsKeys">
+        <label [for]="key">{{ settingLabel({ key, value: '' }) }}</label>
+        <input [id]="key" [ngModel]="valueFor(key)" (ngModelChange)="setValue(key, $event)">
+      </div>
+      <div class="settings-actions">
+        <button mat-flat-button color="primary" type="button" (click)="saveGroup(smsKeys)">{{ 'COMMON.SAVE' | translate }}</button>
+      </div>
+    </div>
+  </section>
+</div>

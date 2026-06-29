@@ -28,6 +28,14 @@ export const adminGuard: CanActivateFn = () => {
   return router.createUrlTree([auth.getDashboardRoute()]);
 };
 
+export const mustChangePasswordGuard: CanActivateFn = (_route, state) => {
+  const auth = inject(AuthService);
+  const router = inject(Router);
+  if (!auth.mustChangePassword()) return true;
+  if (state.url.includes('/admin/profile')) return true;
+  return router.createUrlTree(['/admin/profile'], { queryParams: { changePassword: '1' } });
+};
+
 export const permissionGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {
   const auth = inject(AuthService);
   const permissions = inject(PermissionService);

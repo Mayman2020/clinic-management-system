@@ -1,25 +1,33 @@
 import { Component, OnInit } from '@angular/core';
 import { NgFor, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { TablePagerComponent } from '../../../shared/components/table-pager/table-pager.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { RmsDialogService } from '../../../shared/services/rms-dialog.service';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
+import { RmsIconBtnComponent } from '../../../shared/components/rms-icon-btn/rms-icon-btn.component';
 import { HasPermissionDirective } from '../../../shared/directives/has-permission.directive';
 import { TranslateKeyPipe } from '../../../shared/pipes/translate-key.pipe';
 import { ConsultationService } from '../../../core/services/consultation.service';
 import { Consultation } from '../../../core/models/consultation.model';
 import { SnackService } from '../../../core/services/snack.service';
+import { PrescriptionDialogComponent } from '../../prescription/prescription-dialog/prescription-dialog.component';
+import { LabDialogComponent } from '../../lab/lab-dialog/lab-dialog.component';
+import { RadiologyDialogComponent } from '../../radiology/radiology-dialog/radiology-dialog.component';
+import { ConfirmService } from '../../../core/services/confirm.service';
 
 @Component({
   selector: 'app-consultation-list', standalone: true,
-  imports: [NgFor, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault, FormsModule, RouterLink, TranslateModule, MatTableModule, MatButtonModule, MatIconModule, MatInputModule, MatFormFieldModule, MatProgressSpinnerModule, MatPaginatorModule, PageHeaderComponent, HasPermissionDirective, TranslateKeyPipe],
+  imports: [NgFor, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault, FormsModule, RouterLink, TranslateModule, MatTableModule, MatButtonModule, MatIconModule, MatInputModule, MatFormFieldModule, MatProgressSpinnerModule, TablePagerComponent, MatDialogModule, MatTooltipModule, PageHeaderComponent, RmsIconBtnComponent, HasPermissionDirective, TranslateKeyPipe],
   templateUrl: './consultation-list.component.html',
   styleUrl: './consultation-list.component.scss'
 })
@@ -43,7 +51,10 @@ export class ConsultationListComponent implements OnInit {
   constructor(
     private readonly svc: ConsultationService,
     private readonly snack: SnackService,
-    private readonly route: ActivatedRoute
+    private readonly route: ActivatedRoute,
+    private readonly dialogs: RmsDialogService,
+    private readonly confirm: ConfirmService,
+    private readonly router: Router
   ) {}
 
   ngOnInit(): void {
@@ -71,5 +82,41 @@ export class ConsultationListComponent implements OnInit {
     });
   }
 
-  onPage(e: PageEvent): void { this.page = e.pageIndex; this.size = e.pageSize; this.load(); }
+  onPrescription(row: Consultation): void {
+    this.dialogs.open(PrescriptionDialogComponent, {
+      width: '520px',
+      data: { patientId: row.patientId, doctorId: row.doctorId, consultationId: row.id }
+    });
+  }
+
+  onLab(row: Consultation): void {
+    this.dialogs.open(LabDialogComponent, { width: '520px', data: { patientId: row.patientId, doctorId: row.doctorId, consultationId: row.id } });
+  }
+
+  onRadiology(row: Consultation): void {
+    this.dialogs.open(RadiologyDialogComponent, { width: '520px', data: { patientId: row.patientId, doctorId: row.doctorId, consultationId: row.id } });
+  }
+
+  onGenerateInvoice(row: Consultation): void {
+    this.confirm.confirm({ titleKey: 'COMMON.CONFIRM_TITLE', messageKey: 'WORKFLOW.GENERATE_INVOICE_CONFIRM' }).subscribe((ok) => {
+      if (!ok) return;
+      this.svc.generateInvoice(row.id).subscribe({
+        next: () => { this.snack.success('WORKFLOW.INVOICE_CREATED'); this.router.navigate(['/admin/billing']); },
+        error: (e) => this.snack.error(e.message)
+      });
+    });
+  }
+
+  onComplete(row: Consultation): void {
+    this.svc.complete(row.id).subscribe({
+      next: () => { this.snack.success('WORKFLOW.CONSULTATION_COMPLETED'); this.load(); },
+      error: (e) => this.snack.error(e.message)
+    });
+  }
+
+  isActive(row: Consultation): boolean {
+    return row.status !== 'COMPLETED';
+  }
+
+  onPageIndexChange(index: number): void { this.page = index; this.load(); }
 }

@@ -12,6 +12,7 @@ public class RadiologyRequestDto {
     private String requestNo;
     @NotNull private Long patientId;
     private Long doctorId;
+    private Long consultationId;
     @NotBlank private String studyType;
     private RadiologyStatus status;
     private LocalDateTime scheduledAt;
@@ -19,4 +20,5 @@ public class RadiologyRequestDto {
     private String imageUrl;
     private String notes;
     private LocalDateTime completedAt;
+    private Long generatedInvoiceId;
 }

@@ -9,6 +9,7 @@ import com.clinicmanagement.modules.insurance.repository.ClaimRepository;
 import com.clinicmanagement.modules.patients.repository.PatientRepository;
 import com.clinicmanagement.modules.queue.repository.QueueTokenRepository;
 import com.clinicmanagement.modules.queue.entity.QueueStatus;
+import com.clinicmanagement.shared.branch.BranchContextService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,21 +28,28 @@ public class DashboardService {
     private final PatientRepository patientRepository;
     private final DoctorRepository doctorRepository;
     private final QueueTokenRepository queueTokenRepository;
+    private final BranchContextService branchContext;
 
     @Transactional(readOnly = true)
     public DashboardStatsResponse getStats() {
+        return getStats(null);
+    }
+
+    @Transactional(readOnly = true)
+    public DashboardStatsResponse getStats(Long branchIdOverride) {
+        Long branchId = branchIdOverride != null ? branchIdOverride : branchContext.getFilterBranchId();
         LocalDate today = LocalDate.now();
         LocalDateTime dayStart = today.atStartOfDay();
         LocalDateTime dayEnd = today.atTime(LocalTime.MAX);
         YearMonth ym = YearMonth.now();
         LocalDateTime monthStart = ym.atDay(1).atStartOfDay();
         LocalDateTime monthEnd = ym.atEndOfMonth().atTime(LocalTime.MAX);
-        BigDecimal revToday = invoiceRepository.sumPaidBetween(dayStart, dayEnd);
-        BigDecimal revMonth = invoiceRepository.sumPaidBetween(monthStart, monthEnd);
-        long queueWaiting = queueTokenRepository.countByQueueDateAndStatus(today, QueueStatus.WAITING);
+        BigDecimal revToday = invoiceRepository.sumPaidBetween(dayStart, dayEnd, branchId);
+        BigDecimal revMonth = invoiceRepository.sumPaidBetween(monthStart, monthEnd, branchId);
+        long queueWaiting = queueTokenRepository.countByQueueDateAndStatus(today, QueueStatus.WAITING, branchId);
         return DashboardStatsResponse.builder()
             .patientsToday(patientRepository.countByCreatedAtBetween(dayStart, dayEnd))
-            .appointmentsToday(appointmentRepository.countByAppointmentDate(today))
+            .appointmentsToday(appointmentRepository.countByAppointmentDateAndBranchId(today, branchId))
             .queueWaiting(queueWaiting)
             .revenueToday(revToday == null ? BigDecimal.ZERO : revToday)
             .revenueMonth(revMonth == null ? BigDecimal.ZERO : revMonth)

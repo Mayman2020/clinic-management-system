@@ -13,8 +13,8 @@ public class DashboardController {
     private final DashboardService dashboardService;
 
     @GetMapping("/stats") @RequiresPermission(module = "dashboard", action = "view")
-    public ResponseEntity<ApiResponse<DashboardStatsResponse>> stats() {
-        return ResponseEntity.ok(ApiResponse.ok(dashboardService.getStats()));
+    public ResponseEntity<ApiResponse<DashboardStatsResponse>> stats(@RequestParam(required = false) Long branchId) {
+        return ResponseEntity.ok(ApiResponse.ok(dashboardService.getStats(branchId)));
     }
 
     @GetMapping("/revenue") @RequiresPermission(module = "dashboard", action = "view")

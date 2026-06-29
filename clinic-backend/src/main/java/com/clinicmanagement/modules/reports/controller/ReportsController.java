@@ -45,8 +45,29 @@ public class ReportsController {
         return ResponseEntity.ok(ApiResponse.ok(dashboardService.getDoctorPerformanceChart(from, to)));
     }
 
+    @GetMapping("/summary") @RequiresPermission(module = "reports", action = "view")
+    public ResponseEntity<ApiResponse<com.clinicmanagement.modules.dashboard.dto.DashboardStatsResponse>> summary() {
+        return ResponseEntity.ok(ApiResponse.ok(dashboardService.getStats()));
+    }
+
     @GetMapping("/full") @RequiresPermission(module = "reports", action = "view")
     public ResponseEntity<ApiResponse<DashboardReportResponse>> full() {
         return ResponseEntity.ok(ApiResponse.ok(dashboardService.buildReport()));
+    }
+
+    @GetMapping(value = "/export", produces = "text/csv")
+    @RequiresPermission(module = "reports", action = "export")
+    public ResponseEntity<String> exportCsv() {
+        var report = dashboardService.buildReport();
+        StringBuilder csv = new StringBuilder("metric,value\n");
+        if (report.getAppointmentStats() != null) {
+            report.getAppointmentStats().forEach((k, v) -> csv.append("appointment_").append(k).append(",").append(v).append("\n"));
+        }
+        if (report.getMonthlyRevenue() != null) {
+            report.getMonthlyRevenue().forEach(p -> csv.append("revenue_").append(p.getLabel()).append(",").append(p.getValue()).append("\n"));
+        }
+        return ResponseEntity.ok()
+            .header("Content-Disposition", "attachment; filename=\"clinic-report.csv\"")
+            .body(csv.toString());
     }
 }

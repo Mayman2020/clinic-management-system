@@ -1,34 +1,80 @@
-<div class="page-shell">
+<div class="page-shell queue-page">
   <app-page-header [title]="'QUEUE.TITLE' | translate">
-    <button mat-flat-button color="primary" type="button" (click)="onGenerate()"><span class="material-icons">add</span>{{ 'QUEUE.GENERATE' | translate }}</button>
-    <button mat-flat-button color="accent" type="button" (click)="callNext()">{{ 'QUEUE.CALL_NEXT' | translate }}</button>
-    <a mat-stroked-button routerLink="/queue/tv">{{ 'QUEUE.TV_MODE' | translate }}</a>
+    <div class="page-actions">
+      <rms-icon-btn icon="add" tooltipKey="QUEUE.GENERATE" variant="primary" (clicked)="onGenerate()"></rms-icon-btn>
+      <rms-icon-btn icon="campaign" tooltipKey="QUEUE.CALL_NEXT" variant="gold" (clicked)="callNext()"></rms-icon-btn>
+      <rms-icon-btn icon="tv" tooltipKey="QUEUE.TV_MODE" routerLink="/queue/tv"></rms-icon-btn>
+      <rms-icon-btn icon="refresh" tooltipKey="COMMON.REFRESH" (clicked)="refresh()"></rms-icon-btn>
+    </div>
   </app-page-header>
-  <div class="estate-card admin-filters">
-    <mat-form-field appearance="outline">
-      <mat-label>{{ 'APPOINTMENTS.DOCTOR' | translate }}</mat-label>
-      <mat-select [(ngModel)]="doctorId" (selectionChange)="onDoctorFilter()">
-        <mat-option [value]="undefined">{{ 'COMMON.ALL' | translate }}</mat-option>
-        <mat-option *ngFor="let d of doctors" [value]="d.id">{{ d.firstName }} {{ d.lastName }}</mat-option>
-      </mat-select>
-    </mat-form-field>
-  </div>
-  <div class="estate-card current-token" *ngIf="current">
-    <span class="label">{{ 'QUEUE.CURRENT' | translate }}</span>
-    <span class="num">{{ current.tokenNumber }}</span>
-    <span class="meta" *ngIf="current.patientName">{{ current.patientName }}</span>
-  </div>
-  <div class="estate-card queue-grid">
-    <div class="queue-token" *ngFor="let t of tokens">
-      <div class="num">{{ t.tokenNumber }}</div>
-      <div class="meta">{{ t.patientName || ('#' + t.patientId) }}</div>
-      <div class="meta subtle" *ngIf="t.doctorName">{{ t.doctorName }}</div>
-      <div class="status">{{ t.status | tk:'STATUS' }}</div>
-      <div class="actions">
-        <button *ngIf="t.status === 'CALLED'" mat-icon-button type="button" (click)="setStatus(t, 'IN_SERVICE')" [attr.aria-label]="'QUEUE.START_SERVICE' | translate"><span class="material-icons">play_arrow</span></button>
-        <button *ngIf="t.status === 'CALLED' || t.status === 'IN_SERVICE'" mat-icon-button type="button" (click)="setStatus(t, 'COMPLETED')" [attr.aria-label]="'QUEUE.COMPLETE' | translate"><span class="material-icons">done</span></button>
+
+  <section class="estate-stat-grid queue-kpi" *ngIf="tokens.length">
+    <article class="estate-stat-card navy">
+      <div class="estate-stat-top">
+        <span class="estate-stat-label">{{ 'QUEUE.WAITING' | translate }}</span>
+        <span class="estate-stat-icon material-icons">hourglass_top</span>
+      </div>
+      <div class="estate-stat-value">{{ waitingCount }}</div>
+    </article>
+    <article class="estate-stat-card teal">
+      <div class="estate-stat-top">
+        <span class="estate-stat-label">{{ 'QUEUE.CURRENT' | translate }}</span>
+        <span class="estate-stat-icon material-icons">record_voice_over</span>
+      </div>
+      <div class="estate-stat-value">{{ activeCount }}</div>
+    </article>
+    <article class="estate-stat-card gold">
+      <div class="estate-stat-top">
+        <span class="estate-stat-label">{{ 'DASHBOARD.PATIENTS_TODAY' | translate }}</span>
+        <span class="estate-stat-icon material-icons">groups</span>
+      </div>
+      <div class="estate-stat-value">{{ tokens.length }}</div>
+    </article>
+  </section>
+
+  <section class="estate-card queue-current-card" *ngIf="current">
+    <div>
+      <div class="queue-current-label">{{ 'QUEUE.NOW_SERVING' | translate }}</div>
+      <div class="queue-current-num">{{ current.tokenNumber }}</div>
+      <div class="queue-current-meta" *ngIf="current.patientName">{{ current.patientName }}</div>
+    </div>
+    <span class="status-badge">{{ current.status | tk:'STATUS' }}</span>
+  </section>
+
+  <section class="estate-card queue-grid-card directory-table-card">
+    <div class="estate-table-toolbar directory-toolbar">
+      <div class="directory-toolbar-top table-list-toolbar">
+        <mat-form-field appearance="outline" class="filter-lov filter-lov--filterDoctor">
+          <mat-label>{{ 'QUEUE.FILTER_DOCTOR' | translate }}</mat-label>
+          <mat-select [(ngModel)]="doctorId" (selectionChange)="onDoctorFilter()">
+            <mat-option [value]="undefined">{{ 'COMMON.ALL' | translate }}</mat-option>
+            <mat-option *ngFor="let d of doctors" [value]="d.id">{{ d.firstName }} {{ d.lastName }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <rms-icon-btn icon="refresh" tooltipKey="COMMON.REFRESH" (clicked)="refresh()"></rms-icon-btn>
       </div>
     </div>
-    <p *ngIf="!tokens.length" class="empty-state">{{ 'COMMON.NO_DATA' | translate }}</p>
-  </div>
+    <div class="app-card-header">
+      <span class="app-card-title">{{ 'QUEUE.WAITING_LIST' | translate }}</span>
+      <span class="tv-count">{{ waitingCount }}</span>
+    </div>
+    <div class="queue-grid">
+      <article
+        class="queue-token"
+        *ngFor="let t of tokens"
+        [class.is-active]="t.status === 'CALLED' || t.status === 'IN_SERVICE'"
+        [class.is-next]="t.status === 'WAITING' && t === nextToken">
+        <div class="num">{{ t.tokenNumber }}</div>
+        <div class="meta">{{ t.patientName || ('#' + t.patientId) }}</div>
+        <div class="meta subtle" *ngIf="t.doctorName">{{ t.doctorName }}</div>
+        <div class="status">{{ t.status | tk:'STATUS' }}</div>
+        <div class="actions">
+          <button *ngIf="t.status === 'CALLED'" mat-icon-button type="button" (click)="setStatus(t, 'IN_SERVICE')" [attr.aria-label]="'QUEUE.START_SERVICE' | translate"><span class="material-icons">play_arrow</span></button>
+          <button *ngIf="t.status === 'CALLED' || t.status === 'IN_SERVICE'" mat-icon-button type="button" (click)="setStatus(t, 'COMPLETED')" [attr.aria-label]="'QUEUE.COMPLETE' | translate"><span class="material-icons">done</span></button>
+          <button mat-icon-button type="button" (click)="startConsultation(t)" [attr.aria-label]="'WORKFLOW.START_CONSULTATION' | translate"><span class="material-icons">medical_information</span></button>
+        </div>
+      </article>
+      <p *ngIf="!tokens.length" class="empty-state">{{ 'QUEUE.NO_TOKENS' | translate }}</p>
+    </div>
+  </section>
 </div>

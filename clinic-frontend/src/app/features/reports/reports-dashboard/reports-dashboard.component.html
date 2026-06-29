@@ -1,35 +1,130 @@
-<div class="page-shell">
-  <app-page-header [title]="'REPORTS.TITLE' | translate"></app-page-header>
-  <div *ngIf="loading" class="loading-wrap">{{ 'COMMON.LOADING' | translate }}</div>
-  <div class="reports-grid" *ngIf="!loading">
-    <div class="estate-card chart-card">
-      <h3>{{ 'REPORTS.REVENUE' | translate }}</h3>
-      <div class="chart-wrap"><canvas baseChart [data]="revenue" [options]="opts" type="bar"></canvas></div>
+<div class="page-shell reports-page">
+  <app-page-header [title]="'REPORTS.TITLE' | translate" [subtitle]="'REPORTS.SUBTITLE' | translate">
+    <div class="page-actions">
+      <rms-icon-btn icon="download" tooltipKey="REPORTS.EXPORT_CSV" [disabled]="exporting" (clicked)="exportCsv()"></rms-icon-btn>
     </div>
-    <div class="estate-card chart-card">
-      <h3>{{ 'REPORTS.APPOINTMENTS' | translate }}</h3>
-      <div class="chart-wrap"><canvas baseChart [data]="appointments" [options]="opts" type="line"></canvas></div>
-    </div>
-    <div class="estate-card chart-card">
-      <h3>{{ 'REPORTS.PATIENTS' | translate }}</h3>
-      <div class="chart-wrap"><canvas baseChart [data]="patients" [options]="opts" type="doughnut"></canvas></div>
-    </div>
-    <div class="estate-card chart-card">
-      <div class="chart-header">
-        <h3>{{ 'REPORTS.DOCTORS' | translate }}</h3>
-        <div class="date-filters">
-          <mat-form-field appearance="outline">
-            <mat-label>{{ 'REPORTS.FROM' | translate }}</mat-label>
-            <input matInput type="date" [(ngModel)]="dateFrom">
-          </mat-form-field>
-          <mat-form-field appearance="outline">
-            <mat-label>{{ 'REPORTS.TO' | translate }}</mat-label>
-            <input matInput type="date" [(ngModel)]="dateTo">
-          </mat-form-field>
-          <button mat-stroked-button type="button" (click)="reloadDoctors()">{{ 'COMMON.APPLY' | translate }}</button>
-        </div>
-      </div>
-      <div class="chart-wrap"><canvas baseChart [data]="doctors" [options]="opts" type="bar"></canvas></div>
-    </div>
+  </app-page-header>
+
+  <div class="loading-wrap" *ngIf="loading">
+    <mat-spinner diameter="40"></mat-spinner>
   </div>
+
+  <ng-container *ngIf="!loading">
+    <section class="estate-stat-grid reports-kpi" *ngIf="summary">
+      <article class="estate-stat-card navy">
+        <div class="estate-stat-top">
+          <span class="estate-stat-label">{{ 'DASHBOARD.PATIENTS_TODAY' | translate }}</span>
+          <span class="estate-stat-icon material-icons">groups</span>
+        </div>
+        <div class="estate-stat-value">{{ summary.patientsToday }}</div>
+      </article>
+      <article class="estate-stat-card teal">
+        <div class="estate-stat-top">
+          <span class="estate-stat-label">{{ 'DASHBOARD.APPOINTMENTS' | translate }}</span>
+          <span class="estate-stat-icon material-icons">event</span>
+        </div>
+        <div class="estate-stat-value">{{ summary.appointmentsToday }}</div>
+      </article>
+      <article class="estate-stat-card gold">
+        <div class="estate-stat-top">
+          <span class="estate-stat-label">{{ 'DASHBOARD.DAILY_REVENUE' | translate }}</span>
+          <span class="estate-stat-icon material-icons">payments</span>
+        </div>
+        <div class="estate-stat-value">{{ summary.revenueToday | number:'1.0-0' }}</div>
+      </article>
+      <article class="estate-stat-card danger">
+        <div class="estate-stat-top">
+          <span class="estate-stat-label">{{ 'DASHBOARD.MONTHLY_REVENUE' | translate }}</span>
+          <span class="estate-stat-icon material-icons">trending_up</span>
+        </div>
+        <div class="estate-stat-value">{{ summary.revenueMonth | number:'1.0-0' }}</div>
+      </article>
+    </section>
+
+    <section class="estate-card top-services" *ngIf="topServices.length">
+      <div class="app-card-header">
+        <span class="app-card-title">{{ 'DASHBOARD.TOP_SERVICES' | translate }}</span>
+      </div>
+      <div class="app-card-body">
+        <ul class="service-list">
+          <li *ngFor="let s of topServices">
+            <span>{{ s.label }}</span>
+            <div class="service-bar-wrap">
+              <div class="service-bar"><div class="service-bar-fill" [style.width.%]="servicePercent(s.value)"></div></div>
+              <strong>{{ s.value | number:'1.0-0' }}</strong>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="reports-grid">
+      <article class="estate-card chart-card">
+        <div class="app-card-header">
+          <span class="app-card-title">{{ 'REPORTS.REVENUE' | translate }}</span>
+        </div>
+        <div class="app-card-body">
+          <div class="chart-wrap" *ngIf="hasChartData(revenue); else emptyRevenue">
+            <canvas baseChart [data]="revenue" [options]="barOpts" type="bar"></canvas>
+          </div>
+          <ng-template #emptyRevenue>
+            <div class="chart-empty"><span class="material-icons">bar_chart</span><p>{{ 'COMMON.NO_DATA' | translate }}</p></div>
+          </ng-template>
+        </div>
+      </article>
+
+      <article class="estate-card chart-card">
+        <div class="app-card-header">
+          <span class="app-card-title">{{ 'REPORTS.APPOINTMENTS' | translate }}</span>
+        </div>
+        <div class="app-card-body">
+          <div class="chart-wrap" *ngIf="hasChartData(appointments); else emptyAppts">
+            <canvas baseChart [data]="appointments" [options]="lineOpts" type="line"></canvas>
+          </div>
+          <ng-template #emptyAppts>
+            <div class="chart-empty"><span class="material-icons">show_chart</span><p>{{ 'COMMON.NO_DATA' | translate }}</p></div>
+          </ng-template>
+        </div>
+      </article>
+
+      <article class="estate-card chart-card">
+        <div class="app-card-header">
+          <span class="app-card-title">{{ 'REPORTS.PATIENTS' | translate }}</span>
+        </div>
+        <div class="app-card-body">
+          <div class="chart-wrap chart-wrap-donut" *ngIf="hasChartData(patients); else emptyPatients">
+            <canvas baseChart [data]="patients" [options]="donutOpts" type="doughnut"></canvas>
+          </div>
+          <ng-template #emptyPatients>
+            <div class="chart-empty"><span class="material-icons">pie_chart</span><p>{{ 'COMMON.NO_DATA' | translate }}</p></div>
+          </ng-template>
+        </div>
+      </article>
+
+      <article class="estate-card chart-card chart-card-wide">
+        <div class="app-card-header chart-header-row">
+          <span class="app-card-title">{{ 'REPORTS.DOCTORS' | translate }}</span>
+          <div class="report-filter-strip">
+            <label class="report-date-field">
+              <span>{{ 'REPORTS.FROM' | translate }}</span>
+              <app-date-field [(ngModel)]="dateFrom" [filter]="true" [compact]="true"></app-date-field>
+            </label>
+            <label class="report-date-field">
+              <span>{{ 'REPORTS.TO' | translate }}</span>
+              <app-date-field [(ngModel)]="dateTo" [filter]="true" [compact]="true"></app-date-field>
+            </label>
+            <button mat-flat-button color="primary" type="button" (click)="reloadDoctors()">{{ 'COMMON.APPLY' | translate }}</button>
+          </div>
+        </div>
+        <div class="app-card-body">
+          <div class="chart-wrap" *ngIf="hasChartData(doctors); else emptyDoctors">
+            <canvas baseChart [data]="doctors" [options]="barOpts" type="bar"></canvas>
+          </div>
+          <ng-template #emptyDoctors>
+            <div class="chart-empty"><span class="material-icons">leaderboard</span><p>{{ 'COMMON.NO_DATA' | translate }}</p></div>
+          </ng-template>
+        </div>
+      </article>
+    </section>
+  </ng-container>
 </div>

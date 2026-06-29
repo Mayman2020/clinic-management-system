@@ -19,6 +19,7 @@ public class Consultation {
     @Column(name = "treatment_plan", columnDefinition = "TEXT") private String treatmentPlan;
     @Column(name = "follow_up_date") private LocalDate followUpDate;
     @Column(length = 20) private String status;
+    @Column(name = "branch_id") private Long branchId;
     @CreatedDate @Column(name = "created_at", updatable = false) private LocalDateTime createdAt;
     @LastModifiedDate @Column(name = "updated_at") private LocalDateTime updatedAt;
 }

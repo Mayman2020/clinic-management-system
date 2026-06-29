@@ -21,21 +21,7 @@ export class AuthService {
     const payload: LoginRequest = { username, password: request.password };
     return this.api.post<ApiResponse<LoginResponse>>(AppConstants.API.AUTH_LOGIN, payload).pipe(
       tap((res) => {
-        if (res.data?.accessToken) {
-          this.tokenStorage.setToken(res.data.accessToken);
-          if (res.data.refreshToken) this.tokenStorage.setRefreshToken(res.data.refreshToken);
-          const userDto = res.data.user;
-          if (!userDto) return;
-          const extraRoles = Array.isArray(userDto.extraRoles) ? (userDto.extraRoles as UserRole[]) : [];
-          const user: CurrentUser = {
-            id: userDto.id, username: userDto.username, email: userDto.email, fullName: userDto.fullName,
-            fullNameAr: userDto.fullNameAr, fullNameEn: userDto.fullNameEn, profileImageUrl: userDto.profileImageUrl,
-            role: userDto.role, activeRole: userDto.role, extraRoles, doctorId: userDto.doctorId,
-            permissions: userDto.permissions, initials: this.buildInitials(userDto.fullNameAr || userDto.fullNameEn || userDto.fullName),
-            mustChangePassword: userDto.mustChangePassword ?? false
-          };
-          this.tokenStorage.setUser(user);
-        }
+        if (res.data) this.applyLoginResponse(res.data);
       }),
       map((res) => { if (!res.success || !res.data) throw new Error(res.message || 'Login failed'); return res.data; })
     );
@@ -89,12 +75,46 @@ export class AuthService {
   isAdmin(): boolean { return this.hasRole('ADMIN'); }
   hasRole(role: UserRole): boolean { return this.getRole() === role; }
   mustChangePassword(): boolean { return this.getCurrentUser()?.mustChangePassword === true; }
+
+  clearMustChangePassword(): void {
+    const user = this.getCurrentUser();
+    if (user) this.tokenStorage.setUser({ ...user, mustChangePassword: false });
+  }
+
+  applyLoginResponse(data: LoginResponse): void {
+    if (data.accessToken) this.tokenStorage.setToken(data.accessToken);
+    if (data.refreshToken) this.tokenStorage.setRefreshToken(data.refreshToken);
+    const userDto = data.user;
+    if (!userDto) return;
+    const extraRoles = Array.isArray(userDto.extraRoles) ? (userDto.extraRoles as UserRole[]) : [];
+    const current = this.getCurrentUser();
+    const user: CurrentUser = {
+      id: userDto.id, username: userDto.username, email: userDto.email, fullName: userDto.fullName,
+      fullNameAr: userDto.fullNameAr, fullNameEn: userDto.fullNameEn, profileImageUrl: userDto.profileImageUrl,
+      role: userDto.role, activeRole: current?.activeRole ?? userDto.role, extraRoles, doctorId: userDto.doctorId,
+      permissions: userDto.permissions, initials: this.buildInitials(userDto.fullNameAr || userDto.fullNameEn || userDto.fullName),
+      mustChangePassword: userDto.mustChangePassword ?? false
+    };
+    this.tokenStorage.setUser(user);
+  }
+
   clearExpiredTokens(): void {
     const token = this.tokenStorage.getToken();
     if (token && JwtUtils.isExpired(token)) this.tokenStorage.clearAll();
   }
 
-  getDashboardRoute(): string { return '/admin/dashboard'; }
+  getDashboardRoute(): string {
+    const role = this.getRole();
+    switch (role) {
+      case 'RECEPTIONIST': return '/admin/reception';
+      case 'DOCTOR': return '/admin/consultation';
+      case 'NURSE': return '/admin/queue';
+      case 'CASHIER': return '/admin/billing';
+      case 'LAB_TECHNICIAN': return '/admin/lab';
+      case 'RADIOLOGY_STAFF': return '/admin/radiology';
+      default: return '/admin/dashboard';
+    }
+  }
 
   private buildInitials(name: string): string {
     const words = (name ?? '').trim().split(/\s+/).filter(Boolean);

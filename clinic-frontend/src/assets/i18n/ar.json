@@ -29,7 +29,12 @@
     "AUDIT": "سجل التدقيق",
     "SETTINGS": "الإعدادات",
     "USERS": "المستخدمون",
-    "PROFILE": "الملف الشخصي"
+    "PROFILE": "الملف الشخصي",
+    "RECEPTION": "مكتب الاستقبال",
+    "BRANCHES": "الفروع",
+    "PERMISSIONS": "الصلاحيات",
+    "NOTIFICATIONS": "الإشعارات",
+    "LOOKUPS": "القوائم المرجعية"
   },
   "ROLE": {
     "ADMIN": "مدير النظام",
@@ -42,19 +47,34 @@
   },
   "AUTH": {
     "LOGIN": "تسجيل الدخول",
+    "WELCOME_BACK": "مرحباً بك مجدداً",
     "LOGOUT": "تسجيل الخروج",
     "EMAIL": "البريد الإلكتروني",
     "USERNAME": "اسم المستخدم",
     "PASSWORD": "كلمة المرور",
     "ENTER": "دخول",
     "INVALID_CREDENTIALS": "اسم المستخدم أو كلمة المرور غير صحيحة",
-    "LOGIN_FAILED": "فشل تسجيل الدخول"
+    "LOGIN_FAILED": "فشل تسجيل الدخول",
+    "FORGOT_PASSWORD": "نسيت كلمة المرور؟",
+    "FORGOT_PASSWORD_HINT": "أدخل اسم المستخدم وسنرسل تعليمات إعادة التعيين إلى بريدك المسجل.",
+    "SEND_RESET": "إرسال رابط الاستعادة",
+    "RESET_SENT": "إذا وُجد حساب، تم إرسال تعليمات الاستعادة."
   },
   "LOGIN": {
-    "HERO_TITLE_1": "عمليات العيادة",
-    "HERO_TITLE_2": "تحت السيطرة",
-    "HERO_SUBTITLE": "مواعيد، سجل طبي، فواتير وطابور — منصة واحدة.",
-    "FORM_SUBTITLE": "سجّل الدخول إلى مساحة عمل العيادة"
+    "BRAND_NAME": "CareWell",
+    "BRAND_SUB": "CLINIC",
+    "HERO_HEADLINE": "إدارة عيادتك بسهولة",
+    "HERO_TAGLINE": "نظام متكامل لإدارة المواعيد، المرضى، والفواتير بكفاءة وأمان",
+    "FORM_SUBTITLE": "سجل دخولك للوصول إلى لوحة التحكم",
+    "USERNAME_PLACEHOLDER": "أدخل بريدك الإلكتروني",
+    "PASSWORD_PLACEHOLDER": "أدخل كلمة المرور",
+    "REMEMBER_ME": "تذكرني",
+    "OR_CONTINUE": "أو سجل الدخول بواسطة",
+    "SECURE_LOGIN": "آمن وموثوق",
+    "COPYRIGHT": "© 2024 Clinic Management System",
+    "FEATURE_APPOINTMENTS": "المواعيد",
+    "FEATURE_PATIENTS": "المرضى",
+    "FEATURE_REPORTS": "التقارير"
   },
   "INLINE_TEXT": {
     "COMMAND_CENTER": "مركز القيادة",
@@ -73,8 +93,11 @@
     "CONFIRM": "تأكيد",
     "ACTIONS": "إجراءات",
     "REFRESH": "تحديث",
+    "ON_PAGE": "في هذه الصفحة",
     "APPLY": "تطبيق",
     "NO_DATA": "لا توجد سجلات",
+    "VIEW_ALL": "عرض الكل",
+    "INACTIVE": "غير نشط",
     "UNKNOWN": "غير معروف",
     "STATUS": "الحالة",
     "DATE": "التاريخ",
@@ -94,18 +117,33 @@
     "SUCCESS": "تمت العملية",
     "ERROR": "حدث خطأ",
     "DELETE_CONFIRM": "هل أنت متأكد من حذف هذا السجل؟",
-    "CONFIRM_TITLE": "تأكيد الإجراء"
+    "CONFIRM_TITLE": "تأكيد الإجراء",
+    "BACK": "رجوع",
+    "PAGINATION": "التنقل بين الصفحات",
+    "PREVIOUS": "السابق",
+    "NEXT": "التالي",
+    "PAGE_OF": "صفحة {{current}} من {{total}}"
   },
   "TOPBAR": {
     "TOGGLE_MENU": "إظهار/إخفاء القائمة",
     "LANGUAGE": "اللغة",
     "LIGHT_MODE": "الوضع الفاتح",
     "DARK_MODE": "الوضع الداكن",
-    "NOTIFICATIONS": "الإشعارات"
+    "NOTIFICATIONS": "الإشعارات",
+    "SEARCH_PLACEHOLDER": "ابحث عن مريض، موعد..."
   },
   "ERRORS": {
-    "GENERIC": "حدث خطأ",
+    "GENERIC": "حدث خطأ غير متوقع",
+    "NETWORK": "تعذر الاتصال بالخادم. تحقق من الاتصال وحاول مرة أخرى.",
+    "INTERNAL": "خطأ داخلي في الخادم",
+    "INVALID_PARAMETER": "قيمة المعامل غير صالحة",
+    "MISSING_PARAMETER": "معامل مطلوب مفقود",
+    "INVALID_REQUEST_BODY": "محتوى الطلب غير صالح",
+    "INVALID_DATE_FORMAT": "تنسيق التاريخ غير صالح",
+    "VALIDATION": "فشل التحقق من البيانات",
+    "UNAUTHORIZED": "يجب تسجيل الدخول",
     "EMAIL_ALREADY_USED": "البريد الإلكتروني مستخدم",
+    "NATIONAL_ID_ALREADY_USED": "الرقم الوطني مسجل بالفعل",
     "NOT_FOUND": "السجل غير موجود",
     "FORBIDDEN": "غير مصرح"
   },
@@ -126,7 +164,31 @@
     "PATIENT_STATS": "إحصائيات المرضى",
     "INSURANCE_CLAIMS": "مطالبات التأمين",
     "MONTHLY_REVENUE": "الإيرادات الشهرية",
-    "DAILY_REVENUE": "الإيرادات اليومية"
+    "DAILY_REVENUE": "الإيرادات اليومية",
+    "QUICK_LINKS": "روابط سريعة",
+    "WELCOME_SUB": "إليك ما يحدث في عيادتك اليوم.",
+    "WELCOME_ADMIN": "مرحباً {{name}}",
+    "WELCOME_DOCTOR": "يوم سعيد د. {{name}}",
+    "WELCOME_RECEPTIONIST": "مرحباً {{name}}",
+    "WELCOME_NURSE": "مرحباً {{name}}",
+    "WELCOME_CASHIER": "مرحباً {{name}}",
+    "CALENDAR": "التقويم",
+    "QUICK_ACTIONS": "إجراءات سريعة",
+    "UPCOMING_APPOINTMENTS": "المواعيد القادمة",
+    "NO_APPOINTMENTS": "لا توجد مواعيد قادمة",
+    "NO_APPOINTMENTS_HINT": "احجز موعداً جديداً للبدء.",
+    "LATEST_NOTIFICATIONS": "آخر الإشعارات",
+    "COMPLETED_TODAY": "مكتمل اليوم",
+    "TODAY": "اليوم",
+    "ACTION_NEW_PATIENT": "تسجيل مريض",
+    "ACTION_BOOK_APPT": "حجز موعد",
+    "NOTIF_APPT_CONFIRMED": "تم تأكيد الموعد",
+    "NOTIF_APPT_MSG": "تم تأكيد موعد المريض.",
+    "NOTIF_LAB_READY": "نتائج التحاليل جاهزة",
+    "NOTIF_LAB_MSG": "نتائج تحاليل جديدة متاحة للمراجعة.",
+    "NOTIF_REMINDER": "تذكير بموعد",
+    "NOTIF_REMINDER_MSG": "موعد قادم خلال ساعة.",
+    "TIME_AGO": "منذ {{n}} دقيقة"
   },
   "PATIENTS": {
     "TITLE": "المرضى",
@@ -145,7 +207,13 @@
     "ARCHIVE_CONFIRM": "أرشفة هذا المريض؟",
     "UPLOAD_DOC": "رفع مستند",
     "DATE_OF_BIRTH": "تاريخ الميلاد",
-    "CONSULTATION_HISTORY": "سجل الاستشارات"
+    "CONSULTATION_HISTORY": "سجل الاستشارات",
+    "FULL_HISTORY": "السجل الكامل للمريض",
+    "PATIENT_360": "ملف المريض الشامل",
+    "DOCUMENTS": "المستندات",
+    "INSURANCE_PROVIDER": "شركة التأمين",
+    "INSURANCE_POLICY": "رقم الوثيقة",
+    "NO_PRESCRIPTIONS_API": "سجل الوصفات غير متاح لهذا المريض حالياً."
   },
   "DOCTORS": {
     "TITLE": "الأطباء",
@@ -159,7 +227,8 @@
     "FEE": "رسوم الاستشارة",
     "DAY": "اليوم",
     "START": "وقت البداية",
-    "END": "وقت النهاية"
+    "END": "وقت النهاية",
+    "PROFILE_INFO": "معلومات الطبيب"
   },
   "APPOINTMENTS": {
     "TITLE": "المواعيد",
@@ -172,8 +241,13 @@
     "CANCEL": "إلغاء",
     "CONFIRM": "تأكيد",
     "WALK_IN": "حضور مباشر",
+    "DOCTOR_UNAVAILABLE": "الطبيب لديه موعد آخر في نفس الوقت",
     "NO": "رقم الموعد",
-    "CANCEL_CONFIRM": "إلغاء هذا الموعد؟"
+    "CANCEL_CONFIRM": "إلغاء هذا الموعد؟",
+    "DETAIL": "تفاصيل الموعد",
+    "DATE": "التاريخ",
+    "TIME": "الوقت",
+    "CHECK_IN": "تسجيل الحضور"
   },
   "QUEUE": {
     "TITLE": "الطابور",
@@ -182,16 +256,22 @@
     "TV_MODE": "وضع الشاشة",
     "WAITING": "انتظار",
     "CURRENT": "الرقم الحالي",
+    "NOW_SERVING": "يتم الآن خدمة",
+    "WAITING_LIST": "قائمة الانتظار",
+    "NO_CURRENT": "لا يوجد رقم مستدعى حالياً",
+    "NO_TOKENS": "لا يوجد مرضى في الطابور",
     "ESTIMATED_WAIT": "وقت الانتظار (د)",
     "GENERATE": "إصدار رقم",
     "START_SERVICE": "بدء الخدمة",
     "COMPLETE": "إنهاء",
-    "FILTER_DOCTOR": "تصفية حسب الطبيب"
+    "FILTER_DOCTOR": "تصفية حسب الطبيب",
+    "TOKEN_NUMBER": "رقم الطابور"
   },
   "CONSULTATION": {
     "TITLE": "الاستشارة",
     "NEW": "استشارة جديدة",
-    "CHIEF_COMPLAINT": "الشكوى / الأعراض",
+    "HUB_TITLE": "تفاصيل الاستشارة",
+    "SYMPTOMS": "الأعراض",
     "DIAGNOSIS": "التشخيص",
     "NOTES": "ملاحظات",
     "TREATMENT": "خطة العلاج",
@@ -207,7 +287,9 @@
     "FREQUENCY": "التكرار",
     "DURATION": "المدة",
     "PRINT": "طباعة",
-    "NO": "رقم الوصفة"
+    "DOWNLOAD_PDF": "تحميل PDF",
+    "NO": "رقم الوصفة",
+    "ADD_ITEM": "إضافة دواء"
   },
   "LAB": {
     "TITLE": "طلبات المختبر",
@@ -216,7 +298,10 @@
     "CATEGORY": "الفئة",
     "REQUEST_NO": "رقم الطلب",
     "RESULT": "رابط نتيجة PDF",
-    "NEXT_STATUS": "تقديم الحالة"
+    "NEXT_STATUS": "تقديم الحالة",
+    "UPLOAD_RESULT": "رفع نتيجة المختبر",
+    "RESULT_PDF": "رفع ملف النتيجة",
+    "RESULT_URL": "رابط ملف النتيجة"
   },
   "RADIOLOGY": {
     "TITLE": "طلبات الأشعة",
@@ -226,7 +311,11 @@
     "SCHEDULED_AT": "موعد الجدولة",
     "REPORT": "التقرير",
     "IMAGE_URL": "رابط الصورة",
-    "NEXT_STATUS": "تقديم الحالة"
+    "NEXT_STATUS": "تقديم الحالة",
+    "UPLOAD_RESULT": "إكمال دراسة الأشعة",
+    "UPLOAD_IMAGE": "رفع صورة / مسح",
+    "ATTACHMENT": "المرفق",
+    "VIEW_ATTACHMENT": "عرض المرفق"
   },
   "BILLING": {
     "TITLE": "الفواتير",
@@ -241,7 +330,15 @@
     "TAX": "الضريبة",
     "PAID": "المدفوع",
     "PAY": "تسجيل دفع",
-    "METHOD": "طريقة الدفع"
+    "METHOD": "طريقة الدفع",
+    "PAID_AT": "تاريخ الدفع",
+    "REFERENCE": "المرجع",
+    "DOWNLOAD_PDF": "تحميل PDF",
+    "MIXED_PAYMENT": "دفع مختلط"
+  },
+  "BILLING_DETAIL": {
+    "TITLE": "تفاصيل الفاتورة",
+    "ITEMS": "بنود الفاتورة"
   },
   "INSURANCE": {
     "TITLE": "التأمين",
@@ -265,6 +362,7 @@
   },
   "REPORTS": {
     "TITLE": "التقارير",
+    "SUBTITLE": "ملخص الأداء والإيرادات والمواعيد",
     "REVENUE": "تقرير الإيرادات",
     "APPOINTMENTS": "تقرير المواعيد",
     "PATIENTS": "تقرير المرضى",
@@ -272,14 +370,74 @@
     "TOTAL": "إجمالي المرضى",
     "ACTIVE": "المرضى النشطون",
     "FROM": "من",
-    "TO": "إلى"
+    "TO": "إلى",
+    "EXPORT_CSV": "تصدير CSV",
+    "EXPORTED": "تم تصدير التقرير"
+  },
+  "LOOKUPS": {
+    "TITLE": "القوائم المرجعية",
+    "SUBTITLE": "إدارة التخصصات والأقسام وأنواع التحاليل والقوائم المرجعية",
+    "NEW": "قيمة جديدة",
+    "CODE": "الرمز",
+    "NAME_AR": "الاسم بالعربية",
+    "NAME_EN": "الاسم بالإنجليزية",
+    "SORT_ORDER": "ترتيب العرض",
+    "ACTIVE": "نشط",
+    "INACTIVE": "غير نشط",
+    "TAB_SPECIALTY": "التخصصات",
+    "TAB_DEPARTMENT": "الأقسام",
+    "TAB_LAB_TYPE": "أنواع التحاليل",
+    "TAB_LAB_CATEGORY": "فئات المختبر",
+    "TAB_RADIOLOGY": "أنواع الأشعة",
+    "TAB_PAYMENT": "طرق الدفع"
   },
   "SETTINGS": {
     "TITLE": "الإعدادات",
+    "SUBTITLE": "إدارة بيانات العيادة والرسوم وإشعارات SMS",
+    "CLINIC_INFO": "بيانات العيادة",
+    "FEES": "الرسوم الافتراضية",
+    "SMS_SECTION": "إشعارات SMS",
     "CLINIC_NAME": "اسم العيادة",
     "CLINIC_PHONE": "هاتف العيادة",
     "CLINIC_ADDRESS": "عنوان العيادة",
-    "CLINIC_EMAIL": "بريد العيادة"
+    "CLINIC_EMAIL": "بريد العيادة",
+    "LAB_DEFAULT_FEE": "رسوم المختبر الافتراضية",
+    "RADIOLOGY_DEFAULT_FEE": "رسوم الأشعة الافتراضية",
+    "MULTI_BRANCH": "الفروع المتعددة",
+    "SMS_ENABLED": "تفعيل الرسائل النصية",
+    "SMS_PROVIDER": "مزود SMS",
+    "SMS_TWILIO_SID": "Twilio Account SID",
+    "SMS_TWILIO_TOKEN": "Twilio Auth Token",
+    "SMS_TWILIO_FROM": "رقم المرسل Twilio",
+    "SMS_HTTP_URL": "رابط بوابة SMS المحلية",
+    "SMS_HTTP_KEY": "مفتاح API للبوابة"
+  },
+  "BRANCHES": {
+    "TITLE": "الفروع",
+    "NEW": "فرع جديد",
+    "CODE": "رمز الفرع",
+    "NAME": "اسم الفرع"
+  },
+  "PERMISSIONS": {
+    "TITLE": "صلاحيات الأدوار",
+    "SUBTITLE": "تحديد صلاحيات كل دور في النظام",
+    "SELECT_ROLE": "اختر الدور",
+    "MODULE": "الوحدة",
+    "ENABLED": "مفعّل",
+    "MENU": "القائمة",
+    "VIEW": "عرض",
+    "CREATE": "إنشاء",
+    "EDIT": "تعديل",
+    "DELETE": "حذف",
+    "EXPORT": "تصدير",
+    "APPROVE": "اعتماد"
+  },
+  "RECEPTION": {
+    "TITLE": "مكتب الاستقبال",
+    "FIND_PATIENT": "البحث عن مريض",
+    "SEARCH_PATIENT": "بحث عن مريض",
+    "TODAY_APPOINTMENTS": "مواعيد اليوم",
+    "NO_APPOINTMENTS_TODAY": "لا توجد مواعيد مجدولة لليوم"
   },
   "USERS": {
     "TITLE": "المستخدمون",
@@ -305,7 +463,11 @@
     "APPT_CONFIRMED_TITLE": "تم تأكيد الموعد",
     "APPT_CONFIRMED_BODY": "تم تأكيد الموعد {{appointmentNo}} للمريض {{patientName}} مع د. {{doctorName}}.",
     "APPT_CANCELLED_TITLE": "تم إلغاء الموعد",
-    "APPT_CANCELLED_BODY": "تم إلغاء الموعد {{appointmentNo}} للمريض {{patientName}}."
+    "APPT_CANCELLED_BODY": "تم إلغاء الموعد {{appointmentNo}} للمريض {{patientName}}.",
+    "APPT_REMINDER_TITLE": "تذكير بموعد",
+    "APPT_REMINDER_BODY": "تذكير: المريض {{patientName}} لديه موعد {{appointmentNo}} غداً مع د. {{doctorName}}.",
+    "LAB_READY_TITLE": "نتيجة المختبر جاهزة",
+    "LAB_READY_BODY": "طلب المختبر {{requestNo}} ({{testType}}) للمريض {{patientName}} اكتمل."
   },
   "PRINT": {
     "CLINIC": "العيادة",
@@ -353,6 +515,7 @@
     "CANCELLED": "ملغى",
     "NO_SHOW": "لم يحضر",
     "ACTIVE": "نشط",
+    "INACTIVE": "غير نشط",
     "PENDING": "معلق",
     "PAID": "مدفوع",
     "PARTIAL": "جزئي",
@@ -371,5 +534,21 @@
     "CARD": "بطاقة",
     "INSURANCE": "تأمين",
     "MIXED": "مختلط"
+  },
+  "WORKFLOW": {
+    "CHECK_IN": "تسجيل حضور وطابور",
+    "CHECKED_IN": "تم تسجيل حضور المريض وإضافته للطابور",
+    "START_CONSULTATION": "بدء الاستشارة",
+    "COMPLETE_CONSULTATION": "إنهاء الاستشارة",
+    "CONSULTATION_COMPLETED": "تم إنهاء الاستشارة",
+    "GENERATE_INVOICE": "إنشاء فاتورة",
+    "GENERATE_INVOICE_CONFIRM": "إنشاء فاتورة برسوم استشارة الطبيب؟",
+    "INVOICE_CREATED": "تم إنشاء الفاتورة بنجاح",
+    "SEARCH_PATIENT": "ابحث بالاسم أو الرمز أو الهاتف…",
+    "SEARCH_DOCTOR": "ابحث بالاسم أو التخصص…",
+    "INVOICE_AUTO_CREATED": "تم إنشاء الفاتورة تلقائياً",
+    "SEND_REMINDER": "إرسال تذكير الآن",
+    "REMINDER_SENT": "تم إرسال التذكير بنجاح",
+    "GO_TO_QUEUE": "الذهاب للطابور"
   }
 }

@@ -12,6 +12,7 @@ public class ClaimDto {
     @NotNull private Long patientId;
     private Long providerId;
     private Long invoiceId;
+    private String invoiceNo;
     @NotNull private BigDecimal amount;
     private BigDecimal copayment;
     private String status;

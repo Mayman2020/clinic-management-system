@@ -1,0 +1,175 @@
+/* Clinic Management System — Medical design tokens (soft blue, green, white) */
+
+:root {
+  /* Primary blues */
+  --blue-900: #0c4a8a;
+  --blue-800: #1565b8;
+  --blue-700: #1a73d9;
+  --blue-600: #2563eb;
+  --blue-500: #3b82f6;
+  --blue-400: #60a5fa;
+  --blue-300: #93c5fd;
+  --blue-200: #bfdbfe;
+  --blue-100: #dbeafe;
+  --blue-50: #eff6ff;
+
+  /* Medical greens */
+  --green-700: #047857;
+  --green-600: #059669;
+  --green-500: #10b981;
+  --green-400: #34d399;
+  --green-300: #6ee7b7;
+  --green-100: #d1fae5;
+  --green-50: #ecfdf5;
+
+  /* Neutrals */
+  --white: #ffffff;
+  --gray-50: #f8fafc;
+  --gray-100: #f1f5f9;
+  --gray-200: #e2e8f0;
+  --gray-300: #cbd5e1;
+  --gray-400: #94a3b8;
+  --gray-500: #64748b;
+  --gray-600: #475569;
+  --gray-700: #334155;
+  --gray-800: #1e293b;
+  --gray-900: #0f172a;
+
+  /* Semantic */
+  --ok: #059669;
+  --ok-bg: #d1fae5;
+  --warn: #d97706;
+  --warn-bg: #fef3c7;
+  --bad: #dc2626;
+  --bad-bg: #fee2e2;
+  --info: #2563eb;
+  --info-bg: #dbeafe;
+
+  /* Legacy bridge names (used across app) */
+  --navy-900: var(--blue-900);
+  --navy-800: var(--blue-800);
+  --navy-700: var(--blue-700);
+  --navy-600: var(--blue-600);
+  --navy-500: var(--blue-500);
+
+  --brass-600: var(--green-700);
+  --brass-500: var(--green-600);
+  --brass-400: var(--green-500);
+  --brass-300: var(--green-400);
+  --brass-100: var(--green-100);
+
+  --paper: var(--gray-50);
+  --paper-2: var(--gray-100);
+  --paper-3: var(--gray-200);
+  --ink-900: var(--gray-900);
+  --ink-700: var(--gray-700);
+  --ink-500: var(--gray-500);
+  --ink-400: var(--gray-400);
+  --ink-300: var(--gray-300);
+  --line: var(--gray-200);
+  --line-2: var(--gray-100);
+
+  --surface: var(--white);
+  --surface-2: var(--gray-50);
+
+  --accent: var(--blue-600);
+  --accent-soft: var(--blue-50);
+
+  --teal: var(--green-600);
+  --teal-bg: var(--green-50);
+  --violet: #7c3aed;
+  --violet-bg: #ede9fe;
+
+  --e-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --e-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --t-fast: 160ms;
+  --t-med: 280ms;
+  --t-slow: 480ms;
+
+  --r-xs: 6px;
+  --r-sm: 10px;
+  --r: 12px;
+  --r-lg: 16px;
+  --r-xl: 24px;
+
+  --density: 1;
+  --pad-card: calc(20px * var(--density));
+  --pad-row: calc(14px * var(--density));
+
+  --sidebar-w: 260px;
+  --sidebar-w-collapsed: 68px;
+  --topbar-height: 64px;
+
+  --content-max-w: none;
+  --content-pad-inline: 24px;
+  --content-pad-block: 28px;
+
+  --bg-sidebar: linear-gradient(180deg, #0b1a2e 0%, #0f2744 55%, #0a2d52 100%);
+  --bg-app: var(--bg-premium);
+  --text-on-accent: #ffffff;
+
+  /* Premium visual (queue TV design language) */
+  --premium-radius: 24px;
+  --premium-radius-sm: 16px;
+  --accent-gold: #fbbf24;
+  --accent-teal: #94d4c8;
+  --accent-teal-bright: #5eead4;
+  --bg-premium: linear-gradient(145deg, #eff6ff 0%, #ecfdf5 45%, #f8fafc 100%);
+  --glass-bg: rgba(255, 255, 255, 0.82);
+  --glass-bg-strong: rgba(255, 255, 255, 0.94);
+  --glass-border: rgba(15, 23, 42, 0.08);
+  --glass-shadow: 0 8px 32px rgba(15, 23, 42, 0.06);
+  --glass-inset: inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  --glass-blur: blur(14px);
+  --panel-muted: rgba(15, 23, 42, 0.04);
+
+  --font-display: 'IBM Plex Sans Arabic', 'Inter', -apple-system, system-ui, sans-serif;
+  --font-ui: 'Inter', 'IBM Plex Sans Arabic', -apple-system, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  /* Medical theme specific */
+  --hero-gradient: linear-gradient(135deg, var(--blue-50) 0%, var(--green-50) 50%, var(--white) 100%);
+  --primary-gradient: linear-gradient(135deg, var(--blue-700) 0%, var(--blue-600) 100%);
+  --card-shadow: 0 1px 3px rgba(15, 23, 42, 0.06), 0 4px 12px rgba(15, 23, 42, 0.04);
+  --card-shadow-hover: 0 4px 16px rgba(37, 99, 235, 0.12);
+}
+
+.dark-theme,
+html.dark-theme,
+.cdk-overlay-container.dark-theme {
+  --paper: #0b1624;
+  --paper-2: #0f1d2f;
+  --paper-3: #13253a;
+  --surface: #152739;
+  --surface-2: #1a2e44;
+  --ink-900: #e8f0fa;
+  --ink-700: #b6c3d4;
+  --ink-500: #7a8ea7;
+  --ink-400: #5d7290;
+  --ink-300: #3e5472;
+  --line: #223a55;
+  --line-2: #1b314a;
+  --white: #152739;
+  --gray-50: #0f1d2f;
+  --gray-100: #13253a;
+  --gray-200: #1b314a;
+  --ok-bg: rgba(5, 150, 105, 0.18);
+  --warn-bg: rgba(217, 119, 6, 0.18);
+  --bad-bg: rgba(220, 38, 38, 0.18);
+  --info-bg: rgba(37, 99, 235, 0.18);
+  --blue-50: rgba(37, 99, 235, 0.14);
+  --blue-100: rgba(37, 99, 235, 0.22);
+  --green-50: rgba(16, 185, 129, 0.14);
+  --green-100: rgba(16, 185, 129, 0.22);
+  --bg-premium: linear-gradient(145deg, #0b1a2e 0%, #0f2744 45%, #0a3d3a 100%);
+  --glass-bg: rgba(255, 255, 255, 0.06);
+  --glass-bg-strong: rgba(255, 255, 255, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.28);
+  --glass-inset: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  --panel-muted: rgba(0, 0, 0, 0.22);
+  --bg-app: var(--bg-premium);
+  --hero-gradient: linear-gradient(160deg, rgba(5, 150, 105, 0.28) 0%, rgba(37, 99, 235, 0.18) 55%, rgba(255, 255, 255, 0.06) 100%);
+  --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  --card-shadow-hover: 0 12px 40px rgba(16, 185, 129, 0.12);
+}

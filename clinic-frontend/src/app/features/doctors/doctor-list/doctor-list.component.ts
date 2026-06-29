@@ -7,10 +7,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { TablePagerComponent } from '../../../shared/components/table-pager/table-pager.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { RmsDialogService } from '../../../shared/services/rms-dialog.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
+import { RmsIconBtnComponent } from '../../../shared/components/rms-icon-btn/rms-icon-btn.component';
 import { HasPermissionDirective } from '../../../shared/directives/has-permission.directive';
 import { TranslateKeyPipe } from '../../../shared/pipes/translate-key.pipe';
 import { DoctorService } from '../../../core/services/doctor.service';
@@ -22,7 +24,7 @@ import { DoctorScheduleDialogComponent } from '../doctor-schedule-dialog/doctor-
 @Component({
   selector: 'app-doctor-list',
   standalone: true,
-  imports: [NgFor, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault, FormsModule, TranslateModule, MatTableModule, MatButtonModule, MatIconModule, MatInputModule, MatFormFieldModule, MatProgressSpinnerModule, MatPaginatorModule, MatDialogModule, PageHeaderComponent, HasPermissionDirective, TranslateKeyPipe],
+  imports: [NgFor, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault, FormsModule, TranslateModule, MatTableModule, MatButtonModule, MatIconModule, MatInputModule, MatFormFieldModule, MatProgressSpinnerModule, TablePagerComponent, MatDialogModule, PageHeaderComponent, RmsIconBtnComponent, HasPermissionDirective, TranslateKeyPipe],
   templateUrl: './doctor-list.component.html',
   styleUrl: './doctor-list.component.scss'
 })
@@ -36,7 +38,7 @@ export class DoctorListComponent implements OnInit {
   displayedColumns = ['doctorCode', 'firstName', 'specialty', 'department', 'actions'];
   columns = [{ key: 'doctorCode', labelKey: 'DOCTORS.CODE' }, { key: 'firstName', labelKey: 'DOCTORS.NAME' }, { key: 'specialty', labelKey: 'DOCTORS.SPECIALTY' }, { key: 'department', labelKey: 'DOCTORS.DEPARTMENT' }];
 
-  constructor(private readonly svc: DoctorService, private readonly snack: SnackService, private readonly dialog: MatDialog) {}
+  constructor(private readonly svc: DoctorService, private readonly snack: SnackService, private readonly dialogs: RmsDialogService) {}
 
   ngOnInit(): void { this.load(); }
 
@@ -50,15 +52,15 @@ export class DoctorListComponent implements OnInit {
   }
 
   onCreate(): void {
-    this.dialog.open(DoctorDialogComponent, { width: '520px' }).afterClosed().subscribe((saved) => { if (saved) this.load(); });
+    this.dialogs.open(DoctorDialogComponent, { width: '520px' }).afterClosed().subscribe((saved) => { if (saved) this.load(); });
   }
 
   onEdit(row: Doctor): void {
-    this.dialog.open(DoctorDialogComponent, { width: '520px', data: row }).afterClosed().subscribe((saved) => { if (saved) this.load(); });
+    this.dialogs.open(DoctorDialogComponent, { width: '520px', data: row }).afterClosed().subscribe((saved) => { if (saved) this.load(); });
   }
 
   onSchedule(row: Doctor): void {
-    this.dialog.open(DoctorScheduleDialogComponent, { width: '420px', data: row.id }).afterClosed().subscribe(() => {});
+    this.dialogs.open(DoctorScheduleDialogComponent, { width: '420px', data: row.id }).afterClosed().subscribe(() => {});
   }
-  onPage(e: PageEvent): void { this.page = e.pageIndex; this.size = e.pageSize; this.load(); }
+  onPageIndexChange(index: number): void { this.page = index; this.load(); }
 }

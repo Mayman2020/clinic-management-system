@@ -11,25 +11,53 @@ import java.util.Map;
 
 @Slf4j @Component
 public class JwtUtil {
+    public static final String CLAIM_TOKEN_TYPE = "tokenType";
+    public static final String TYPE_ACCESS = "access";
+    public static final String TYPE_REFRESH = "refresh";
+
     @Value("${jwt.secret}") private String secret;
     @Value("${jwt.expiration}") private long expiration;
     @Value("${jwt.refresh-expiration}") private long refreshExpiration;
     private SecretKey getKey() { return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8)); }
+
     public String generateToken(String subject, Map<String, Object> claims) {
-        return Jwts.builder().subject(subject).claims(claims).issuedAt(new Date())
-            .expiration(new Date(System.currentTimeMillis() + expiration)).signWith(getKey()).compact();
+        return Jwts.builder().subject(subject).claims(claims)
+            .claim(CLAIM_TOKEN_TYPE, TYPE_ACCESS)
+            .issuedAt(new Date())
+            .expiration(new Date(System.currentTimeMillis() + expiration))
+            .signWith(getKey()).compact();
     }
+
     public String generateRefreshToken(String subject) {
-        return Jwts.builder().subject(subject).issuedAt(new Date())
-            .expiration(new Date(System.currentTimeMillis() + refreshExpiration)).signWith(getKey()).compact();
+        return Jwts.builder().subject(subject)
+            .claim(CLAIM_TOKEN_TYPE, TYPE_REFRESH)
+            .issuedAt(new Date())
+            .expiration(new Date(System.currentTimeMillis() + refreshExpiration))
+            .signWith(getKey()).compact();
     }
+
     public Claims extractAllClaims(String token) {
         return Jwts.parser().verifyWith(getKey()).build().parseSignedClaims(token).getPayload();
     }
+
     public String extractSubject(String token) { return extractAllClaims(token).getSubject(); }
+
     public boolean isValid(String token) {
         try { extractAllClaims(token); return true; }
         catch (JwtException | IllegalArgumentException e) { log.debug("Invalid JWT: {}", e.getMessage()); return false; }
     }
+
+    public boolean isAccessToken(String token) {
+        try {
+            return TYPE_ACCESS.equals(extractAllClaims(token).get(CLAIM_TOKEN_TYPE, String.class));
+        } catch (Exception e) { return false; }
+    }
+
+    public boolean isRefreshToken(String token) {
+        try {
+            return TYPE_REFRESH.equals(extractAllClaims(token).get(CLAIM_TOKEN_TYPE, String.class));
+        } catch (Exception e) { return false; }
+    }
+
     public Date extractExpiration(String token) { return extractAllClaims(token).getExpiration(); }
 }

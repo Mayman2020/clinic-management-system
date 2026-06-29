@@ -1,0 +1,66 @@
+.consultation-detail-page {
+  .detail-card,
+  .actions-card {
+    padding: 0;
+    max-width: 800px;
+  }
+
+  .actions-card {
+    margin-top: 20px;
+  }
+
+  .status-badge {
+    background: rgba(37, 99, 235, 0.1);
+    color: var(--blue-700, var(--accent));
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+  }
+
+  .detail-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    font-size: 0.9rem;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--line-2);
+  }
+
+  .detail-row span {
+    color: var(--text-muted);
+  }
+
+  .detail-block .label {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-500);
+    margin-bottom: 6px;
+  }
+
+  .detail-block p {
+    margin: 0;
+    line-height: 1.55;
+  }
+
+  .action-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .action-buttons button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+}

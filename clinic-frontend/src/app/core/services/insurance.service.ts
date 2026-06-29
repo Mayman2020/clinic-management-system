@@ -20,8 +20,8 @@ export class InsuranceService {
   deactivateProvider(id: number): Observable<ApiResponse<void>> {
     return this.api.delete<ApiResponse<void>>(AppConstants.API.INSURANCE_PROVIDER_BY_ID(id));
   }
-  listClaims(page = 0, size = 20): Observable<ApiResponse<PagedResponse<InsuranceClaim>>> {
-    return this.api.get<ApiResponse<PagedResponse<InsuranceClaim>>>(AppConstants.API.INSURANCE_CLAIMS, { page, size });
+  listClaims(page = 0, size = 20, params: Record<string, string | number> = {}): Observable<ApiResponse<PagedResponse<InsuranceClaim>>> {
+    return this.api.get<ApiResponse<PagedResponse<InsuranceClaim>>>(AppConstants.API.INSURANCE_CLAIMS, { page, size, ...params });
   }
   createClaim(payload: Partial<InsuranceClaim>): Observable<ApiResponse<InsuranceClaim>> {
     return this.api.post<ApiResponse<InsuranceClaim>>(AppConstants.API.INSURANCE_CLAIMS, payload);

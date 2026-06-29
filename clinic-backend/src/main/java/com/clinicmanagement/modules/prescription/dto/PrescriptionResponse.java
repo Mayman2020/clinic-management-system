@@ -10,6 +10,7 @@ public class PrescriptionResponse {
     private String prescriptionNo;
     private Long consultationId;
     private Long patientId;
+    private String patientName;
     private Long doctorId;
     private String notes;
     private String status;

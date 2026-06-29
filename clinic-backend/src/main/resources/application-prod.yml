@@ -1,0 +1,15 @@
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+jwt:
+  secret: ${JWT_SECRET}
+
+user:
+  default:
+    password: ${USER_DEFAULT_PASSWORD}
+
+clinic:
+  tv:
+    display-token: ${TV_DISPLAY_TOKEN}

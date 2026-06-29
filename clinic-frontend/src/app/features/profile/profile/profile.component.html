@@ -1,0 +1,38 @@
+<div class="page-shell profile-page">
+  <app-page-header [title]="'PROFILE.TITLE' | translate">
+    <a mat-stroked-button routerLink="/admin/dashboard">{{ 'COMMON.CANCEL' | translate }}</a>
+  </app-page-header>
+
+  <div class="loading-wrap" *ngIf="loading">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
+  <form class="estate-card profile-card" *ngIf="!loading" [formGroup]="form" (ngSubmit)="save()">
+    <div class="app-card-header">
+      <span class="app-card-title">{{ 'PROFILE.TITLE' | translate }}</span>
+    </div>
+    <div class="app-card-body profile-form">
+      <mat-form-field appearance="outline"><mat-label>{{ 'USERS.USERNAME' | translate }}</mat-label><input matInput [value]="username" disabled></mat-form-field>
+      <mat-form-field appearance="outline"><mat-label>{{ 'USERS.FULL_NAME' | translate }}</mat-label><input matInput formControlName="fullName"></mat-form-field>
+      <mat-form-field appearance="outline"><mat-label>{{ 'AUTH.EMAIL' | translate }}</mat-label><input matInput formControlName="email"></mat-form-field>
+      <mat-form-field appearance="outline"><mat-label>{{ 'PATIENTS.PHONE' | translate }}</mat-label><input matInput formControlName="phone"></mat-form-field>
+      <div class="form-actions">
+        <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || saving">{{ 'COMMON.SAVE' | translate }}</button>
+      </div>
+    </div>
+  </form>
+
+  <form class="estate-card profile-card" *ngIf="!loading" [formGroup]="passwordForm" (ngSubmit)="changePassword()" [class.highlight]="highlightPassword">
+    <div class="app-card-header">
+      <span class="app-card-title">{{ 'PROFILE.CHANGE_PASSWORD' | translate }}</span>
+    </div>
+    <div class="app-card-body profile-form">
+      <mat-form-field appearance="outline"><mat-label>{{ 'PROFILE.CURRENT_PASSWORD' | translate }}</mat-label><input matInput type="password" formControlName="currentPassword"></mat-form-field>
+      <mat-form-field appearance="outline"><mat-label>{{ 'PROFILE.NEW_PASSWORD' | translate }}</mat-label><input matInput type="password" formControlName="newPassword"></mat-form-field>
+      <mat-form-field appearance="outline"><mat-label>{{ 'PROFILE.CONFIRM_PASSWORD' | translate }}</mat-label><input matInput type="password" formControlName="confirmPassword"></mat-form-field>
+      <div class="form-actions">
+        <button mat-stroked-button type="submit" [disabled]="passwordForm.invalid || changingPassword">{{ 'PROFILE.CHANGE_PASSWORD' | translate }}</button>
+      </div>
+    </div>
+  </form>
+</div>

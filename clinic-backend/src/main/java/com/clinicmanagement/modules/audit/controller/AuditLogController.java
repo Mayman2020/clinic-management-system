@@ -13,7 +13,8 @@ import org.springframework.web.bind.annotation.*;
 public class AuditLogController {
     private final AuditLogService auditLogService;
     @GetMapping @RequiresPermission(module = "reports", action = "view")
-    public ResponseEntity<ApiResponse<Page<AuditLog>>> list(Pageable pageable) {
-        return ResponseEntity.ok(ApiResponse.ok(auditLogService.list(pageable)));
+    public ResponseEntity<ApiResponse<Page<AuditLog>>> list(Pageable pageable,
+            @RequestParam(required = false) String q) {
+        return ResponseEntity.ok(ApiResponse.ok(auditLogService.list(pageable, q)));
     }
 }

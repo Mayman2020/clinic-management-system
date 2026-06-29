@@ -42,4 +42,9 @@ public class RadiologyController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime scheduledAt) {
         return ResponseEntity.ok(ApiResponse.ok(radiologyService.updateStatus(id, status, reportText, imageUrl, scheduledAt)));
     }
+    @PutMapping("/{id}/attachment") @RequiresPermission(module = "radiology", action = "edit")
+    public ResponseEntity<ApiResponse<RadiologyRequestDto>> updateAttachment(@PathVariable Long id,
+            @RequestParam String imageUrl) {
+        return ResponseEntity.ok(ApiResponse.ok(radiologyService.updateAttachment(id, imageUrl)));
+    }
 }

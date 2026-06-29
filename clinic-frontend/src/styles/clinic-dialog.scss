@@ -1,0 +1,167 @@
+/* Clinic dialogs — estate/property pattern */
+
+.app-dialog-panel .mat-mdc-dialog-container {
+  border-radius: var(--premium-radius-sm, var(--r-lg)) !important;
+  overflow: hidden;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-dialog-panel .mat-mdc-dialog-container .mdc-dialog__container,
+.app-dialog-panel .mat-mdc-dialog-container .mat-mdc-dialog-surface {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: 100%;
+  background: var(--surface);
+}
+
+.app-dialog-panel .mat-mdc-dialog-title {
+  flex: 0 0 auto;
+  background: linear-gradient(135deg, #0b1a2e 0%, #0f2744 55%, #0a2d52 100%);
+  color: #fbbf24 !important;
+  padding: 18px 24px !important;
+  font-family: var(--font-display) !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.01em;
+  display: flex !important;
+  align-items: center;
+  gap: 10px;
+  margin: 0 !important;
+}
+
+.app-dialog-panel .mat-mdc-dialog-title.app-dialog-title-with-close {
+  justify-content: space-between;
+  padding-inline-end: 12px !important;
+}
+
+.app-dialog-panel .app-dialog-title-main {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.app-dialog-panel .app-dialog-close-btn {
+  flex: 0 0 auto;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 36px !important;
+  height: 36px !important;
+  min-width: 36px !important;
+  padding: 0 !important;
+  border-radius: 10px !important;
+  color: #fff !important;
+  background: rgba(255, 255, 255, 0.14) !important;
+  border: 1px solid rgba(255, 255, 255, 0.35) !important;
+  cursor: pointer;
+
+  .material-icons {
+    font-size: 22px !important;
+    color: #fff !important;
+  }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.24) !important;
+  }
+}
+
+.app-dialog-panel .dialog-title-icon {
+  font-size: 22px;
+  width: 22px;
+  height: 22px;
+  color: #94d4c8;
+}
+
+.app-dialog-panel .mat-mdc-dialog-content,
+.app-dialog-panel .dialog-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: none;
+  padding: 20px 24px !important;
+  overflow-y: auto;
+  overflow-x: hidden;
+  color: var(--ink-900);
+}
+
+.app-dialog-panel .mat-mdc-dialog-actions,
+.app-dialog-panel .app-dialog-actions {
+  flex: 0 0 auto;
+  padding: 12px 24px 20px !important;
+  border-top: 1px solid var(--line);
+  background: var(--surface);
+  min-height: 56px;
+  display: flex !important;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.app-dialog-panel .btn-dialog-cancel {
+  border: 1px solid var(--line) !important;
+  color: var(--ink-700) !important;
+  min-height: 40px;
+  border-radius: 10px !important;
+}
+
+.app-dialog-panel .btn-dialog-confirm {
+  background: linear-gradient(135deg, #059669, #2563eb) !important;
+  color: #fff !important;
+  min-height: 40px;
+  border-radius: 10px !important;
+}
+
+.rms-dialog-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 16px;
+  align-items: start;
+}
+
+.rms-dialog-form .full,
+.rms-dialog-form .full-col {
+  grid-column: 1 / -1;
+}
+
+.rms-dialog-form mat-form-field,
+.rms-dialog-form app-patient-search-field,
+.rms-dialog-form app-doctor-search-field,
+.rms-dialog-form app-lookup-select {
+  width: 100%;
+  min-width: 0;
+}
+
+.rms-dialog-form mat-form-field .mat-mdc-form-field-subscript-wrapper {
+  margin-bottom: 0;
+}
+
+.app-dialog-panel mat-dialog-content:not(:has(.rms-dialog-form)) {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 16px;
+  align-items: start;
+}
+
+.app-dialog-panel mat-dialog-content:not(:has(.rms-dialog-form)) mat-form-field,
+.app-dialog-panel mat-dialog-content:not(:has(.rms-dialog-form)) app-patient-search-field,
+.app-dialog-panel mat-dialog-content:not(:has(.rms-dialog-form)) app-doctor-search-field,
+.app-dialog-panel mat-dialog-content:not(:has(.rms-dialog-form)) app-lookup-select {
+  width: 100%;
+  min-width: 0;
+}
+
+.app-dialog-panel mat-dialog-content app-patient-search-field,
+.app-dialog-panel mat-dialog-content app-doctor-search-field {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 600px) {
+  .rms-dialog-form,
+  .app-dialog-panel mat-dialog-content:not(:has(.rms-dialog-form)) {
+    grid-template-columns: 1fr;
+  }
+}

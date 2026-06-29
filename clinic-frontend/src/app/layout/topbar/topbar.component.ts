@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { NgFor, NgIf, AsyncPipe } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
@@ -7,24 +8,31 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatOptionModule } from '@angular/material/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { ThemeService } from '../../core/services/theme.service';
 import { I18nService, LanguageOption } from '../../core/i18n/i18n.service';
 import { AuthService } from '../../core/services/auth.service';
 import { PermissionService } from '../../core/services/permission.service';
 import { NotificationService } from '../../core/services/notification.service';
+import { BranchService, BranchContext } from '../../core/services/branch.service';
+import { NavigationHistoryService } from '../../core/services/navigation-history.service';
 import { UserRole } from '../../core/models/user.model';
 
 @Component({
   selector: 'app-topbar', standalone: true,
-  imports: [NgFor, NgIf, AsyncPipe, RouterLink, TranslateModule, MatIconModule, MatButtonModule, MatMenuModule, MatTooltipModule, MatBadgeModule, MatDividerModule],
+  imports: [NgFor, NgIf, AsyncPipe, FormsModule, RouterLink, TranslateModule, MatIconModule, MatButtonModule, MatMenuModule, MatTooltipModule, MatBadgeModule, MatDividerModule, MatSelectModule, MatFormFieldModule, MatOptionModule],
   templateUrl: './topbar.component.html',
   styleUrl: './topbar.component.scss'
 })
 export class TopbarComponent implements OnInit, OnDestroy {
   @Input() sidebarCollapsed = false;
   @Output() sidebarToggle = new EventEmitter<void>();
+  searchQuery = '';
   unreadCount = 0;
+  branchContext: BranchContext | null = null;
   private pollTimer?: ReturnType<typeof setInterval>;
 
   constructor(
@@ -33,12 +41,32 @@ export class TopbarComponent implements OnInit, OnDestroy {
     readonly auth: AuthService,
     private readonly permissions: PermissionService,
     private readonly router: Router,
-    private readonly notifications: NotificationService
+    private readonly notifications: NotificationService,
+    private readonly branchService: BranchService,
+    private readonly navHistory: NavigationHistoryService
   ) {}
 
   ngOnInit(): void {
     this.refreshUnread();
     this.pollTimer = setInterval(() => this.refreshUnread(), 45000);
+    if (this.auth.isAuthenticated()) this.loadBranchContext();
+  }
+
+  loadBranchContext(): void {
+    this.branchService.loadContext().subscribe({
+      next: (r) => { this.branchContext = r.data ?? null; },
+      error: () => { /* silent */ }
+    });
+  }
+
+  onBranchChange(branchId: number): void {
+    this.branchService.setBranch(branchId);
+    this.branchContext = this.branchService.context;
+    void this.router.navigateByUrl(this.router.url);
+  }
+
+  onMenuNav(): void {
+    this.navHistory.markFromMenu();
   }
 
   ngOnDestroy(): void {
@@ -69,5 +97,11 @@ export class TopbarComponent implements OnInit, OnDestroy {
     if (this.isRoleActive(role)) return;
     this.auth.setActiveRole(role);
     this.permissions.loadMine().subscribe({ next: () => void this.router.navigateByUrl(this.auth.getDashboardRoute()) });
+  }
+
+  onSearch(): void {
+    const q = this.searchQuery.trim();
+    if (!q) return;
+    void this.router.navigate(['/admin/patients'], { queryParams: { q } });
   }
 }

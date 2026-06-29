@@ -1,14 +1,16 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NgFor, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatDialogModule } from '@angular/material/dialog';
+import { RmsDialogService } from '../../../shared/services/rms-dialog.service';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
+import { RmsIconBtnComponent } from '../../../shared/components/rms-icon-btn/rms-icon-btn.component';
 import { TranslateKeyPipe } from '../../../shared/pipes/translate-key.pipe';
 import { QueueService } from '../../../core/services/queue.service';
 import { QueueRealtimeService } from '../../../core/services/queue-realtime.service';
@@ -20,7 +22,7 @@ import { QueueTokenDialogComponent } from '../queue-token-dialog/queue-token-dia
 
 @Component({
   selector: 'app-queue-dashboard', standalone: true,
-  imports: [NgFor, NgIf, FormsModule, RouterLink, TranslateModule, MatButtonModule, MatDialogModule, MatFormFieldModule, MatSelectModule, MatIconModule, PageHeaderComponent, TranslateKeyPipe],
+  imports: [NgFor, NgIf, FormsModule, RouterLink, TranslateModule, MatButtonModule, MatDialogModule, MatFormFieldModule, MatSelectModule, MatIconModule, PageHeaderComponent, RmsIconBtnComponent, TranslateKeyPipe],
   templateUrl: './queue-dashboard.component.html',
   styleUrl: './queue-dashboard.component.scss'
 })
@@ -37,7 +39,8 @@ export class QueueDashboardComponent implements OnInit, OnDestroy {
     private readonly realtime: QueueRealtimeService,
     private readonly doctorSvc: DoctorService,
     private readonly snack: SnackService,
-    private readonly dialog: MatDialog
+    private readonly dialogs: RmsDialogService,
+    private readonly router: Router
   ) {}
 
   ngOnInit(): void {
@@ -72,7 +75,7 @@ export class QueueDashboardComponent implements OnInit, OnDestroy {
   onDoctorFilter(): void { this.refresh(); }
 
   onGenerate(): void {
-    this.dialog.open(QueueTokenDialogComponent, { width: '420px' }).afterClosed().subscribe((saved) => { if (saved) this.refresh(); });
+    this.dialogs.open(QueueTokenDialogComponent, { width: '480px' }).afterClosed().subscribe((saved) => { if (saved) this.refresh(); });
   }
 
   callNext(): void {
@@ -87,5 +90,27 @@ export class QueueDashboardComponent implements OnInit, OnDestroy {
       next: () => { this.snack.success('MESSAGES.STATUS_UPDATED'); this.refresh(); },
       error: (e) => this.snack.error(e.message)
     });
+  }
+
+  startConsultation(token: QueueToken): void {
+    void this.router.navigate(['/admin/consultation/new'], {
+      queryParams: {
+        patientId: token.patientId,
+        doctorId: token.doctorId,
+        appointmentId: token.appointmentId
+      }
+    });
+  }
+
+  get waitingCount(): number {
+    return this.tokens.filter(t => t.status === 'WAITING').length;
+  }
+
+  get activeCount(): number {
+    return this.tokens.filter(t => t.status === 'CALLED' || t.status === 'IN_SERVICE').length;
+  }
+
+  get nextToken(): QueueToken | undefined {
+    return this.tokens.find(t => t.status === 'WAITING');
   }
 }

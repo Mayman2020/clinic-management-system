@@ -8,9 +8,10 @@ import { Patient } from '../models/patient.model';
 @Injectable({ providedIn: 'root' })
 export class PatientService {
   constructor(private readonly api: ApiService) {}
-  list(page = 0, size = 20, q = ''): Observable<ApiResponse<PagedResponse<Patient>>> {
-    const params: Record<string, string | number> = { page, size };
+  list(page = 0, size = 20, q = '', active?: boolean): Observable<ApiResponse<PagedResponse<Patient>>> {
+    const params: Record<string, string | number | boolean> = { page, size };
     if (q) params['q'] = q;
+    if (active !== undefined) params['active'] = active;
     return this.api.get<ApiResponse<PagedResponse<Patient>>>(AppConstants.API.PATIENTS, params);
   }
   getById(id: number): Observable<ApiResponse<Patient>> {

@@ -100,16 +100,64 @@ public class RolePermissionService {
     public static Map<String, Map<String, Boolean>> defaultPermissions(UserRole role) {
         Map<String, Map<String, Boolean>> permissions = baseCatalog();
         switch (role) {
-            case ADMIN -> permissions.replaceAll((k,v) -> fillTrue(v));
-            case RECEPTIONIST -> permissions.replaceAll((k,v) -> fillTrue(v));
-            case DOCTOR -> permissions.replaceAll((k,v) -> fillTrue(v));
-            case NURSE -> permissions.replaceAll((k,v) -> fillTrue(v));
-            case LAB_TECHNICIAN -> permissions.replaceAll((k,v) -> fillTrue(v));
-            case RADIOLOGY_STAFF -> permissions.replaceAll((k,v) -> fillTrue(v));
-            case CASHIER -> permissions.replaceAll((k,v) -> fillTrue(v));
+            case ADMIN -> permissions.replaceAll((k, v) -> fillTrue(v));
+            case RECEPTIONIST -> {
+                grant(permissions, "dashboard", "enabled", "menu", "view");
+                grant(permissions, "patients", "enabled", "menu", "view", "create", "edit");
+                grant(permissions, "doctors", "enabled", "menu", "view");
+                grant(permissions, "appointments", "enabled", "menu", "view", "create", "edit");
+                grant(permissions, "calendar", "enabled", "menu", "view");
+                grant(permissions, "queue", "enabled", "menu", "view", "create", "edit");
+                grant(permissions, "billing", "enabled", "menu", "view");
+            }
+            case DOCTOR -> {
+                grant(permissions, "dashboard", "enabled", "menu", "view");
+                grant(permissions, "patients", "enabled", "menu", "view", "edit");
+                grant(permissions, "doctors", "enabled", "menu", "view");
+                grant(permissions, "appointments", "enabled", "menu", "view", "create", "edit");
+                grant(permissions, "calendar", "enabled", "menu", "view");
+                grant(permissions, "queue", "enabled", "menu", "view");
+                grant(permissions, "consultation", "enabled", "menu", "view", "create", "edit");
+                grant(permissions, "prescription", "enabled", "menu", "view", "create", "edit");
+                grant(permissions, "lab", "enabled", "menu", "view", "create");
+                grant(permissions, "radiology", "enabled", "menu", "view", "create");
+            }
+            case NURSE -> {
+                grant(permissions, "dashboard", "enabled", "menu", "view");
+                grant(permissions, "patients", "enabled", "menu", "view", "create", "edit");
+                grant(permissions, "appointments", "enabled", "menu", "view");
+                grant(permissions, "calendar", "enabled", "menu", "view");
+                grant(permissions, "queue", "enabled", "menu", "view", "create", "edit");
+                grant(permissions, "consultation", "enabled", "menu", "view", "create", "edit");
+                grant(permissions, "lab", "enabled", "menu", "view", "create");
+                grant(permissions, "radiology", "enabled", "menu", "view", "create");
+            }
+            case LAB_TECHNICIAN -> {
+                grant(permissions, "dashboard", "enabled", "menu", "view");
+                grant(permissions, "lab", "enabled", "menu", "view", "create", "edit", "approve");
+            }
+            case RADIOLOGY_STAFF -> {
+                grant(permissions, "dashboard", "enabled", "menu", "view");
+                grant(permissions, "radiology", "enabled", "menu", "view", "create", "edit", "approve");
+            }
+            case CASHIER -> {
+                grant(permissions, "dashboard", "enabled", "menu", "view");
+                grant(permissions, "patients", "enabled", "menu", "view");
+                grant(permissions, "billing", "enabled", "menu", "view", "create", "edit", "export");
+                grant(permissions, "insurance", "enabled", "menu", "view");
+                grant(permissions, "reports", "enabled", "menu", "view", "export");
+            }
             default -> { }
         }
         return permissions;
+    }
+
+    private static void grant(Map<String, Map<String, Boolean>> permissions, String module, String... actions) {
+        Map<String, Boolean> flags = permissions.get(module);
+        if (flags == null) return;
+        for (String action : actions) {
+            if (flags.containsKey(action)) flags.put(action, true);
+        }
     }
 
     private static Map<String, Map<String, Boolean>> baseCatalog() {

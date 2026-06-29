@@ -14,4 +14,5 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     java.util.Optional<Notification> findByIdAndRecipientUserId(Long id, Long recipientUserId);
     @Modifying @Query("UPDATE Notification n SET n.readAt = :readAt WHERE n.recipientUserId = :userId AND n.readAt IS NULL")
     void markAllRead(@Param("userId") Long userId, @Param("readAt") LocalDateTime readAt);
+    boolean existsByTypeAndReferenceId(com.clinicmanagement.modules.notification.entity.NotificationType type, Long referenceId);
 }

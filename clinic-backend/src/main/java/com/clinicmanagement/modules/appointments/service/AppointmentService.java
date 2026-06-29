@@ -1,4 +1,5 @@
 package com.clinicmanagement.modules.appointments.service;
+import com.clinicmanagement.shared.util.SearchQueryUtil;
 import com.clinicmanagement.modules.audit.annotation.Auditable;
 import com.clinicmanagement.modules.appointments.dto.*;
 import com.clinicmanagement.modules.appointments.entity.*;
@@ -7,6 +8,10 @@ import com.clinicmanagement.modules.doctors.repository.DoctorRepository;
 import com.clinicmanagement.modules.notification.entity.NotificationType;
 import com.clinicmanagement.modules.notification.service.NotificationService;
 import com.clinicmanagement.modules.patients.repository.PatientRepository;
+import com.clinicmanagement.modules.queue.dto.QueueTokenRequest;
+import com.clinicmanagement.modules.queue.dto.QueueTokenResponse;
+import com.clinicmanagement.modules.queue.service.QueueService;
+import com.clinicmanagement.shared.branch.BranchContextService;
 import com.clinicmanagement.shared.exception.AppException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -26,15 +31,42 @@ public class AppointmentService {
     private final PatientRepository patientRepository;
     private final DoctorRepository doctorRepository;
     private final NotificationService notificationService;
+    private final QueueService queueService;
+    private final BranchContextService branchContext;
 
-    public Page<AppointmentResponse> list(Pageable pageable, String q, AppointmentStatus status, Long doctorId) {
-        return repository.search(trim(q), status, doctorId, pageable).map(this::toResponse);
+    public Page<AppointmentResponse> list(Pageable pageable, String q, AppointmentStatus status, List<AppointmentStatus> statuses, Long doctorId) {
+        if (statuses != null && !statuses.isEmpty()) {
+            return repository.searchByStatuses(trim(q), statuses, doctorId, branchContext.getFilterBranchId(), pageable).map(this::toResponse);
+        }
+        return repository.search(trim(q), status, doctorId, branchContext.getFilterBranchId(), pageable).map(this::toResponse);
     }
 
     public List<AppointmentResponse> calendar(LocalDate from, LocalDate to, Long doctorId, AppointmentStatus status) {
-        return repository.findCalendar(from, to, doctorId, status).stream().map(this::toResponse).toList();
+        return repository.findCalendar(from, to, doctorId, status, branchContext.getFilterBranchId()).stream().map(this::toResponse).toList();
     }
     public AppointmentResponse getById(Long id) { return toResponse(find(id)); }
+
+    public List<AppointmentResponse> byPatient(Long patientId) {
+        return repository.findByPatientIdAndActiveTrueOrderByAppointmentDateDescStartTimeDesc(patientId)
+            .stream().map(this::toResponse).toList();
+    }
+
+    @Transactional @Auditable(action = "UPDATE", entityType = "Appointment")
+    public CheckInResponse checkIn(Long id) {
+        Appointment a = find(id);
+        if (a.getStatus() == AppointmentStatus.CANCELLED || a.getStatus() == AppointmentStatus.NO_SHOW) {
+            throw AppException.badRequest("Cannot check in a cancelled or no-show appointment", "APPOINTMENT_CANNOT_CHECK_IN");
+        }
+        a.setStatus(AppointmentStatus.WAITING);
+        AppointmentResponse appointment = toResponse(repository.save(a));
+        QueueTokenRequest tokenRequest = new QueueTokenRequest();
+        tokenRequest.setPatientId(a.getPatientId());
+        tokenRequest.setDoctorId(a.getDoctorId());
+        tokenRequest.setAppointmentId(a.getId());
+        tokenRequest.setQueueDate(LocalDate.now());
+        QueueTokenResponse queueToken = queueService.generateToken(tokenRequest);
+        return CheckInResponse.builder().appointment(appointment).queueToken(queueToken).build();
+    }
 
     @Transactional @Auditable(action = "CREATE", entityType = "Appointment")
     public AppointmentResponse book(AppointmentRequest request) {
@@ -44,6 +76,7 @@ public class AppointmentService {
 
     @Transactional @Auditable(action = "CREATE", entityType = "Appointment")
     public AppointmentResponse walkIn(AppointmentRequest request) {
+        checkOverlap(request, null);
         return toResponse(repository.save(build(request, AppointmentStatus.WAITING, "WALK_IN")));
     }
 
@@ -86,6 +119,7 @@ public class AppointmentService {
         return r;
     }
 
+
     private void notifyAppointment(NotificationType type, String titleKey, String bodyKey, AppointmentResponse r) {
         Map<String, Object> vars = Map.of(
             "appointmentNo", r.getAppointmentNo() != null ? r.getAppointmentNo() : "",
@@ -111,10 +145,17 @@ public class AppointmentService {
             .patientId(r.getPatientId()).doctorId(r.getDoctorId()).appointmentDate(r.getAppointmentDate())
             .startTime(r.getStartTime()).endTime(r.getEndTime()).status(status)
             .appointmentType(r.getAppointmentType() != null ? r.getAppointmentType() : type)
-            .notes(r.getNotes()).active(true).build();
+            .notes(r.getNotes()).active(true).branchId(branchContext.requireBranchIdForWrite()).build();
     }
 
-    private Appointment find(Long id) { return repository.findById(id).orElseThrow(() -> AppException.notFound("Appointment not found")); }
+    private Appointment find(Long id) {
+        Appointment a = repository.findById(id).orElseThrow(() -> AppException.notFound("Appointment not found"));
+        Long branchId = branchContext.getFilterBranchId();
+        if (branchId != null && a.getBranchId() != null && !branchId.equals(a.getBranchId())) {
+            throw AppException.notFound("Appointment not found");
+        }
+        return a;
+    }
 
     public AppointmentResponse toResponse(Appointment a) {
         String patientName = patientRepository.findById(a.getPatientId())
@@ -130,5 +171,5 @@ public class AppointmentService {
             .createdAt(a.getCreatedAt()).build();
     }
 
-    private static String trim(String q) { return q == null || q.isBlank() ? null : q.trim(); }
+    private static String trim(String q) { return SearchQueryUtil.normalize(q); }
 }

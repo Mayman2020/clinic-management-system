@@ -1,30 +1,53 @@
 <div class="page-shell">
   <app-page-header [title]="'PRESCRIPTION.TITLE' | translate">
-    <button *appCan="'prescription'; appCanAction: 'create'" mat-flat-button color="primary" type="button" (click)="onCreate()"><span class="material-icons">add</span>{{ 'PRESCRIPTION.NEW' | translate }}</button>
-    <button mat-stroked-button type="button" (click)="load()"><span class="material-icons">refresh</span>{{ 'COMMON.REFRESH' | translate }}</button>
+    <div class="page-actions">
+      <rms-icon-btn icon="add" tooltipKey="PRESCRIPTION.NEW" variant="primary" *appCan="'prescription'; appCanAction: 'create'" (clicked)="onCreate()"></rms-icon-btn>
+      <rms-icon-btn icon="refresh" tooltipKey="COMMON.REFRESH" (clicked)="load()"></rms-icon-btn>
+    </div>
   </app-page-header>
-  <div class="estate-card" *ngIf="!loading; else loadingTpl">
-    <table mat-table [dataSource]="rows" class="app-data-table">
-      <ng-container *ngFor="let col of columns" [matColumnDef]="col.key">
-        <th mat-header-cell *matHeaderCellDef>{{ col.labelKey | translate }}</th>
-        <td mat-cell *matCellDef="let row">
-          <ng-container [ngSwitch]="col.key">
-            <span *ngSwitchCase="'status'">{{ row.status | tk:'STATUS' }}</span>
-            <span *ngSwitchDefault>{{ row[col.key] }}</span>
+
+  <div class="loading-wrap" *ngIf="loading"><mat-spinner diameter="40"></mat-spinner></div>
+
+  <div class="app-list-surface" *ngIf="!loading">
+    <section class="list-stats">
+      <article class="stat-pill stat-pill--purple"><span class="stat-label">{{ 'COMMON.TOTAL' | translate }}</span><strong>{{ total }}</strong></article>
+      <article class="stat-pill stat-pill--green"><span class="stat-label">{{ 'COMMON.ON_PAGE' | translate }}</span><strong>{{ rows.length }}</strong></article>
+    </section>
+    <section class="estate-card directory-table-card">
+      <div class="estate-table-toolbar directory-toolbar">
+        <div class="directory-toolbar-top table-list-toolbar">
+          <div class="directory-search">
+            <span class="material-icons">search</span>
+            <input [(ngModel)]="search" (keyup.enter)="page=0; load()" [placeholder]="'COMMON.SEARCH' | translate">
+          </div>
+          <rms-icon-btn icon="search" tooltipKey="COMMON.SEARCH" variant="primary" (clicked)="page=0; load()"></rms-icon-btn>
+        </div>
+      </div>
+      <div class="app-table-wrap">
+        <table mat-table [dataSource]="rows" class="app-data-table">
+          <ng-container *ngFor="let col of columns" [matColumnDef]="col.key">
+            <th mat-header-cell *matHeaderCellDef>{{ col.labelKey | translate }}</th>
+            <td mat-cell *matCellDef="let row">
+              <ng-container [ngSwitch]="col.key">
+                <span *ngSwitchCase="'status'">{{ row.status | tk:'STATUS' }}</span>
+                <span *ngSwitchCase="'patientName'">{{ row.patientName || row.patientId }}</span>
+                <span *ngSwitchDefault>{{ row[col.key] }}</span>
+              </ng-container>
+            </td>
           </ng-container>
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef>{{ 'COMMON.ACTIONS' | translate }}</th>
-        <td mat-cell *matCellDef="let row">
-          <button *appCan="'prescription'; appCanAction: 'export'" mat-icon-button type="button" (click)="onPrint(row)"><span class="material-icons">print</span></button>
-        </td>
-      </ng-container>
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-    </table>
-    <p *ngIf="!rows.length" class="empty-state">{{ 'COMMON.NO_DATA' | translate }}</p>
-    <mat-paginator [length]="total" [pageSize]="size" [pageIndex]="page" [pageSizeOptions]="[10,20,50]" (page)="onPage($event)"></mat-paginator>
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>{{ 'COMMON.ACTIONS' | translate }}</th>
+            <td mat-cell *matCellDef="let row">
+              <button *appCan="'prescription'; appCanAction: 'export'" mat-icon-button type="button" [matTooltip]="'PRESCRIPTION.DOWNLOAD_PDF' | translate" (click)="onDownloadPdf(row)"><span class="material-icons">picture_as_pdf</span></button>
+              <button *appCan="'prescription'; appCanAction: 'export'" mat-icon-button type="button" [matTooltip]="'COMMON.PRINT' | translate" (click)="onPrint(row)"><span class="material-icons">print</span></button>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+      </div>
+      <p *ngIf="!rows.length" class="empty-state">{{ 'COMMON.NO_DATA' | translate }}</p>
+      <app-table-pager [length]="total" [pageSize]="size" [pageIndex]="page" (pageIndexChange)="onPageIndexChange($event)"></app-table-pager>
+    </section>
   </div>
-  <ng-template #loadingTpl><mat-spinner diameter="40"></mat-spinner></ng-template>
 </div>

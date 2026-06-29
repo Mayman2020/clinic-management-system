@@ -11,6 +11,7 @@ public class InvoiceResponse {
     private String invoiceNo;
     private Long patientId;
     private String patientName;
+    private Long consultationId;
     private String status;
     private BigDecimal subtotal;
     private BigDecimal discount;

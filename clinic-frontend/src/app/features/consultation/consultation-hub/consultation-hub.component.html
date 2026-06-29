@@ -1,0 +1,61 @@
+<div class="page-shell consultation-detail-page" *ngIf="!loading && consultation; else loadingTpl">
+  <app-page-header [title]="'CONSULTATION.HUB_TITLE' | translate">
+    <a *appCan="'consultation'; appCanAction: 'edit'" mat-stroked-button [routerLink]="['/admin/consultation', consultation.id, 'edit']" [disabled]="!isActive()">
+      <span class="material-icons">edit</span>{{ 'COMMON.EDIT' | translate }}
+    </a>
+  </app-page-header>
+
+  <section class="estate-card detail-card">
+    <div class="app-card-header">
+      <span class="app-card-title">{{ consultation.patientName }}</span>
+      <span class="status-badge">{{ consultation.status | tk:'STATUS' }}</span>
+    </div>
+    <div class="app-card-body detail-grid">
+      <div class="detail-row"><span>{{ 'APPOINTMENTS.PATIENT' | translate }}</span><strong>{{ consultation.patientName }}</strong></div>
+      <div class="detail-row"><span>{{ 'APPOINTMENTS.DOCTOR' | translate }}</span><strong>{{ consultation.doctorName }}</strong></div>
+      <div class="detail-row"><span>{{ 'COMMON.DATE' | translate }}</span><strong>{{ consultation.createdAt }}</strong></div>
+      <div class="detail-block" *ngIf="consultation.symptoms">
+        <span class="label">{{ 'CONSULTATION.SYMPTOMS' | translate }}</span>
+        <p>{{ consultation.symptoms }}</p>
+      </div>
+      <div class="detail-block" *ngIf="consultation.diagnosis">
+        <span class="label">{{ 'CONSULTATION.DIAGNOSIS' | translate }}</span>
+        <p>{{ consultation.diagnosis }}</p>
+      </div>
+      <div class="detail-block" *ngIf="consultation.treatmentPlan">
+        <span class="label">{{ 'CONSULTATION.TREATMENT' | translate }}</span>
+        <p>{{ consultation.treatmentPlan }}</p>
+      </div>
+      <div class="detail-block" *ngIf="consultation.notes">
+        <span class="label">{{ 'COMMON.NOTES' | translate }}</span>
+        <p>{{ consultation.notes }}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="estate-card actions-card">
+    <div class="app-card-header">
+      <span class="app-card-title">{{ 'COMMON.ACTIONS' | translate }}</span>
+    </div>
+    <div class="app-card-body action-buttons">
+      <button *appCan="'prescription'; appCanAction: 'create'" mat-stroked-button type="button" (click)="onPrescription()" [disabled]="!isActive()">
+        <span class="material-icons">medication</span>{{ 'PRESCRIPTION.NEW' | translate }}
+      </button>
+      <button *appCan="'lab'; appCanAction: 'create'" mat-stroked-button type="button" (click)="onLab()" [disabled]="!isActive()">
+        <span class="material-icons">science</span>{{ 'LAB.NEW' | translate }}
+      </button>
+      <button *appCan="'radiology'; appCanAction: 'create'" mat-stroked-button type="button" (click)="onRadiology()" [disabled]="!isActive()">
+        <span class="material-icons">biotech</span>{{ 'RADIOLOGY.NEW' | translate }}
+      </button>
+      <button *appCan="'billing'; appCanAction: 'create'" mat-stroked-button type="button" (click)="onGenerateInvoice()" [disabled]="!isActive()">
+        <span class="material-icons">receipt_long</span>{{ 'WORKFLOW.GENERATE_INVOICE' | translate }}
+      </button>
+      <button *appCan="'consultation'; appCanAction: 'edit'" mat-flat-button color="primary" type="button" (click)="onComplete()" [disabled]="!isActive()">
+        <span class="material-icons">task_alt</span>{{ 'WORKFLOW.COMPLETE_CONSULTATION' | translate }}
+      </button>
+    </div>
+  </section>
+</div>
+<ng-template #loadingTpl>
+  <div class="page-shell loading-wrap"><mat-spinner diameter="48"></mat-spinner></div>
+</ng-template>

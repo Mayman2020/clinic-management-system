@@ -1,7 +1,18 @@
-@import './styles/estate-os-tokens';
+@import './styles/clinic-tokens';
+@import './styles/platform-os-globals';
+@import './styles/layout/app-shell';
+@import './styles/clinic-estate-cards';
+@import './styles/clinic-premium-shell';
+@import './styles/clinic-theme-contrast';
+@import './styles/clinic-premium-visual';
+@import './styles/clinic-dialog';
+@import './styles/pages/list-pages';
+@import './styles/pages/content-pages';
 @import './styles/pages/request-detail.page';
 @import './styles/pages/dashboard.page';
 @import './styles/admin.filters';
+@import './styles/components/form-dialog';
+@import './styles/components/date-field';
 
 /* Arabic UI: always show Western digits (0–9) in numbers, counters, and tables */
 html[lang^='ar'],
@@ -60,14 +71,14 @@ html[lang^='ar'] :where(
   --bg-gradient-2: var(--paper-2);
   --surface-raised: var(--surface);
 
-  --primary: var(--navy-900);
-  --primary-light: var(--navy-700);
-  --primary-dark: var(--navy-900);
-  --accent: var(--brass-500);
-  --accent-light: var(--brass-400);
-  --accent-dark: var(--brass-600);
-  --primary-gradient: linear-gradient(135deg, var(--navy-900) 0%, var(--navy-800) 60%, var(--navy-700) 100%);
-  --accent-gradient: linear-gradient(180deg, var(--brass-400), var(--brass-500));
+  --primary: var(--blue-700);
+  --primary-light: var(--blue-500);
+  --primary-dark: var(--blue-900);
+  --accent: var(--blue-600);
+  --accent-light: var(--blue-400);
+  --accent-dark: var(--blue-800);
+  --primary-gradient: linear-gradient(135deg, var(--blue-700) 0%, var(--blue-600) 100%);
+  --accent-gradient: linear-gradient(180deg, var(--blue-500), var(--blue-600));
 
   --success: var(--ok);
   --success-bg: var(--ok-bg);
@@ -78,10 +89,10 @@ html[lang^='ar'] :where(
 
   --line-strong: var(--line-2);
   --card-border: var(--line);
-  --card-hover-border: var(--brass-300);
+  --card-hover-border: var(--blue-300);
 
-  --btn-primary-bg: var(--navy-900);
-  --btn-primary-color: var(--brass-100);
+  --btn-primary-bg: var(--blue-600);
+  --btn-primary-color: var(--white);
   --btn-outline-bg: var(--surface);
   --btn-outline-hover: var(--paper-2);
   --btn-save: var(--ok);
@@ -92,23 +103,23 @@ html[lang^='ar'] :where(
   --header-bg: var(--surface);
   --header-border: var(--line);
 
-  --sidebar-bg: linear-gradient(180deg, var(--navy-900) 0%, var(--navy-800) 100%);
-  --sidebar-text: rgba(233, 223, 200, 0.78);
-  --sidebar-text-active: #f4e7c4;
-  --sidebar-item-hover: rgba(255, 255, 255, 0.04);
-  --sidebar-item-active: rgba(204, 165, 91, 0.22);
-  --sidebar-accent: var(--brass-400);
+  --sidebar-bg: var(--surface);
+  --sidebar-text: var(--ink-700);
+  --sidebar-text-active: var(--blue-700);
+  --sidebar-item-hover: var(--blue-50);
+  --sidebar-item-active: var(--blue-50);
+  --sidebar-accent: var(--blue-600);
   --sidebar-width: var(--sidebar-w);
   --sidebar-collapsed-width: var(--sidebar-w-collapsed);
 
   --card-bg: var(--surface);
-  --shadow-soft: 0 10px 30px rgba(14, 31, 51, 0.06);
-  --shadow-hover: 0 10px 30px rgba(14, 31, 51, 0.08);
+  --shadow-soft: var(--card-shadow);
+  --shadow-hover: var(--card-shadow-hover);
   --shadow-card: none;
 
   --input-bg: var(--surface);
   --input-border: var(--line);
-  --input-focus-border: var(--brass-500);
+  --input-focus-border: var(--blue-500);
 
   --table-border: var(--line);
   --table-header-bg: var(--paper-2);
@@ -168,8 +179,8 @@ html.dark-theme,
   --header-bg: var(--surface);
   --header-border: var(--line);
 
-  --sidebar-bg: linear-gradient(180deg, var(--navy-900) 0%, var(--navy-800) 100%);
-  --sidebar-item-active: rgba(204, 165, 91, 0.26);
+  --sidebar-bg: var(--surface);
+  --sidebar-item-active: rgba(37, 99, 235, 0.14);
 
   --card-bg: var(--surface);
   --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.35);
@@ -180,7 +191,7 @@ html.dark-theme,
   --btn-outline-hover: var(--paper-3);
   --input-bg: var(--surface-2);
   --input-border: var(--line);
-  --input-focus-border: var(--brass-400);
+  --input-focus-border: var(--blue-400);
 
   --table-border: var(--line);
   --table-header-bg: var(--paper-2);
@@ -444,27 +455,29 @@ a:hover {
 }
 
 .app-page {
-  padding: 32px 40px 56px;
+  padding: var(--content-pad-block) var(--content-pad-inline) 48px;
   min-height: calc(100vh - 64px);
-  max-width: 1400px;
-  margin-inline: auto;
+  max-width: var(--content-max-w);
+  margin-inline: 0;
   text-align: start;
 }
 
 .app-page-header {
   display: flex;
   flex-direction: row;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
   margin-bottom: 28px;
-  gap: 28px;
-  column-gap: 36px;
+  gap: 20px;
+  column-gap: 28px;
   flex-wrap: wrap;
-  padding: 22px 24px 22px;
-  border: 1px solid var(--line);
-  border-radius: var(--r);
-  background: var(--surface-raised, var(--surface));
-  box-shadow: var(--shadow-soft);
+  padding: clamp(18px, 2.5vw, 24px) clamp(20px, 3vw, 28px);
+  border: 1px solid var(--glass-border, var(--line));
+  border-radius: var(--premium-radius, var(--r-xl));
+  background: var(--glass-bg, var(--surface-raised, var(--surface)));
+  box-shadow: var(--glass-shadow, var(--shadow-soft)), var(--glass-inset, none);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
 }
 
 .app-page-header .page-heading {
@@ -489,6 +502,7 @@ a:hover {
   border-radius: 12px;
   background: linear-gradient(180deg, #2563eb 0%, #1d4ed8 100%);
   color: #fff;
+  text-decoration: none;
   font-family: inherit;
   font-size: 0.95rem;
   font-weight: 700;
@@ -1184,6 +1198,14 @@ a:hover {
   margin: 0;
 }
 
+.empty-state {
+  text-align: center;
+  padding: 24px 16px;
+  margin: 0;
+  color: var(--empty-state-text);
+  font-size: 0.9rem;
+}
+
 .app-breadcrumb {
   display: flex;
   flex-direction: row;
@@ -1294,6 +1316,89 @@ a:hover {
 
 .mat-mdc-snack-bar-container.success-snack .mdc-snackbar__surface {
   background: var(--ok) !important;
+}
+
+.srs-pager-shell {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+  padding: 18px 16px 16px;
+  border-top: 1px solid var(--line-2);
+}
+
+.srs-pager__info,
+.srs-pager__size-label {
+  color: var(--text-muted);
+  font-size: 0.84rem;
+  font-weight: 500;
+}
+
+.srs-pager__controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.srs-pager__nav,
+.srs-pager__page {
+  min-height: 36px;
+  border-radius: 10px;
+  font: inherit;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.srs-pager__nav {
+  width: 36px;
+  padding: 0;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--text-main);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.srs-pager__nav .material-icons {
+  font-size: 20px;
+}
+
+.srs-pager__nav:hover:not(:disabled),
+.srs-pager__page:hover {
+  background: var(--paper-2);
+  border-color: var(--blue-300);
+}
+
+.srs-pager__nav:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.srs-pager__page {
+  min-width: 36px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-main);
+  font-weight: 600;
+}
+
+.srs-pager__page--active {
+  background: var(--blue-700);
+  color: #fff;
+  box-shadow: 0 8px 18px rgba(37, 99, 235, 0.25);
+}
+
+.srs-pager__gap {
+  color: var(--text-subtle);
+  padding-inline: 4px;
+}
+
+html[dir='rtl'] .srs-pager__nav .material-icons {
+  transform: scaleX(-1);
 }
 
 .mat-mdc-snack-bar-container.error-snack .mdc-snackbar__surface {

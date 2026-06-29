@@ -1,4 +1,5 @@
 package com.clinicmanagement.modules.prescription.service;
+import com.clinicmanagement.shared.util.SearchQueryUtil;
 import com.clinicmanagement.modules.audit.annotation.Auditable;
 import com.clinicmanagement.modules.prescription.dto.*;
 import com.clinicmanagement.modules.prescription.entity.*;
@@ -55,14 +56,17 @@ public class PrescriptionService {
     }
 
     public PrescriptionResponse toResponse(Prescription p) {
+        String patientName = patientRepository.findById(p.getPatientId())
+            .map(pt -> pt.getFirstName() + " " + pt.getLastName()).orElse(null);
         return PrescriptionResponse.builder().id(p.getId()).prescriptionNo(p.getPrescriptionNo())
-            .consultationId(p.getConsultationId()).patientId(p.getPatientId()).doctorId(p.getDoctorId())
+            .consultationId(p.getConsultationId()).patientId(p.getPatientId()).patientName(patientName)
+            .doctorId(p.getDoctorId())
             .notes(p.getNotes()).status(p.getStatus()).createdAt(p.getCreatedAt())
             .items(p.getItems().stream().map(i -> PrescriptionItemResponse.builder().id(i.getId())
                 .medicineName(i.getMedicineName()).dosage(i.getDosage()).frequency(i.getFrequency())
                 .duration(i.getDuration()).notes(i.getNotes()).build()).toList()).build();
     }
 
-    private static String trim(String q) { return q == null || q.isBlank() ? null : q.trim(); }
+    private static String trim(String q) { return SearchQueryUtil.normalize(q); }
     private static String blankToNull(String s) { return s == null || s.isBlank() ? null : s.trim(); }
 }

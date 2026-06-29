@@ -1,0 +1,54 @@
+<div class="page-shell">
+  <app-page-header [title]="'BRANCHES.TITLE' | translate">
+    <div class="page-actions">
+      <rms-icon-btn icon="add" tooltipKey="BRANCHES.NEW" variant="primary" *appCan="'settings'; appCanAction: 'edit'" (clicked)="onCreate()"></rms-icon-btn>
+      <rms-icon-btn icon="refresh" tooltipKey="COMMON.REFRESH" (clicked)="load()"></rms-icon-btn>
+    </div>
+  </app-page-header>
+
+  <div class="loading-wrap" *ngIf="loading"><mat-spinner diameter="40"></mat-spinner></div>
+
+  <div class="app-list-surface" *ngIf="!loading">
+    <section class="list-stats">
+      <article class="stat-pill stat-pill--cyan"><span class="stat-label">{{ 'COMMON.TOTAL' | translate }}</span><strong>{{ rows.length }}</strong></article>
+      <article class="stat-pill stat-pill--teal"><span class="stat-label">{{ 'COMMON.ON_PAGE' | translate }}</span><strong>{{ filteredRows.length }}</strong></article>
+    </section>
+    <section class="estate-card directory-table-card">
+      <div class="estate-table-toolbar directory-toolbar">
+        <div class="directory-toolbar-top table-list-toolbar">
+          <div class="directory-search">
+            <span class="material-icons">search</span>
+            <input [(ngModel)]="search" [placeholder]="'COMMON.SEARCH' | translate">
+          </div>
+        </div>
+      </div>
+      <div class="app-table-wrap">
+        <table mat-table [dataSource]="filteredRows" class="app-data-table">
+          <ng-container matColumnDef="branchCode">
+            <th mat-header-cell *matHeaderCellDef>{{ 'BRANCHES.CODE' | translate }}</th>
+            <td mat-cell *matCellDef="let row">{{ row.branchCode }}</td>
+          </ng-container>
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>{{ 'BRANCHES.NAME' | translate }}</th>
+            <td mat-cell *matCellDef="let row">{{ row.name }}</td>
+          </ng-container>
+          <ng-container matColumnDef="phone">
+            <th mat-header-cell *matHeaderCellDef>{{ 'PATIENTS.PHONE' | translate }}</th>
+            <td mat-cell *matCellDef="let row">{{ row.phone }}</td>
+          </ng-container>
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>{{ 'COMMON.ACTIONS' | translate }}</th>
+            <td mat-cell *matCellDef="let row" class="action-cell">
+              <button *appCan="'settings'; appCanAction: 'edit'" mat-icon-button type="button" [matTooltip]="'COMMON.EDIT' | translate" (click)="onEdit(row)">
+                <span class="material-icons">edit</span>
+              </button>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+      </div>
+      <p *ngIf="!filteredRows.length" class="empty-state">{{ 'COMMON.NO_DATA' | translate }}</p>
+    </section>
+  </div>
+</div>

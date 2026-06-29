@@ -8,9 +8,10 @@ import { User } from '../models/user.model';
 @Injectable({ providedIn: 'root' })
 export class UserService {
   constructor(private readonly api: ApiService) {}
-  list(page = 0, size = 20, q = ''): Observable<ApiResponse<PagedResponse<User>>> {
+  list(page = 0, size = 20, q = '', role = ''): Observable<ApiResponse<PagedResponse<User>>> {
     const params: Record<string, string | number> = { page, size };
     if (q) params['q'] = q;
+    if (role) params['role'] = role;
     return this.api.get<ApiResponse<PagedResponse<User>>>(AppConstants.API.USERS, params);
   }
   getById(id: number): Observable<ApiResponse<User>> {

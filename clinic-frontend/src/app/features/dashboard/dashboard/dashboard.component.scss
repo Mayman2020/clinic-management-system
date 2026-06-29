@@ -1,3 +1,292 @@
-.dashboard-charts { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
-.chart-card h3 { margin: 0 0 12px; } .chart-wrap { height: 260px; }
-@media (max-width: 900px) { .dashboard-charts { grid-template-columns: 1fr; } }
+.clinic-dashboard {
+  .dashboard-welcome {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: clamp(24px, 4vw, 32px) clamp(24px, 4vw, 36px);
+    margin-bottom: 24px;
+    background: var(--hero-gradient);
+    border-radius: var(--premium-radius, var(--r-xl));
+    border: 1px solid var(--glass-border, var(--line));
+    box-shadow: var(--glass-shadow), var(--glass-inset);
+    backdrop-filter: var(--glass-blur);
+  }
+
+  :host-context(.dark-theme) .dashboard-welcome,
+  :host-context(html.dark-theme) .dashboard-welcome {
+    border-color: var(--line);
+  }
+
+  .welcome-text h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-main);
+  }
+
+  .welcome-text p {
+    margin: 6px 0 0;
+    color: var(--accent-teal, var(--ink-500));
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+
+  .welcome-illustration {
+    width: 120px;
+    height: auto;
+    flex-shrink: 0;
+  }
+
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .dashboard-layout {
+    display: grid;
+    grid-template-columns: 260px 1fr 280px;
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+
+  .widget-card, .panel-card {
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .compact-header {
+    padding: 16px 18px 12px;
+  }
+
+  .widget-card .app-card-body,
+  .panel-card .app-card-body {
+    padding: 0 18px 18px;
+  }
+
+  .widget-card h3, .panel-card h3 {
+    margin: 0 0 16px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-main);
+  }
+
+  .mini-calendar .cal-header {
+    text-align: center;
+    font-weight: 600;
+    color: var(--blue-700);
+    margin-bottom: 12px;
+  }
+
+  .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    text-align: center;
+    font-size: 0.75rem;
+  }
+
+  .cal-day {
+    padding: 6px;
+    border-radius: 50%;
+    color: var(--ink-700);
+  }
+
+  .cal-day.muted { color: var(--ink-400); }
+  .cal-day.today {
+    background: var(--blue-600);
+    color: var(--white);
+    font-weight: 700;
+  }
+
+  .quick-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .quick-actions-widget .quick-actions {
+    margin-top: 0;
+  }
+
+  .quick-action-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: var(--r);
+    background: var(--gray-50);
+    color: var(--ink-700);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: background var(--t-fast);
+  }
+
+  .quick-action-btn:hover { background: var(--blue-50); color: var(--blue-700); }
+  .quick-action-btn .material-icons { font-size: 20px; color: var(--blue-600); }
+
+  .panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .panel-card .appointments-table {
+    padding: 0 18px 8px;
+  }
+
+  .panel-empty {
+    padding: 12px 18px 24px;
+  }
+
+  .panel-header h3 { margin: 0; }
+
+  .view-all {
+    font-size: 0.82rem;
+    color: var(--blue-600);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .appt-row {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr 1.2fr auto auto;
+    gap: 12px;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 0.85rem;
+  }
+
+  .appt-row:last-child { border-bottom: 0; }
+
+  .appt-time {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .appt-time strong { color: var(--ink-900); }
+  .appt-time span { font-size: 0.75rem; color: var(--ink-500); }
+
+  .appt-patient, .appt-doctor {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--blue-100);
+    color: var(--blue-700);
+    display: grid;
+    place-items: center;
+    font-size: 0.7rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .avatar.doctor { background: var(--green-100); color: var(--green-700); }
+
+  .view-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--r);
+    display: grid;
+    place-items: center;
+    color: var(--blue-600);
+    background: var(--blue-50);
+    text-decoration: none;
+  }
+
+  .notif-item {
+    display: flex;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .notif-item:last-child { border-bottom: 0; }
+
+  .notif-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--r);
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+  }
+
+  .notif-icon.calendar { background: var(--blue-50); color: var(--blue-600); }
+  .notif-icon.lab { background: var(--green-50); color: var(--green-600); }
+  .notif-icon.bell { background: var(--warn-bg); color: var(--warn); }
+
+  .notif-body {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .notif-body strong { font-size: 0.85rem; color: var(--ink-900); }
+  .notif-body span { font-size: 0.72rem; color: var(--ink-400); }
+  .notif-body p { margin: 4px 0 0; font-size: 0.78rem; color: var(--ink-500); }
+
+  .charts-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .chart-wrap { height: 220px; min-height: 200px; position: relative; }
+
+  .chart-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 200px;
+    padding: 0 18px 24px;
+    color: var(--text-muted);
+  }
+
+  .chart-empty .material-icons {
+    font-size: 48px;
+    opacity: 0.35;
+  }
+
+  .chart-empty p {
+    margin: 0;
+    font-size: 0.9rem;
+  }
+
+  .panel-card.chart-card .chart-wrap {
+    padding: 0 18px 18px;
+  }
+
+  .loading-center {
+    display: flex;
+    justify-content: center;
+    padding: 64px;
+  }
+
+  @media (max-width: 1200px) {
+    .dashboard-layout { grid-template-columns: 1fr; }
+    .dashboard-sidebar-widgets { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .quick-actions { margin-top: 0; }
+  }
+
+  @media (max-width: 768px) {
+    .dashboard-sidebar-widgets { grid-template-columns: 1fr; }
+    .appt-row { grid-template-columns: 1fr; gap: 8px; }
+    .charts-row { grid-template-columns: 1fr; }
+    .welcome-illustration { display: none; }
+  }
+}

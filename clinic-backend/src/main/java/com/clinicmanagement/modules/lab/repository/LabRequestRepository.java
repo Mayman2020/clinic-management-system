@@ -9,8 +9,9 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface LabRequestRepository extends JpaRepository<LabRequest, Long> {
-    @Query("SELECT r FROM LabRequest r WHERE (:status IS NULL OR r.status = :status) AND (:q IS NULL OR LOWER(r.requestNo) LIKE LOWER(CONCAT('%',:q,'%')) OR LOWER(r.testType) LIKE LOWER(CONCAT('%',:q,'%')))")
+    @Query("SELECT r FROM LabRequest r WHERE (:status IS NULL OR r.status = :status) AND (:q = '' OR LOWER(r.requestNo) LIKE LOWER(CONCAT('%',:q,'%')) OR LOWER(r.testType) LIKE LOWER(CONCAT('%',:q,'%')))")
     Page<LabRequest> search(@Param("q") String q, @Param("status") LabStatus status, Pageable pageable);
     List<LabRequest> findByPatientIdOrderByRequestedAtDesc(Long patientId);
+    List<LabRequest> findByConsultationId(Long consultationId);
     List<LabRequest> findByStatus(LabStatus status);
 }

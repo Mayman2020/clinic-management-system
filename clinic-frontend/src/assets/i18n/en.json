@@ -29,7 +29,12 @@
     "AUDIT": "Audit logs",
     "SETTINGS": "Settings",
     "USERS": "Users",
-    "PROFILE": "Profile"
+    "PROFILE": "Profile",
+    "RECEPTION": "Reception desk",
+    "BRANCHES": "Branches",
+    "PERMISSIONS": "Permissions",
+    "NOTIFICATIONS": "Notifications",
+    "LOOKUPS": "Lookups"
   },
   "ROLE": {
     "ADMIN": "Administrator",
@@ -42,19 +47,34 @@
   },
   "AUTH": {
     "LOGIN": "Sign in",
+    "WELCOME_BACK": "Welcome back",
     "LOGOUT": "Sign out",
     "EMAIL": "Email",
     "USERNAME": "Username",
     "PASSWORD": "Password",
     "ENTER": "Enter",
     "INVALID_CREDENTIALS": "Invalid username or password",
-    "LOGIN_FAILED": "Login failed"
+    "LOGIN_FAILED": "Login failed",
+    "FORGOT_PASSWORD": "Forgot password?",
+    "FORGOT_PASSWORD_HINT": "Enter your username and we will send reset instructions to your registered email.",
+    "SEND_RESET": "Send reset link",
+    "RESET_SENT": "If an account exists, reset instructions have been sent."
   },
   "LOGIN": {
-    "HERO_TITLE_1": "Clinical operations",
-    "HERO_TITLE_2": "under control",
-    "HERO_SUBTITLE": "Appointments, EMR, billing, and queue — one platform.",
-    "FORM_SUBTITLE": "Sign in to your clinic workspace"
+    "BRAND_NAME": "CareWell",
+    "BRAND_SUB": "CLINIC",
+    "HERO_HEADLINE": "Manage your clinic with ease",
+    "HERO_TAGLINE": "An integrated system for appointments, patients, and billing — efficient and secure",
+    "FORM_SUBTITLE": "Sign in to access your dashboard",
+    "USERNAME_PLACEHOLDER": "Enter your email",
+    "PASSWORD_PLACEHOLDER": "Enter your password",
+    "REMEMBER_ME": "Remember me",
+    "OR_CONTINUE": "Or sign in with",
+    "SECURE_LOGIN": "Secure & trusted",
+    "COPYRIGHT": "© 2024 Clinic Management System",
+    "FEATURE_APPOINTMENTS": "Appointments",
+    "FEATURE_PATIENTS": "Patients",
+    "FEATURE_REPORTS": "Reports"
   },
   "INLINE_TEXT": {
     "COMMAND_CENTER": "Command center",
@@ -73,8 +93,10 @@
     "CONFIRM": "Confirm",
     "ACTIONS": "Actions",
     "REFRESH": "Refresh",
+    "ON_PAGE": "On this page",
     "APPLY": "Apply",
     "NO_DATA": "No records found",
+    "VIEW_ALL": "View all",
     "UNKNOWN": "Unknown",
     "STATUS": "Status",
     "DATE": "Date",
@@ -94,18 +116,33 @@
     "SUCCESS": "Operation completed",
     "ERROR": "An error occurred",
     "DELETE_CONFIRM": "Are you sure you want to delete this record?",
-    "CONFIRM_TITLE": "Confirm action"
+    "CONFIRM_TITLE": "Confirm action",
+    "BACK": "Back",
+    "PAGINATION": "Pagination",
+    "PREVIOUS": "Previous",
+    "NEXT": "Next",
+    "PAGE_OF": "Page {{current}} of {{total}}"
   },
   "TOPBAR": {
     "TOGGLE_MENU": "Toggle menu",
     "LANGUAGE": "Language",
     "LIGHT_MODE": "Light mode",
     "DARK_MODE": "Dark mode",
-    "NOTIFICATIONS": "Notifications"
+    "NOTIFICATIONS": "Notifications",
+    "SEARCH_PLACEHOLDER": "Search patients, appointments..."
   },
   "ERRORS": {
     "GENERIC": "Something went wrong",
+    "NETWORK": "Cannot reach the server. Check your connection and try again.",
+    "INTERNAL": "Internal server error",
+    "INVALID_PARAMETER": "Invalid parameter value",
+    "MISSING_PARAMETER": "A required parameter is missing",
+    "INVALID_REQUEST_BODY": "Invalid request body",
+    "INVALID_DATE_FORMAT": "Invalid date format",
+    "VALIDATION": "Validation failed",
+    "UNAUTHORIZED": "Authentication required",
     "EMAIL_ALREADY_USED": "This email is already in use",
+    "NATIONAL_ID_ALREADY_USED": "This national ID is already registered",
     "NOT_FOUND": "Record not found",
     "FORBIDDEN": "Access denied"
   },
@@ -126,7 +163,31 @@
     "PATIENT_STATS": "Patient statistics",
     "INSURANCE_CLAIMS": "Insurance claims",
     "MONTHLY_REVENUE": "Monthly revenue",
-    "DAILY_REVENUE": "Daily revenue"
+    "DAILY_REVENUE": "Daily revenue",
+    "QUICK_LINKS": "Quick links",
+    "WELCOME_SUB": "Here's what's happening at your clinic today.",
+    "WELCOME_ADMIN": "Welcome back, {{name}}",
+    "WELCOME_DOCTOR": "Good day, Dr. {{name}}",
+    "WELCOME_RECEPTIONIST": "Hello, {{name}}",
+    "WELCOME_NURSE": "Hello, {{name}}",
+    "WELCOME_CASHIER": "Hello, {{name}}",
+    "CALENDAR": "Calendar",
+    "QUICK_ACTIONS": "Quick actions",
+    "UPCOMING_APPOINTMENTS": "Upcoming appointments",
+    "NO_APPOINTMENTS": "No upcoming appointments",
+    "NO_APPOINTMENTS_HINT": "Book a new appointment to get started.",
+    "LATEST_NOTIFICATIONS": "Latest notifications",
+    "COMPLETED_TODAY": "Completed today",
+    "TODAY": "Today",
+    "ACTION_NEW_PATIENT": "Register patient",
+    "ACTION_BOOK_APPT": "Book appointment",
+    "NOTIF_APPT_CONFIRMED": "Appointment confirmed",
+    "NOTIF_APPT_MSG": "Patient appointment has been confirmed.",
+    "NOTIF_LAB_READY": "Lab results ready",
+    "NOTIF_LAB_MSG": "New lab results are available for review.",
+    "NOTIF_REMINDER": "Appointment reminder",
+    "NOTIF_REMINDER_MSG": "Upcoming appointment in 1 hour.",
+    "TIME_AGO": "{{n}} min ago"
   },
   "PATIENTS": {
     "TITLE": "Patients",
@@ -145,7 +206,13 @@
     "ARCHIVE_CONFIRM": "Archive this patient?",
     "UPLOAD_DOC": "Upload document",
     "DATE_OF_BIRTH": "Date of birth",
-    "CONSULTATION_HISTORY": "Consultation history"
+    "CONSULTATION_HISTORY": "Consultation history",
+    "FULL_HISTORY": "Patient timeline",
+    "PATIENT_360": "Patient 360",
+    "DOCUMENTS": "Documents",
+    "INSURANCE_PROVIDER": "Insurance provider",
+    "INSURANCE_POLICY": "Policy number",
+    "NO_PRESCRIPTIONS_API": "Prescription history is not available for this patient yet."
   },
   "DOCTORS": {
     "TITLE": "Doctors",
@@ -159,7 +226,8 @@
     "FEE": "Consultation fee",
     "DAY": "Day",
     "START": "Start time",
-    "END": "End time"
+    "END": "End time",
+    "PROFILE_INFO": "Doctor information"
   },
   "APPOINTMENTS": {
     "TITLE": "Appointments",
@@ -172,8 +240,13 @@
     "CANCEL": "Cancel",
     "CONFIRM": "Confirm",
     "WALK_IN": "Walk-in",
+    "DOCTOR_UNAVAILABLE": "Doctor already has an appointment at this time",
     "NO": "Appointment no.",
-    "CANCEL_CONFIRM": "Cancel this appointment?"
+    "CANCEL_CONFIRM": "Cancel this appointment?",
+    "DETAIL": "Appointment details",
+    "DATE": "Date",
+    "TIME": "Time",
+    "CHECK_IN": "Check in"
   },
   "QUEUE": {
     "TITLE": "Queue",
@@ -182,16 +255,22 @@
     "TV_MODE": "TV display mode",
     "WAITING": "Waiting",
     "CURRENT": "Current token",
+    "NOW_SERVING": "Now serving",
+    "WAITING_LIST": "Waiting list",
+    "NO_CURRENT": "No patient called yet",
+    "NO_TOKENS": "No patients in queue",
     "ESTIMATED_WAIT": "Estimated wait (min)",
     "GENERATE": "Generate token",
     "START_SERVICE": "Start service",
     "COMPLETE": "Complete",
-    "FILTER_DOCTOR": "Filter by doctor"
+    "FILTER_DOCTOR": "Filter by doctor",
+    "TOKEN_NUMBER": "Queue token number"
   },
   "CONSULTATION": {
     "TITLE": "Consultation",
     "NEW": "New consultation",
-    "CHIEF_COMPLAINT": "Chief complaint / Symptoms",
+    "HUB_TITLE": "Consultation details",
+    "SYMPTOMS": "Symptoms",
     "DIAGNOSIS": "Diagnosis",
     "NOTES": "Notes",
     "TREATMENT": "Treatment plan",
@@ -207,7 +286,9 @@
     "FREQUENCY": "Frequency",
     "DURATION": "Duration",
     "PRINT": "Print",
-    "NO": "Prescription no."
+    "DOWNLOAD_PDF": "Download PDF",
+    "NO": "Prescription no.",
+    "ADD_ITEM": "Add medicine"
   },
   "LAB": {
     "TITLE": "Lab requests",
@@ -216,7 +297,10 @@
     "CATEGORY": "Category",
     "REQUEST_NO": "Request no.",
     "RESULT": "Result PDF URL",
-    "NEXT_STATUS": "Advance status"
+    "NEXT_STATUS": "Advance status",
+    "UPLOAD_RESULT": "Upload lab result",
+    "RESULT_PDF": "Upload result PDF",
+    "RESULT_URL": "Result file URL"
   },
   "RADIOLOGY": {
     "TITLE": "Radiology requests",
@@ -226,7 +310,11 @@
     "SCHEDULED_AT": "Scheduled at",
     "REPORT": "Report",
     "IMAGE_URL": "Image URL",
-    "NEXT_STATUS": "Advance status"
+    "NEXT_STATUS": "Advance status",
+    "UPLOAD_RESULT": "Complete radiology study",
+    "UPLOAD_IMAGE": "Upload image / scan",
+    "ATTACHMENT": "Attachment",
+    "VIEW_ATTACHMENT": "View attachment"
   },
   "BILLING": {
     "TITLE": "Billing",
@@ -241,7 +329,15 @@
     "TAX": "Tax",
     "PAID": "Paid",
     "PAY": "Record payment",
-    "METHOD": "Payment method"
+    "METHOD": "Payment method",
+    "PAID_AT": "Paid at",
+    "REFERENCE": "Reference",
+    "DOWNLOAD_PDF": "Download PDF",
+    "MIXED_PAYMENT": "Mixed payment"
+  },
+  "BILLING_DETAIL": {
+    "TITLE": "Invoice details",
+    "ITEMS": "Line items"
   },
   "INSURANCE": {
     "TITLE": "Insurance",
@@ -265,6 +361,7 @@
   },
   "REPORTS": {
     "TITLE": "Reports",
+    "SUBTITLE": "Performance, revenue, and appointments overview",
     "REVENUE": "Revenue report",
     "APPOINTMENTS": "Appointments report",
     "PATIENTS": "Patients report",
@@ -272,14 +369,74 @@
     "TOTAL": "Total patients",
     "ACTIVE": "Active patients",
     "FROM": "From",
-    "TO": "To"
+    "TO": "To",
+    "EXPORT_CSV": "Export CSV",
+    "EXPORTED": "Report exported"
+  },
+  "LOOKUPS": {
+    "TITLE": "Lookups",
+    "SUBTITLE": "Manage specialties, departments, lab types, and reference lists",
+    "NEW": "New lookup",
+    "CODE": "Code",
+    "NAME_AR": "Arabic name",
+    "NAME_EN": "English name",
+    "SORT_ORDER": "Sort order",
+    "ACTIVE": "Active",
+    "INACTIVE": "Inactive",
+    "TAB_SPECIALTY": "Specialties",
+    "TAB_DEPARTMENT": "Departments",
+    "TAB_LAB_TYPE": "Lab test types",
+    "TAB_LAB_CATEGORY": "Lab categories",
+    "TAB_RADIOLOGY": "Radiology study types",
+    "TAB_PAYMENT": "Payment methods"
   },
   "SETTINGS": {
     "TITLE": "Settings",
+    "SUBTITLE": "Manage clinic profile, default fees, and SMS notifications",
+    "CLINIC_INFO": "Clinic information",
+    "FEES": "Default fees",
+    "SMS_SECTION": "SMS notifications",
     "CLINIC_NAME": "Clinic name",
     "CLINIC_PHONE": "Clinic phone",
     "CLINIC_ADDRESS": "Clinic address",
-    "CLINIC_EMAIL": "Clinic email"
+    "CLINIC_EMAIL": "Clinic email",
+    "LAB_DEFAULT_FEE": "Default lab fee",
+    "RADIOLOGY_DEFAULT_FEE": "Default radiology fee",
+    "MULTI_BRANCH": "Multi-branch mode",
+    "SMS_ENABLED": "Enable SMS",
+    "SMS_PROVIDER": "SMS provider",
+    "SMS_TWILIO_SID": "Twilio Account SID",
+    "SMS_TWILIO_TOKEN": "Twilio Auth Token",
+    "SMS_TWILIO_FROM": "Twilio sender number",
+    "SMS_HTTP_URL": "Local SMS gateway URL",
+    "SMS_HTTP_KEY": "SMS gateway API key"
+  },
+  "BRANCHES": {
+    "TITLE": "Branches",
+    "NEW": "New branch",
+    "CODE": "Branch code",
+    "NAME": "Branch name"
+  },
+  "PERMISSIONS": {
+    "TITLE": "Role permissions",
+    "SUBTITLE": "Configure access for each system role",
+    "SELECT_ROLE": "Select role",
+    "MODULE": "Module",
+    "ENABLED": "Enabled",
+    "MENU": "Menu",
+    "VIEW": "View",
+    "CREATE": "Create",
+    "EDIT": "Edit",
+    "DELETE": "Delete",
+    "EXPORT": "Export",
+    "APPROVE": "Approve"
+  },
+  "RECEPTION": {
+    "TITLE": "Reception desk",
+    "FIND_PATIENT": "Find patient",
+    "SEARCH_PATIENT": "Search patient",
+    "TODAY_APPOINTMENTS": "Today's appointments",
+    "NO_APPOINTMENTS_TODAY": "No appointments scheduled for today"
   },
   "USERS": {
     "TITLE": "Users",
@@ -305,7 +462,11 @@
     "APPT_CONFIRMED_TITLE": "Appointment confirmed",
     "APPT_CONFIRMED_BODY": "Appointment {{appointmentNo}} for {{patientName}} with Dr. {{doctorName}} was confirmed.",
     "APPT_CANCELLED_TITLE": "Appointment cancelled",
-    "APPT_CANCELLED_BODY": "Appointment {{appointmentNo}} for {{patientName}} was cancelled."
+    "APPT_CANCELLED_BODY": "Appointment {{appointmentNo}} for {{patientName}} was cancelled.",
+    "APPT_REMINDER_TITLE": "Appointment reminder",
+    "APPT_REMINDER_BODY": "Reminder: {{patientName}} has appointment {{appointmentNo}} tomorrow with Dr. {{doctorName}}.",
+    "LAB_READY_TITLE": "Lab result ready",
+    "LAB_READY_BODY": "Lab {{requestNo}} ({{testType}}) for {{patientName}} is complete."
   },
   "PRINT": {
     "CLINIC": "Clinic",
@@ -353,6 +514,7 @@
     "CANCELLED": "Cancelled",
     "NO_SHOW": "No show",
     "ACTIVE": "Active",
+    "INACTIVE": "Inactive",
     "PENDING": "Pending",
     "PAID": "Paid",
     "PARTIAL": "Partial",
@@ -371,5 +533,21 @@
     "CARD": "Card",
     "INSURANCE": "Insurance",
     "MIXED": "Mixed"
+  },
+  "WORKFLOW": {
+    "CHECK_IN": "Check in & queue",
+    "CHECKED_IN": "Patient checked in and added to queue",
+    "START_CONSULTATION": "Start consultation",
+    "COMPLETE_CONSULTATION": "Complete consultation",
+    "CONSULTATION_COMPLETED": "Consultation completed",
+    "GENERATE_INVOICE": "Generate invoice",
+    "GENERATE_INVOICE_CONFIRM": "Create invoice from doctor consultation fee?",
+    "INVOICE_CREATED": "Invoice created successfully",
+    "SEARCH_PATIENT": "Search by name, code, or phone…",
+    "SEARCH_DOCTOR": "Search by name or specialty…",
+    "INVOICE_AUTO_CREATED": "Invoice created automatically",
+    "SEND_REMINDER": "Send reminder now",
+    "REMINDER_SENT": "Reminder sent successfully",
+    "GO_TO_QUEUE": "Go to queue"
   }
 }

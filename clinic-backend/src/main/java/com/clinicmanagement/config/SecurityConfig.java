@@ -1,4 +1,5 @@
 package com.clinicmanagement.config;
+import com.clinicmanagement.config.BranchContextFilter;
 import com.clinicmanagement.shared.security.JwtAuthFilter;
 import com.clinicmanagement.shared.security.MustChangePasswordFilter;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 public class SecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
     private final MustChangePasswordFilter mustChangePasswordFilter;
+    private final BranchContextFilter branchContextFilter;
     private final CorsConfigurationSource corsConfigurationSource;
 
     @Bean
@@ -32,11 +34,12 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/auth/**").permitAll()
                 .requestMatchers("/queue/tv-display", "/queue/tv/stream").permitAll()
-                .requestMatchers(HttpMethod.GET, "/files/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/files/**").authenticated()
+                .requestMatchers(HttpMethod.GET, "/files/**").authenticated()
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .anyRequest().authenticated())
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterAfter(branchContextFilter, JwtAuthFilter.class)
             .addFilterAfter(mustChangePasswordFilter, JwtAuthFilter.class)
             .build();
     }

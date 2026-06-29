@@ -76,9 +76,23 @@ public class AuthService {
         }
     }
 
+    public LoginResponse issueTokensForUser(User user) {
+        return buildResponse(user);
+    }
+
+    public LoginResponse issueTokensForCurrentUser() {
+        var auth = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !(auth.getPrincipal() instanceof User user)) {
+            throw AppException.forbidden("Authenticated user is required");
+        }
+        return buildResponse(userRepository.findById(user.getId()).orElse(user));
+    }
+
     public LoginResponse refresh(RefreshTokenRequest request) {
         String token = request.getRefreshToken();
-        if (!jwtUtil.isValid(token)) throw AppException.badRequest("Refresh token is invalid or expired.");
+        if (!jwtUtil.isValid(token) || !jwtUtil.isRefreshToken(token)) {
+            throw AppException.badRequest("Refresh token is invalid or expired.");
+        }
         String username = jwtUtil.extractSubject(token);
         User user = userRepository.findByUsernameIgnoreCase(username)
             .orElseThrow(() -> AppException.notFound("User not found."));

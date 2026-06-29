@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgIf } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -15,32 +15,14 @@ import { SnackService } from '../../../core/services/snack.service';
 @Component({
   selector: 'app-profile', standalone: true,
   imports: [NgIf, ReactiveFormsModule, RouterLink, TranslateModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatProgressSpinnerModule, PageHeaderComponent],
-  template: `<div class="page-shell">
-    <app-page-header [title]="'PROFILE.TITLE' | translate">
-      <a mat-stroked-button routerLink="/admin/dashboard">{{ 'COMMON.CANCEL' | translate }}</a>
-    </app-page-header>
-    <mat-spinner *ngIf="loading" diameter="40"></mat-spinner>
-    <form class="estate-card profile-form" *ngIf="!loading" [formGroup]="form" (ngSubmit)="save()">
-      <mat-form-field appearance="outline"><mat-label>{{ 'USERS.USERNAME' | translate }}</mat-label><input matInput [value]="username" disabled></mat-form-field>
-      <mat-form-field appearance="outline"><mat-label>{{ 'USERS.FULL_NAME' | translate }}</mat-label><input matInput formControlName="fullName"></mat-form-field>
-      <mat-form-field appearance="outline"><mat-label>{{ 'AUTH.EMAIL' | translate }}</mat-label><input matInput formControlName="email"></mat-form-field>
-      <mat-form-field appearance="outline"><mat-label>{{ 'PATIENTS.PHONE' | translate }}</mat-label><input matInput formControlName="phone"></mat-form-field>
-      <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || saving">{{ 'COMMON.SAVE' | translate }}</button>
-    </form>
-    <form class="estate-card profile-form" *ngIf="!loading" [formGroup]="passwordForm" (ngSubmit)="changePassword()">
-      <h3>{{ 'PROFILE.CHANGE_PASSWORD' | translate }}</h3>
-      <mat-form-field appearance="outline"><mat-label>{{ 'PROFILE.CURRENT_PASSWORD' | translate }}</mat-label><input matInput type="password" formControlName="currentPassword"></mat-form-field>
-      <mat-form-field appearance="outline"><mat-label>{{ 'PROFILE.NEW_PASSWORD' | translate }}</mat-label><input matInput type="password" formControlName="newPassword"></mat-form-field>
-      <mat-form-field appearance="outline"><mat-label>{{ 'PROFILE.CONFIRM_PASSWORD' | translate }}</mat-label><input matInput type="password" formControlName="confirmPassword"></mat-form-field>
-      <button mat-stroked-button type="submit" [disabled]="passwordForm.invalid || changingPassword">{{ 'PROFILE.CHANGE_PASSWORD' | translate }}</button>
-    </form>
-  </div>`,
-  styles: [`.profile-form { display: flex; flex-direction: column; gap: 12px; max-width: 480px; margin-bottom: 16px; } h3 { margin: 0 0 8px; }`]
+  templateUrl: './profile.component.html',
+  styleUrl: './profile.component.scss'
 })
 export class ProfileComponent implements OnInit {
   loading = true;
   saving = false;
   changingPassword = false;
+  highlightPassword = false;
   username = '';
   form = this.fb.group({ fullName: ['', Validators.required], email: ['', Validators.email], phone: [''] });
   passwordForm = this.fb.group({ currentPassword: ['', Validators.required], newPassword: ['', [Validators.required, Validators.minLength(6)]], confirmPassword: ['', Validators.required] });
@@ -49,10 +31,14 @@ export class ProfileComponent implements OnInit {
     private readonly fb: FormBuilder,
     private readonly profile: UserProfileService,
     private readonly auth: AuthService,
-    private readonly snack: SnackService
+    private readonly snack: SnackService,
+    private readonly route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
+    if (this.route.snapshot.queryParamMap.get('changePassword') === '1') {
+      this.highlightPassword = true;
+    }
     this.profile.getMyProfile().subscribe({
       next: (r) => {
         const u = r.data;
@@ -80,7 +66,13 @@ export class ProfileComponent implements OnInit {
     if (v.newPassword !== v.confirmPassword) { this.snack.error('PROFILE.PASSWORD_MISMATCH'); return; }
     this.changingPassword = true;
     this.profile.changeMyPassword({ currentPassword: v.currentPassword!, newPassword: v.newPassword! }).subscribe({
-      next: () => { this.snack.success('PROFILE.PASSWORD_CHANGED'); this.passwordForm.reset(); this.changingPassword = false; },
+      next: (res) => {
+        if (res.data) this.auth.applyLoginResponse(res.data);
+        this.highlightPassword = false;
+        this.snack.success('PROFILE.PASSWORD_CHANGED');
+        this.passwordForm.reset();
+        this.changingPassword = false;
+      },
       error: (e) => { this.snack.error(e.message); this.changingPassword = false; }
     });
   }

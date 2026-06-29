@@ -12,6 +12,7 @@ public class LabRequestDto {
     private String requestNo;
     @NotNull private Long patientId;
     private Long doctorId;
+    private Long consultationId;
     @NotBlank private String testType;
     private String testCategory;
     private LabStatus status;
@@ -19,4 +20,5 @@ public class LabRequestDto {
     private String notes;
     private LocalDateTime requestedAt;
     private LocalDateTime completedAt;
+    private Long generatedInvoiceId;
 }

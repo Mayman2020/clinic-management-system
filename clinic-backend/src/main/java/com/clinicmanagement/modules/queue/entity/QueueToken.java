@@ -15,6 +15,7 @@ public class QueueToken {
     @Column(length = 100) private String department;
     @Column(name = "patient_id") private Long patientId;
     @Column(name = "appointment_id") private Long appointmentId;
+    @Column(name = "branch_id") private Long branchId;
     @Enumerated(EnumType.STRING) @Column(length = 20) private QueueStatus status;
     @Column(name = "estimated_wait_minutes") private Integer estimatedWaitMinutes;
     @Column(name = "called_at") private LocalDateTime calledAt;

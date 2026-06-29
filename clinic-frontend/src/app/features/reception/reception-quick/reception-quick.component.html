@@ -1,0 +1,45 @@
+<div class="page-shell reception-page">
+  <app-page-header [title]="'RECEPTION.TITLE' | translate">
+    <a mat-stroked-button routerLink="/admin/queue"><span class="material-icons">queue</span>{{ 'WORKFLOW.GO_TO_QUEUE' | translate }}</a>
+    <a mat-stroked-button routerLink="/admin/appointments"><span class="material-icons">event</span>{{ 'NAV.APPOINTMENTS' | translate }}</a>
+  </app-page-header>
+
+  <section class="estate-card search-card">
+    <div class="app-card-header">
+      <span class="app-card-title">{{ 'RECEPTION.FIND_PATIENT' | translate }}</span>
+    </div>
+    <div class="app-card-body">
+      <app-patient-search-field [formControl]="patientCtrl" labelKey="RECEPTION.SEARCH_PATIENT"></app-patient-search-field>
+    </div>
+  </section>
+
+  <section class="estate-card patient-card" *ngIf="selectedPatient">
+    <div class="app-card-header">
+      <span class="app-card-title">{{ selectedPatient.firstName }} {{ selectedPatient.lastName }}</span>
+    </div>
+    <div class="app-card-body">
+      <p class="meta">{{ selectedPatient.patientCode }} · {{ selectedPatient.phone }}</p>
+      <div class="quick-actions">
+        <button mat-flat-button color="primary" type="button" (click)="walkIn()">
+          <span class="material-icons">directions_walk</span>{{ 'APPOINTMENTS.WALK_IN' | translate }}
+        </button>
+        <a mat-stroked-button routerLink="/admin/patients/{{ selectedPatient.id }}">
+          <span class="material-icons">person</span>{{ 'PATIENTS.PATIENT_360' | translate }}
+        </a>
+      </div>
+
+      <h4 class="appt-section-title">{{ 'RECEPTION.TODAY_APPOINTMENTS' | translate }}</h4>
+      <p *ngIf="loadingAppts">{{ 'COMMON.LOADING' | translate }}</p>
+      <div class="appt-row" *ngFor="let a of todayAppointments">
+        <div>
+          <strong>{{ a.appointmentNo }}</strong>
+          <span class="meta"> · {{ a.doctorName }} · {{ a.status }}</span>
+        </div>
+        <button mat-stroked-button type="button" (click)="checkIn(a.id)" [disabled]="a.status === 'CANCELLED' || a.status === 'COMPLETED'">
+          {{ 'WORKFLOW.CHECK_IN' | translate }}
+        </button>
+      </div>
+      <p *ngIf="!loadingAppts && !todayAppointments.length" class="empty-state">{{ 'RECEPTION.NO_APPOINTMENTS_TODAY' | translate }}</p>
+    </div>
+  </section>
+</div>

@@ -23,6 +23,7 @@ public class Appointment {
     @Column(name = "appointment_type", length = 20) private String appointmentType;
     @Column(columnDefinition = "TEXT") private String notes;
     @Builder.Default @Column(name = "is_active") private boolean active = true;
+    @Column(name = "branch_id") private Long branchId;
     @CreatedBy @Column(name = "created_by", updatable = false) private Long createdBy;
     @CreatedDate @Column(name = "created_at", updatable = false) private LocalDateTime createdAt;
     @LastModifiedDate @Column(name = "updated_at") private LocalDateTime updatedAt;

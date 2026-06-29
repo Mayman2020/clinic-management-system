@@ -41,4 +41,9 @@ public class LabController {
             @RequestParam LabStatus status, @RequestParam(required = false) String resultPdfUrl) {
         return ResponseEntity.ok(ApiResponse.ok(labService.updateStatus(id, status, resultPdfUrl)));
     }
+    @PutMapping("/{id}/result") @RequiresPermission(module = "lab", action = "edit")
+    public ResponseEntity<ApiResponse<LabRequestDto>> saveResult(@PathVariable Long id,
+            @RequestParam String resultPdfUrl) {
+        return ResponseEntity.ok(ApiResponse.ok(labService.saveResult(id, resultPdfUrl)));
+    }
 }

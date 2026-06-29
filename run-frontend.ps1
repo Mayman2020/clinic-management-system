@@ -1,2 +1,2 @@
-Set-Location "$PSScriptRoot\clinic-frontend"
-npm start
+& "$PSScriptRoot\clinic-frontend\run-frontend.ps1" @args
+exit $LASTEXITCODE

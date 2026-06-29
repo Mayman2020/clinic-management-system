@@ -36,18 +36,29 @@ spring:
   web:
     locale: en
     locale-resolver: accept-header
+  mail:
+    host: ${MAIL_HOST:localhost}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 jwt:
   secret: ${JWT_SECRET:ClinicManagementSecretKey2024VeryLongAndSecureKeyForJWT}
   expiration: 86400000
   refresh-expiration: 604800000
 user:
   default:
-    password: ${USER_DEFAULT_PASSWORD:admin123}
+    password: ${USER_DEFAULT_PASSWORD:Dev@Local2026!}
 file:
   upload-dir: ${UPLOAD_DIR:D:/clinic-files}
-  base-url: ${FILE_BASE_URL:http://localhost:8082/api/v1}
+  base-url: ${FILE_BASE_URL:http://localhost:8086/api/v1}
 server:
-  port: 8082
+  port: 8086
   servlet:
     context-path: /api/v1
 logging:
@@ -56,3 +67,11 @@ logging:
     org.springframework.security: WARN
     org.flywaydb: INFO
     org.hibernate.SQL: WARN
+clinic:
+  mail:
+    enabled: ${MAIL_ENABLED:false}
+    from: ${MAIL_FROM:noreply@clinic.local}
+  reminders:
+    cron: ${REMINDER_CRON:0 0 8 * * *}
+  tv:
+    display-token: ${TV_DISPLAY_TOKEN:dev-tv-display-token}

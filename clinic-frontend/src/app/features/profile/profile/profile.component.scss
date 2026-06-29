@@ -1,0 +1,24 @@
+.profile-page {
+  .profile-card {
+    padding: 0;
+    max-width: 560px;
+    margin-bottom: 20px;
+  }
+
+  .profile-form {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 8px;
+  }
+
+  .highlight {
+    outline: 2px solid var(--blue-400);
+    outline-offset: 2px;
+  }
+}

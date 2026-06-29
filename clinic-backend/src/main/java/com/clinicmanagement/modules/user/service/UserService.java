@@ -1,4 +1,5 @@
 package com.clinicmanagement.modules.user.service;
+import com.clinicmanagement.shared.util.SearchQueryUtil;
 import com.clinicmanagement.modules.user.dto.*;
 import com.clinicmanagement.modules.user.entity.User;
 import com.clinicmanagement.modules.user.entity.UserRole;
@@ -92,7 +93,7 @@ public class UserService {
         if (p instanceof User u) return u.getId();
         throw AppException.forbidden("Authentication required");
     }
-    private static String trim(String q) { return q == null || q.isBlank() ? null : q.trim(); }
+    private static String trim(String q) { return SearchQueryUtil.normalize(q); }
 
     public UserResponse toResponse(User user) {
         return UserResponse.builder().id(user.getId()).username(user.getUsername()).email(user.getEmail())

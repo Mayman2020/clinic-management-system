@@ -13,7 +13,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmailIgnoreCase(String email);
     boolean existsByEmailIgnoreCase(String email);
     boolean existsByUsernameIgnoreCase(String username);
-    @Query("SELECT u FROM User u WHERE (:q IS NULL OR LOWER(u.fullName) LIKE LOWER(CONCAT('%',:q,'%')) OR LOWER(u.email) LIKE LOWER(CONCAT('%',:q,'%')) OR LOWER(u.username) LIKE LOWER(CONCAT('%',:q,'%'))) AND (:role IS NULL OR u.role = :role)")
+    @Query("SELECT u FROM User u WHERE (:q = '' OR LOWER(u.fullName) LIKE LOWER(CONCAT('%',:q,'%')) OR LOWER(u.email) LIKE LOWER(CONCAT('%',:q,'%')) OR LOWER(u.username) LIKE LOWER(CONCAT('%',:q,'%'))) AND (:role IS NULL OR u.role = :role)")
     Page<User> search(@Param("q") String q, @Param("role") UserRole role, Pageable pageable);
     java.util.List<User> findByActiveTrueAndRoleIn(java.util.Collection<UserRole> roles);
 }

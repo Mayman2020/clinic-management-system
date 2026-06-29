@@ -1,0 +1,43 @@
+.appointment-detail-page {
+  .detail-card {
+    padding: 0;
+    max-width: 720px;
+  }
+
+  .detail-dl {
+    display: grid;
+    grid-template-columns: 150px 1fr;
+    gap: 12px 16px;
+    margin: 0 0 24px;
+  }
+
+  dt {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+
+  dd {
+    margin: 0;
+    font-weight: 600;
+  }
+
+  .row-link {
+    color: var(--blue-600, var(--accent));
+    text-decoration: none;
+  }
+
+  .detail-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding-top: 8px;
+    border-top: 1px solid var(--line-2);
+  }
+}
+
+@media (max-width: 640px) {
+  .appointment-detail-page .detail-dl {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+}

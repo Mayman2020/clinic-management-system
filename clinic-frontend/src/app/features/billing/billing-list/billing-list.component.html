@@ -1,31 +1,74 @@
 <div class="page-shell">
   <app-page-header [title]="'BILLING.TITLE' | translate">
-    <button *appCan="'billing'; appCanAction: 'create'" mat-flat-button color="primary" type="button" (click)="onCreate()"><span class="material-icons">add</span>{{ 'BILLING.NEW' | translate }}</button>
-    <button mat-stroked-button type="button" (click)="load()"><span class="material-icons">refresh</span>{{ 'COMMON.REFRESH' | translate }}</button>
+    <div class="page-actions">
+      <rms-icon-btn icon="add" tooltipKey="BILLING.NEW" variant="primary" *appCan="'billing'; appCanAction: 'create'" (clicked)="onCreate()"></rms-icon-btn>
+      <rms-icon-btn icon="payments" tooltipKey="BILLING.PAYMENTS" routerLink="/admin/billing/payments"></rms-icon-btn>
+      <rms-icon-btn icon="refresh" tooltipKey="COMMON.REFRESH" (clicked)="load()"></rms-icon-btn>
+    </div>
   </app-page-header>
-  <div class="estate-card" *ngIf="!loading; else loadingTpl">
-    <table mat-table [dataSource]="rows" class="app-data-table">
-      <ng-container *ngFor="let col of columns" [matColumnDef]="col.key">
-        <th mat-header-cell *matHeaderCellDef>{{ col.labelKey | translate }}</th>
-        <td mat-cell *matCellDef="let row">
-          <ng-container [ngSwitch]="col.key">
-            <span *ngSwitchCase="'status'">{{ row.status | tk:'STATUS' }}</span>
-            <span *ngSwitchDefault>{{ row[col.key] }}</span>
-          </ng-container>
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef>{{ 'COMMON.ACTIONS' | translate }}</th>
-        <td mat-cell *matCellDef="let row">
-          <button *appCan="'billing'; appCanAction: 'export'" mat-icon-button type="button" (click)="onPrint(row)"><span class="material-icons">print</span></button>
-          <button *appCan="'billing'; appCanAction: 'approve'" mat-stroked-button type="button" (click)="onPay(row)" [disabled]="row.status === 'PAID'">{{ 'BILLING.PAY' | translate }}</button>
-        </td>
-      </ng-container>
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-    </table>
-    <p *ngIf="!rows.length" class="empty-state">{{ 'COMMON.NO_DATA' | translate }}</p>
-    <mat-paginator [length]="total" [pageSize]="size" [pageIndex]="page" [pageSizeOptions]="[10,20,50]" (page)="onPage($event)"></mat-paginator>
+
+  <div class="loading-wrap" *ngIf="listLoad.showInitialSpinner">
+    <mat-spinner diameter="40"></mat-spinner>
   </div>
-  <ng-template #loadingTpl><mat-spinner diameter="40"></mat-spinner></ng-template>
+
+  <app-empty-state
+    *ngIf="listLoad.showSurface && rows.length === 0 && !hasActiveFilters()"
+    icon="receipt_long"
+    titleKey="BILLING.TITLE"
+    messageKey="COMMON.NO_DATA">
+  </app-empty-state>
+
+  <div class="app-list-surface" [class.is-refreshing]="listLoad.refreshing"
+    *ngIf="listLoad.showSurface && (rows.length > 0 || hasActiveFilters())">
+    <div class="list-refresh-spinner" *ngIf="listLoad.refreshing">
+      <mat-spinner diameter="32"></mat-spinner>
+    </div>
+
+    <section class="list-stats">
+      <article class="stat-pill stat-pill--green"><span class="stat-label">{{ 'COMMON.TOTAL' | translate }}</span><strong>{{ total }}</strong></article>
+      <article class="stat-pill stat-pill--orange"><span class="stat-label">{{ 'COMMON.ON_PAGE' | translate }}</span><strong>{{ rows.length }}</strong></article>
+    </section>
+    <section class="estate-card directory-table-card">
+      <div class="estate-table-toolbar directory-toolbar">
+        <div class="directory-toolbar-top table-list-toolbar">
+          <div class="directory-search">
+            <span class="material-icons">search</span>
+            <input [(ngModel)]="search" (keyup.enter)="onSearch()" [placeholder]="'COMMON.SEARCH' | translate">
+          </div>
+          <select class="estate-filter-select" [(ngModel)]="statusFilter" (ngModelChange)="onFilterChange()">
+            <option value="">{{ 'COMMON.ALL' | translate }}</option>
+            <option *ngFor="let s of statusOptions" [value]="s">{{ s | tk:'STATUS' }}</option>
+          </select>
+          <rms-icon-btn icon="search" tooltipKey="COMMON.SEARCH" variant="primary" (clicked)="onSearch()"></rms-icon-btn>
+        </div>
+      </div>
+      <div class="app-table-wrap">
+        <table mat-table [dataSource]="rows" class="app-data-table">
+          <ng-container *ngFor="let col of columns" [matColumnDef]="col.key">
+            <th mat-header-cell *matHeaderCellDef>{{ col.labelKey | translate }}</th>
+            <td mat-cell *matCellDef="let row">
+              <ng-container [ngSwitch]="col.key">
+                <a *ngSwitchCase="'invoiceNo'" class="row-link" [routerLink]="['/admin/billing', row.id]">{{ row.invoiceNo }}</a>
+                <span *ngSwitchCase="'status'">{{ row.status | tk:'STATUS' }}</span>
+                <span *ngSwitchDefault>{{ row[col.key] }}</span>
+              </ng-container>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>{{ 'COMMON.ACTIONS' | translate }}</th>
+            <td mat-cell *matCellDef="let row" class="action-cell">
+              <button *appCan="'billing'; appCanAction: 'view'" mat-icon-button type="button" [matTooltip]="'COMMON.DETAILS' | translate" (click)="onView(row)"><span class="material-icons">visibility</span></button>
+              <button *appCan="'billing'; appCanAction: 'export'" mat-icon-button type="button" [matTooltip]="'COMMON.PRINT' | translate" (click)="onPrint(row)"><span class="material-icons">print</span></button>
+              <button *appCan="'billing'; appCanAction: 'export'" mat-icon-button type="button" [matTooltip]="'BILLING.DOWNLOAD_PDF' | translate" (click)="onDownloadPdf(row)"><span class="material-icons">picture_as_pdf</span></button>
+              <button *appCan="'billing'; appCanAction: 'approve'" mat-icon-button type="button" [matTooltip]="'BILLING.PAY' | translate" (click)="onPay(row)" [disabled]="row.status === 'PAID'"><span class="material-icons">paid</span></button>
+              <button *appCan="'insurance'; appCanAction: 'create'" mat-icon-button type="button" [matTooltip]="'INSURANCE.SUBMIT' | translate" (click)="onInsuranceClaim(row)" [disabled]="row.status === 'PAID'"><span class="material-icons">health_and_safety</span></button>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+      </div>
+      <app-table-pager [length]="total" [pageSize]="size" [pageIndex]="page" (pageIndexChange)="onPageIndexChange($event)"></app-table-pager>
+    </section>
+  </div>
 </div>

@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.InvalidDataAccessResourceUsageException;
+import org.hibernate.exception.SQLGrammarException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -83,6 +85,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ApiResponse<Void>> handleJsonParse(HttpMessageNotReadableException ex, WebRequest request) {
         return ResponseEntity.badRequest().body(ApiResponse.error(tr("error.invalid_request_body", request), "INVALID_REQUEST_BODY"));
+    }
+    @ExceptionHandler({ InvalidDataAccessResourceUsageException.class, SQLGrammarException.class })
+    public ResponseEntity<ApiResponse<Void>> handleSqlGrammar(Exception ex, WebRequest request) {
+        log.warn("SQL grammar error: {}", ex.getMessage());
+        return ResponseEntity.badRequest().body(ApiResponse.error(tr("error.invalid_parameter", request), "INVALID_QUERY"));
     }
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleGeneral(Exception ex, WebRequest request) {

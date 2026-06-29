@@ -9,26 +9,33 @@ import { MatButtonModule } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
 import { PatientService } from '../../../core/services/patient.service';
 import { FileService } from '../../../core/services/file.service';
+import { InsuranceService } from '../../../core/services/insurance.service';
 import { Patient } from '../../../core/models/patient.model';
+import { InsuranceProvider } from '../../../core/models/insurance.model';
 import { SnackService } from '../../../core/services/snack.service';
+
+import { DateFieldComponent } from '../../../shared/components/date-field/date-field.component';
 
 interface PatientDocument { id: number; fileName: string; fileUrl: string; documentType: string; }
 
 @Component({
   selector: 'app-patient-dialog', standalone: true,
-  imports: [NgFor, NgIf, ReactiveFormsModule, MatDialogModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, TranslateModule],
+  imports: [NgFor, NgIf, ReactiveFormsModule, MatDialogModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, TranslateModule, DateFieldComponent],
   templateUrl: './patient-dialog.component.html'
 })
 export class PatientDialogComponent implements OnInit {
   uploading = false;
   documents: PatientDocument[] = [];
+  insuranceProviders: InsuranceProvider[] = [];
   form = this.fb.group({
     firstName: ['', Validators.required], lastName: ['', Validators.required], phone: [''], email: [''],
-    gender: [''], nationalId: [''], dateOfBirth: [''], address: [''], allergies: [''], chronicDiseases: [''], documentUrl: ['']
+    gender: [''], nationalId: [''], dateOfBirth: [''], address: [''], allergies: [''], chronicDiseases: [''], documentUrl: [''],
+    insuranceProviderId: [null as number | null], insurancePolicyNo: ['']
   });
 
   constructor(
     private readonly fb: FormBuilder, private readonly svc: PatientService, private readonly files: FileService,
+    private readonly insuranceSvc: InsuranceService,
     private readonly snack: SnackService, private readonly ref: MatDialogRef<PatientDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: Partial<Patient> | null
   ) {
@@ -36,6 +43,10 @@ export class PatientDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.insuranceSvc.listProviders().subscribe({
+      next: (r) => { this.insuranceProviders = r.data ?? []; },
+      error: () => { /* optional */ }
+    });
     if (this.data?.id) {
       this.svc.getDocuments(this.data.id).subscribe({
         next: (r) => { this.documents = r.data ?? []; },
@@ -68,7 +79,9 @@ export class PatientDialogComponent implements OnInit {
       dateOfBirth: raw.dateOfBirth ?? undefined,
       address: raw.address ?? undefined,
       allergies: raw.allergies ?? undefined,
-      chronicDiseases: raw.chronicDiseases ?? undefined
+      chronicDiseases: raw.chronicDiseases ?? undefined,
+      insuranceProviderId: raw.insuranceProviderId ?? undefined,
+      insurancePolicyNo: raw.insurancePolicyNo ?? undefined
     };
     const req = this.data?.id ? this.svc.update(this.data.id, payload) : this.svc.create(payload);
     req.subscribe({

@@ -1,36 +1,64 @@
-import { Component } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
 import { QueueService } from '../../../core/services/queue.service';
 import { SnackService } from '../../../core/services/snack.service';
+import { PatientSearchFieldComponent } from '../../../shared/components/patient-search-field/patient-search-field.component';
+import { DoctorSearchFieldComponent } from '../../../shared/components/doctor-search-field/doctor-search-field.component';
+
+export interface QueueTokenDialogData {
+  patientId?: number;
+  doctorId?: number;
+  appointmentId?: number;
+}
 
 @Component({
   selector: 'app-queue-token-dialog', standalone: true,
-  imports: [ReactiveFormsModule, MatDialogModule, MatFormFieldModule, MatInputModule, MatButtonModule, TranslateModule],
+  imports: [ReactiveFormsModule, MatDialogModule, MatButtonModule, TranslateModule, PatientSearchFieldComponent, DoctorSearchFieldComponent],
   template: `
     <h2 mat-dialog-title>{{ 'QUEUE.GENERATE' | translate }}</h2>
-    <form [formGroup]="form" (ngSubmit)="save()">
+    <form class="cm-form-dialog" [formGroup]="form" (ngSubmit)="save()">
       <mat-dialog-content>
-        <mat-form-field appearance="outline"><mat-label>{{ 'APPOINTMENTS.PATIENT' | translate }} ID</mat-label><input matInput type="number" formControlName="patientId"></mat-form-field>
-        <mat-form-field appearance="outline"><mat-label>{{ 'APPOINTMENTS.DOCTOR' | translate }} ID</mat-label><input matInput type="number" formControlName="doctorId"></mat-form-field>
+        <app-patient-search-field formControlName="patientId"></app-patient-search-field>
+        <app-doctor-search-field formControlName="doctorId"></app-doctor-search-field>
       </mat-dialog-content>
       <mat-dialog-actions align="end">
         <button mat-button type="button" mat-dialog-close>{{ 'COMMON.CANCEL' | translate }}</button>
         <button mat-flat-button color="primary" type="submit">{{ 'COMMON.SAVE' | translate }}</button>
       </mat-dialog-actions>
-    </form>`
+    </form>
+  `
 })
 export class QueueTokenDialogComponent {
-  form = this.fb.group({ patientId: [null as number | null, Validators.required], doctorId: [null as number | null] });
-  constructor(private readonly fb: FormBuilder, private readonly svc: QueueService, private readonly snack: SnackService, private readonly ref: MatDialogRef<QueueTokenDialogComponent>) {}
+  form = this.fb.group({
+    patientId: [null as number | null, Validators.required],
+    doctorId: [null as number | null]
+  });
+
+  constructor(
+    private readonly fb: FormBuilder,
+    private readonly svc: QueueService,
+    private readonly snack: SnackService,
+    private readonly ref: MatDialogRef<QueueTokenDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) data: QueueTokenDialogData | null
+  ) {
+    if (data) this.form.patchValue({ patientId: data.patientId ?? null, doctorId: data.doctorId ?? null });
+    this.appointmentId = data?.appointmentId;
+  }
+
+  private readonly appointmentId?: number;
+
   save(): void {
     if (this.form.invalid) return;
     const v = this.form.getRawValue();
-    this.svc.generateToken({ patientId: v.patientId!, doctorId: v.doctorId ?? undefined, queueDate: new Date().toISOString().slice(0, 10) }).subscribe({
+    this.svc.generateToken({
+      patientId: v.patientId!,
+      doctorId: v.doctorId ?? undefined,
+      appointmentId: this.appointmentId,
+      queueDate: new Date().toISOString().slice(0, 10)
+    }).subscribe({
       next: () => { this.snack.success('COMMON.SAVED'); this.ref.close(true); },
       error: (e) => this.snack.error(e.message)
     });

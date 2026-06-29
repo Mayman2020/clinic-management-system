@@ -1,35 +1,38 @@
 import { Component, OnInit } from '@angular/core';
 import { NgFor, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
+import { TablePagerComponent } from '../../../shared/components/table-pager/table-pager.component';
+import { RmsIconBtnComponent } from '../../../shared/components/rms-icon-btn/rms-icon-btn.component';
+import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 import { HasPermissionDirective } from '../../../shared/directives/has-permission.directive';
 import { TranslateKeyPipe } from '../../../shared/pipes/translate-key.pipe';
 import { PatientService } from '../../../core/services/patient.service';
 import { ConfirmService } from '../../../core/services/confirm.service';
+import { RmsDialogService } from '../../../shared/services/rms-dialog.service';
 import { Patient } from '../../../core/models/patient.model';
 import { SnackService } from '../../../core/services/snack.service';
 import { PatientDialogComponent } from '../patient-dialog/patient-dialog.component';
 import { PatientHistoryDialogComponent } from '../patient-history-dialog/patient-history-dialog.component';
+import { ListLoadController } from '../../../shared/utils/list-load.util';
 
 @Component({
   selector: 'app-patient-list',
   standalone: true,
-  imports: [NgFor, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault, FormsModule, TranslateModule, MatTableModule, MatButtonModule, MatIconModule, MatInputModule, MatFormFieldModule, MatProgressSpinnerModule, MatPaginatorModule, MatDialogModule, PageHeaderComponent, HasPermissionDirective, TranslateKeyPipe],
+  imports: [NgFor, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault, FormsModule, RouterLink, TranslateModule, MatTableModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule, PageHeaderComponent, TablePagerComponent, RmsIconBtnComponent, EmptyStateComponent, HasPermissionDirective, TranslateKeyPipe],
   templateUrl: './patient-list.component.html',
   styleUrl: './patient-list.component.scss'
 })
 export class PatientListComponent implements OnInit {
-  loading = false;
+  listLoad = new ListLoadController();
   search = '';
+  activeFilter = '';
   page = 0;
   size = 10;
   total = 0;
@@ -46,36 +49,59 @@ export class PatientListComponent implements OnInit {
   constructor(
     private readonly svc: PatientService,
     private readonly snack: SnackService,
-    private readonly dialog: MatDialog,
+    private readonly dialogs: RmsDialogService,
     private readonly confirm: ConfirmService
   ) {}
 
   ngOnInit(): void { this.load(); }
 
   load(): void {
-    this.loading = true;
-    this.svc.list(this.page, this.size, this.search).subscribe({
+    this.listLoad.begin();
+    const active = this.activeFilter === '' ? undefined : this.activeFilter === 'true';
+    this.svc.list(this.page, this.size, this.search, active).subscribe({
       next: (res) => {
         this.rows = res.data?.content ?? [];
         this.total = res.data?.totalElements ?? 0;
-        this.loading = false;
+        this.listLoad.end();
       },
-      error: (err) => { this.snack.error(err.message); this.loading = false; }
+      error: (err) => {
+        this.snack.error(err.message);
+        this.rows = [];
+        this.total = 0;
+        this.listLoad.end();
+      }
     });
   }
 
-  onPage(e: PageEvent): void { this.page = e.pageIndex; this.size = e.pageSize; this.load(); }
+  onSearch(): void {
+    this.page = 0;
+    this.load();
+  }
+
+  onFilterChange(): void {
+    this.page = 0;
+    this.load();
+  }
+
+  onPageIndexChange(index: number): void {
+    this.page = index;
+    this.load();
+  }
+
+  hasActiveFilters(): boolean {
+    return !!(this.search.trim() || this.activeFilter);
+  }
 
   onCreate(): void {
-    this.dialog.open(PatientDialogComponent, { width: '560px' }).afterClosed().subscribe((saved) => { if (saved) this.load(); });
+    this.dialogs.open(PatientDialogComponent, { width: '560px' }).afterClosed().subscribe((saved) => { if (saved) this.load(); });
   }
 
   onEdit(row: Patient): void {
-    this.dialog.open(PatientDialogComponent, { width: '560px', data: row }).afterClosed().subscribe((saved) => { if (saved) this.load(); });
+    this.dialogs.open(PatientDialogComponent, { width: '560px', data: row }).afterClosed().subscribe((saved) => { if (saved) this.load(); });
   }
 
   onHistory(row: Patient): void {
-    this.dialog.open(PatientHistoryDialogComponent, { width: '640px', data: row });
+    this.dialogs.open(PatientHistoryDialogComponent, { width: '640px', data: row });
   }
 
   onArchive(row: Patient): void {

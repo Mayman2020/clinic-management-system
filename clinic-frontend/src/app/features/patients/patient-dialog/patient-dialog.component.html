@@ -6,7 +6,7 @@
     <mat-form-field appearance="outline"><mat-label>{{ 'PATIENTS.PHONE' | translate }}</mat-label><input matInput formControlName="phone"></mat-form-field>
     <mat-form-field appearance="outline"><mat-label>{{ 'PATIENTS.EMAIL' | translate }}</mat-label><input matInput formControlName="email"></mat-form-field>
     <mat-form-field appearance="outline"><mat-label>{{ 'PATIENTS.NATIONAL_ID' | translate }}</mat-label><input matInput formControlName="nationalId"></mat-form-field>
-    <mat-form-field appearance="outline"><mat-label>{{ 'PATIENTS.DATE_OF_BIRTH' | translate }}</mat-label><input matInput type="date" formControlName="dateOfBirth"></mat-form-field>
+    <app-date-field formControlName="dateOfBirth" labelKey="PATIENTS.DATE_OF_BIRTH" [compact]="true"></app-date-field>
     <mat-form-field appearance="outline"><mat-label>{{ 'PATIENTS.GENDER' | translate }}</mat-label>
       <mat-select formControlName="gender">
         <mat-option value="MALE">{{ 'GENDER.MALE' | translate }}</mat-option>
@@ -17,6 +17,13 @@
     <mat-form-field appearance="outline" class="full"><mat-label>{{ 'PATIENTS.ADDRESS' | translate }}</mat-label><textarea matInput rows="2" formControlName="address"></textarea></mat-form-field>
     <mat-form-field appearance="outline" class="full"><mat-label>{{ 'PATIENTS.ALLERGIES' | translate }}</mat-label><textarea matInput rows="2" formControlName="allergies"></textarea></mat-form-field>
     <mat-form-field appearance="outline" class="full"><mat-label>{{ 'PATIENTS.CHRONIC' | translate }}</mat-label><textarea matInput rows="2" formControlName="chronicDiseases"></textarea></mat-form-field>
+    <mat-form-field appearance="outline"><mat-label>{{ 'PATIENTS.INSURANCE_PROVIDER' | translate }}</mat-label>
+      <mat-select formControlName="insuranceProviderId">
+        <mat-option [value]="null">{{ 'COMMON.SELECT' | translate }}</mat-option>
+        <mat-option *ngFor="let p of insuranceProviders" [value]="p.id">{{ p.name }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline"><mat-label>{{ 'PATIENTS.INSURANCE_POLICY' | translate }}</mat-label><input matInput formControlName="insurancePolicyNo"></mat-form-field>
     <div class="full upload-row">
       <label class="upload-btn"><span class="material-icons">upload_file</span>{{ 'PATIENTS.UPLOAD_DOC' | translate }}
         <input type="file" hidden (change)="onFileSelected($event)" accept=".pdf,.jpg,.jpeg,.png">

@@ -11,15 +11,19 @@ import java.time.LocalTime;
 import java.util.List;
 
 public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
-    @Query("SELECT a FROM Appointment a WHERE a.active = true AND (:status IS NULL OR a.status = :status) AND (:doctorId IS NULL OR a.doctorId = :doctorId) AND (:q IS NULL OR LOWER(a.appointmentNo) LIKE LOWER(CONCAT('%',:q,'%')))")
-    Page<Appointment> search(@Param("q") String q, @Param("status") AppointmentStatus status, @Param("doctorId") Long doctorId, Pageable pageable);
-    @Query("SELECT a FROM Appointment a WHERE a.active = true AND a.appointmentDate BETWEEN :from AND :to AND (:doctorId IS NULL OR a.doctorId = :doctorId) AND (:status IS NULL OR a.status = :status)")
+    @Query("SELECT a FROM Appointment a WHERE a.active = true AND (:branchId IS NULL OR a.branchId = :branchId) AND (:status IS NULL OR a.status = :status) AND (:doctorId IS NULL OR a.doctorId = :doctorId) AND (:q = '' OR LOWER(a.appointmentNo) LIKE LOWER(CONCAT('%', :q, '%')))")
+    Page<Appointment> search(@Param("q") String q, @Param("status") AppointmentStatus status, @Param("doctorId") Long doctorId, @Param("branchId") Long branchId, Pageable pageable);
+    @Query("SELECT a FROM Appointment a WHERE a.active = true AND (:branchId IS NULL OR a.branchId = :branchId) AND a.status IN :statuses AND (:doctorId IS NULL OR a.doctorId = :doctorId) AND (:q = '' OR LOWER(a.appointmentNo) LIKE LOWER(CONCAT('%', :q, '%')))")
+    Page<Appointment> searchByStatuses(@Param("q") String q, @Param("statuses") List<AppointmentStatus> statuses, @Param("doctorId") Long doctorId, @Param("branchId") Long branchId, Pageable pageable);
+    @Query("SELECT a FROM Appointment a WHERE a.active = true AND (:branchId IS NULL OR a.branchId = :branchId) AND a.appointmentDate BETWEEN :from AND :to AND (:doctorId IS NULL OR a.doctorId = :doctorId) AND (:status IS NULL OR a.status = :status)")
     List<Appointment> findCalendar(@Param("from") LocalDate from, @Param("to") LocalDate to,
-        @Param("doctorId") Long doctorId, @Param("status") AppointmentStatus status);
+        @Param("doctorId") Long doctorId, @Param("status") AppointmentStatus status, @Param("branchId") Long branchId);
     @Query("SELECT a.status, COUNT(a) FROM Appointment a WHERE a.appointmentDate BETWEEN :from AND :to GROUP BY a.status")
     List<Object[]> countByStatus(@Param("from") LocalDate from, @Param("to") LocalDate to);
     long countByAppointmentDateBetween(LocalDate from, LocalDate to);
     long countByAppointmentDate(LocalDate date);
+    @Query("SELECT COUNT(a) FROM Appointment a WHERE a.active = true AND a.appointmentDate = :date AND (:branchId IS NULL OR a.branchId = :branchId)")
+    long countByAppointmentDateAndBranchId(@Param("date") LocalDate date, @Param("branchId") Long branchId);
     long countByDoctorIdAndStatus(Long doctorId, AppointmentStatus status);
     long countByDoctorIdAndStatusAndAppointmentDateBetween(Long doctorId, AppointmentStatus status, LocalDate from, LocalDate to);
     @Query("""
@@ -31,4 +35,6 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
         """)
     boolean existsOverlap(@Param("doctorId") Long doctorId, @Param("date") LocalDate date,
         @Param("startTime") LocalTime startTime, @Param("endTime") LocalTime endTime, @Param("excludeId") Long excludeId);
+    List<Appointment> findByPatientIdAndActiveTrueOrderByAppointmentDateDescStartTimeDesc(Long patientId);
+    List<Appointment> findByActiveTrueAndAppointmentDateAndStatusIn(LocalDate appointmentDate, List<AppointmentStatus> statuses);
 }

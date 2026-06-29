@@ -13,6 +13,6 @@ public interface PatientRepository extends JpaRepository<Patient, Long> {
     Optional<Patient> findByPatientCode(String patientCode);
     boolean existsByNationalIdAndActiveTrueAndIdNot(String nationalId, Long id);
     boolean existsByNationalIdAndActiveTrue(String nationalId);
-    @Query("SELECT p FROM Patient p WHERE p.active = COALESCE(:active, p.active) AND (:q IS NULL OR LOWER(p.firstName) LIKE LOWER(CONCAT('%',:q,'%')) OR LOWER(p.lastName) LIKE LOWER(CONCAT('%',:q,'%')) OR LOWER(p.patientCode) LIKE LOWER(CONCAT('%',:q,'%')) OR p.nationalId LIKE CONCAT('%',:q,'%'))")
+    @Query("SELECT p FROM Patient p WHERE (:active IS NULL OR p.active = :active) AND (:q = '' OR LOWER(p.firstName) LIKE LOWER(CONCAT('%', :q, '%')) OR LOWER(p.lastName) LIKE LOWER(CONCAT('%', :q, '%')) OR LOWER(p.patientCode) LIKE LOWER(CONCAT('%', :q, '%')) OR p.nationalId LIKE CONCAT('%', :q, '%'))")
     Page<Patient> search(@Param("q") String q, @Param("active") Boolean active, Pageable pageable);
 }

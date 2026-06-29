@@ -3,6 +3,7 @@ import com.clinicmanagement.modules.queue.dto.*;
 import com.clinicmanagement.modules.queue.entity.QueueStatus;
 import com.clinicmanagement.modules.queue.service.QueueService;
 import com.clinicmanagement.modules.queue.service.QueueEventPublisher;
+import com.clinicmanagement.modules.queue.service.TvDisplayAccessService;
 import com.clinicmanagement.modules.permission.annotation.RequiresPermission;
 import com.clinicmanagement.shared.response.ApiResponse;
 import jakarta.validation.Valid;
@@ -20,6 +21,7 @@ import java.util.Map;
 public class QueueController {
     private final QueueService queueService;
     private final QueueEventPublisher eventPublisher;
+    private final TvDisplayAccessService tvDisplayAccessService;
 
     @PostMapping("/tokens") @RequiresPermission(module = "queue", action = "create")
     public ResponseEntity<ApiResponse<QueueTokenResponse>> generate(@Valid @RequestBody QueueTokenRequest request) {
@@ -52,7 +54,10 @@ public class QueueController {
     }
 
     @GetMapping("/tv-display")
-    public ResponseEntity<ApiResponse<List<QueueTokenResponse>>> tvDisplay() {
+    public ResponseEntity<ApiResponse<List<QueueTokenResponse>>> tvDisplay(
+            @RequestParam(name = "token", required = false) String token,
+            @RequestHeader(name = "X-TV-Display-Token", required = false) String headerToken) {
+        tvDisplayAccessService.validateAccess(token != null ? token : headerToken);
         return ResponseEntity.ok(ApiResponse.ok(queueService.tvDisplay()));
     }
 
@@ -68,7 +73,10 @@ public class QueueController {
     }
 
     @GetMapping(value = "/tv/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public SseEmitter tvStream() {
+    public SseEmitter tvStream(
+            @RequestParam(name = "token", required = false) String token,
+            @RequestHeader(name = "X-TV-Display-Token", required = false) String headerToken) {
+        tvDisplayAccessService.validateAccess(token != null ? token : headerToken);
         return eventPublisher.subscribeTv();
     }
 }

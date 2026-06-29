@@ -1,0 +1,269 @@
+/* Premium visual system — queue TV design language across admin shell */
+
+.main-content {
+  background: var(--bg-premium);
+  background-attachment: fixed;
+}
+
+.app-shell .topbar {
+  background: var(--glass-bg-strong);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-bottom: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+/* ── Glass panels (cards, headers, stats) ── */
+.estate-card,
+.app-card,
+.app-page-header {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--premium-radius);
+  box-shadow: var(--glass-shadow), var(--glass-inset);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+}
+
+.app-page-header {
+  align-items: center;
+  padding: clamp(18px, 2.5vw, 24px) clamp(20px, 3vw, 28px);
+}
+
+.app-page-title {
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--ink-900);
+}
+
+.app-page-subtitle,
+.app-page-eyebrow {
+  color: var(--accent-teal, var(--ink-500));
+}
+
+.app-page-eyebrow {
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+/* Stat pills — TV token cards */
+.stat-pill {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--premium-radius-sm);
+  box-shadow: var(--glass-shadow), var(--glass-inset);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  padding: 18px 20px;
+}
+
+.stat-pill:hover {
+  border-color: rgba(251, 191, 36, 0.45);
+  box-shadow: 0 0 24px rgba(251, 191, 36, 0.08), var(--glass-shadow);
+}
+
+.stat-pill strong {
+  font-size: clamp(1.6rem, 2.5vw, 1.95rem);
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-pill--purple strong,
+.stat-pill--cyan strong,
+.stat-pill--green strong,
+.stat-pill--orange strong,
+.stat-pill--teal strong,
+.stat-pill--indigo strong,
+.stat-pill--rose strong {
+  color: var(--accent-gold);
+}
+
+/* Dashboard stat cards */
+.stat-card {
+  background: var(--glass-bg) !important;
+  border: 1px solid var(--glass-border) !important;
+  border-radius: var(--premium-radius-sm) !important;
+  box-shadow: var(--glass-shadow), var(--glass-inset) !important;
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+}
+
+.stat-card:hover {
+  border-color: rgba(52, 211, 153, 0.45) !important;
+  box-shadow: 0 0 28px rgba(16, 185, 129, 0.1), var(--glass-shadow) !important;
+}
+
+.stat-card .stat-value {
+  color: var(--accent-gold, var(--ink-900));
+}
+
+/* Table toolbars & panels */
+.estate-card > .estate-table-toolbar.directory-toolbar,
+.estate-card .estate-table-toolbar {
+  background: var(--panel-muted);
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.estate-card .app-table-wrap {
+  background: transparent;
+}
+
+.directory-search {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--premium-radius-sm);
+  backdrop-filter: var(--glass-blur);
+}
+
+.directory-search:focus-within {
+  border-color: rgba(52, 211, 153, 0.5);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.12);
+}
+
+/* Tables — glass rows */
+.app-data-table .mat-mdc-header-row {
+  background: var(--panel-muted);
+}
+
+.app-data-table .mat-mdc-row {
+  background: transparent;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.app-data-table .mat-mdc-row:hover {
+  background: rgba(16, 185, 129, 0.08);
+}
+
+.table-pager {
+  background: var(--panel-muted);
+  border-top: 1px solid var(--glass-border);
+  border-radius: 0 0 var(--premium-radius) var(--premium-radius);
+}
+
+/* Back button — TV hero gradient */
+.app-back-btn {
+  background: linear-gradient(160deg, #059669 0%, #2563eb 100%);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.25);
+}
+
+.app-back-btn:hover {
+  background: linear-gradient(160deg, #047857 0%, #1d4ed8 100%);
+  box-shadow: 0 8px 26px rgba(37, 99, 235, 0.3);
+}
+
+/* Icon buttons */
+.rms-icon-btn {
+  background: var(--glass-bg);
+  border-color: var(--glass-border);
+  border-radius: var(--premium-radius-sm);
+  backdrop-filter: var(--glass-blur);
+}
+
+.rms-icon-btn--primary {
+  background: linear-gradient(135deg, #059669, #2563eb);
+  border-color: transparent;
+  box-shadow: 0 6px 18px rgba(16, 185, 129, 0.22);
+}
+
+/* Dashboard welcome — TV hero panel */
+.clinic-dashboard .dashboard-welcome {
+  background: var(--hero-gradient);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--premium-radius);
+  box-shadow: var(--glass-shadow), var(--glass-inset);
+  backdrop-filter: var(--glass-blur);
+}
+
+.clinic-dashboard .welcome-text h1 {
+  color: var(--ink-900);
+  font-weight: 700;
+}
+
+.clinic-dashboard .welcome-text p {
+  color: var(--accent-teal, var(--ink-500));
+}
+
+/* App card headers inside glass panels */
+.app-card-header {
+  background: var(--panel-muted);
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.app-card-title {
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* Empty states */
+.empty-state,
+.app-empty-state,
+.estate-card .empty-state {
+  color: var(--ink-500);
+}
+
+html.dark-theme,
+.dark-theme {
+  .stat-card .stat-value {
+    color: var(--accent-gold);
+  }
+
+  .app-page-subtitle,
+  .app-page-eyebrow {
+    color: var(--accent-teal);
+  }
+
+  .topbar-brand-name,
+  .tb-user-name {
+    color: var(--ink-900);
+  }
+
+  .topbar-search {
+    background: var(--glass-bg);
+    border-color: var(--glass-border);
+  }
+
+  .topbar-search:focus-within {
+    border-color: rgba(52, 211, 153, 0.45);
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.12);
+  }
+
+  .app-data-table .mat-mdc-row:hover {
+    background: rgba(16, 185, 129, 0.12);
+  }
+
+  .app-data-table .mat-mdc-cell {
+    color: rgba(248, 250, 252, 0.92);
+  }
+
+  .app-data-table .mat-mdc-header-cell {
+    color: rgba(226, 232, 240, 0.85);
+  }
+
+  .directory-search input {
+    color: var(--ink-900);
+  }
+
+  .mat-mdc-paginator,
+  .table-pager span {
+    color: var(--ink-500);
+  }
+}
+
+html.light-theme,
+.light-theme {
+  .stat-pill--purple strong,
+  .stat-pill--cyan strong,
+  .stat-pill--green strong,
+  .stat-pill--orange strong,
+  .stat-pill--teal strong,
+  .stat-pill--indigo strong,
+  .stat-pill--rose strong {
+    color: var(--ink-900);
+  }
+
+  .stat-card .stat-value {
+    color: var(--ink-900);
+  }
+}

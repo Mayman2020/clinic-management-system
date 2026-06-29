@@ -1,0 +1,36 @@
+<div class="page-shell appointment-detail-page">
+  <app-page-header [title]="'APPOINTMENTS.DETAIL' | translate">
+  </app-page-header>
+
+  <div class="loading-wrap" *ngIf="loading">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
+  <section class="estate-card detail-card" *ngIf="!loading && appt">
+    <div class="app-card-header">
+      <span class="app-card-title">{{ appt.appointmentNo }}</span>
+      <app-status-badge [status]="appt.status"></app-status-badge>
+    </div>
+    <div class="app-card-body">
+      <dl class="detail-dl">
+        <dt>{{ 'APPOINTMENTS.DATE' | translate }}</dt><dd>{{ formatDate(appt.appointmentDate) }}</dd>
+        <dt>{{ 'APPOINTMENTS.TIME' | translate }}</dt><dd>{{ appt.startTime }}<span *ngIf="appt.endTime"> – {{ appt.endTime }}</span></dd>
+        <dt>{{ 'PATIENTS.TITLE' | translate }}</dt><dd><a class="row-link" [routerLink]="['/admin/patients', appt.patientId]">{{ appt.patientName || appt.patientId }}</a></dd>
+        <dt>{{ 'DOCTORS.TITLE' | translate }}</dt><dd><a class="row-link" [routerLink]="['/admin/doctors', appt.doctorId]">{{ appt.doctorName || appt.doctorId }}</a></dd>
+        <dt>{{ 'APPOINTMENTS.TYPE' | translate }}</dt><dd>{{ appt.appointmentType || '—' }}</dd>
+        <dt>{{ 'COMMON.NOTES' | translate }}</dt><dd>{{ appt.notes || '—' }}</dd>
+      </dl>
+      <div class="detail-actions">
+        <button mat-flat-button color="primary" *ngIf="appt.status === 'SCHEDULED'" (click)="confirm()">
+          <span class="material-icons">check_circle</span>{{ 'APPOINTMENTS.CONFIRM' | translate }}
+        </button>
+        <button mat-stroked-button (click)="checkIn()" *ngIf="appt.status === 'CONFIRMED'">
+          <span class="material-icons">how_to_reg</span>{{ 'APPOINTMENTS.CHECK_IN' | translate }}
+        </button>
+        <button mat-stroked-button color="warn" (click)="cancel()" *ngIf="appt.status !== 'CANCELLED'">
+          <span class="material-icons">cancel</span>{{ 'COMMON.CANCEL' | translate }}
+        </button>
+      </div>
+    </div>
+  </section>
+</div>

@@ -1,4 +1,5 @@
 package com.clinicmanagement.modules.consultation.controller;
+import com.clinicmanagement.modules.billing.dto.InvoiceResponse;
 import com.clinicmanagement.modules.consultation.dto.*;
 import com.clinicmanagement.modules.consultation.service.ConsultationService;
 import com.clinicmanagement.modules.permission.annotation.RequiresPermission;
@@ -34,5 +35,13 @@ public class ConsultationController {
     @PutMapping("/{id}") @RequiresPermission(module = "consultation", action = "edit")
     public ResponseEntity<ApiResponse<ConsultationResponse>> update(@PathVariable Long id, @Valid @RequestBody ConsultationRequest request) {
         return ResponseEntity.ok(ApiResponse.ok(consultationService.update(id, request)));
+    }
+    @PostMapping("/{id}/complete") @RequiresPermission(module = "consultation", action = "edit")
+    public ResponseEntity<ApiResponse<ConsultationResponse>> complete(@PathVariable Long id) {
+        return ResponseEntity.ok(ApiResponse.ok(consultationService.complete(id)));
+    }
+    @PostMapping("/{id}/generate-invoice") @RequiresPermission(module = "billing", action = "create")
+    public ResponseEntity<ApiResponse<InvoiceResponse>> generateInvoice(@PathVariable Long id) {
+        return ResponseEntity.ok(ApiResponse.ok(consultationService.generateInvoice(id)));
     }
 }

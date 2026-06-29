@@ -14,6 +14,8 @@ public class Invoice {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) private Long id;
     @Column(name = "invoice_no", unique = true, nullable = false, length = 30) private String invoiceNo;
     @Column(name = "patient_id", nullable = false) private Long patientId;
+    @Column(name = "branch_id") private Long branchId;
+    @Column(name = "consultation_id") private Long consultationId;
     @Column(length = 20) private String status;
     private BigDecimal subtotal;
     private BigDecimal discount;

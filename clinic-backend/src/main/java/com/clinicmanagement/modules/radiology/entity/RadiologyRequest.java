@@ -12,6 +12,7 @@ public class RadiologyRequest {
     @Column(name = "request_no", unique = true, nullable = false, length = 30) private String requestNo;
     @Column(name = "patient_id", nullable = false) private Long patientId;
     @Column(name = "doctor_id") private Long doctorId;
+    @Column(name = "consultation_id") private Long consultationId;
     @Column(name = "study_type", nullable = false, length = 100) private String studyType;
     @Enumerated(EnumType.STRING) @Column(length = 30) private RadiologyStatus status;
     @Column(name = "scheduled_at") private LocalDateTime scheduledAt;

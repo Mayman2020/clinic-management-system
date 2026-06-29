@@ -30,8 +30,18 @@ public class SettingsService {
     }
 
     public ClinicSettingDto toResponse(ClinicSetting s) {
+        String value = s.getSettingValue();
+        if (isSecretKey(s.getSettingKey()) && value != null && !value.isBlank()) {
+            value = "********";
+        }
         return ClinicSettingDto.builder().id(s.getId()).settingKey(s.getSettingKey())
-            .settingValue(s.getSettingValue()).description(s.getDescription()).build();
+            .settingValue(value).description(s.getDescription()).build();
+    }
+
+    private static boolean isSecretKey(String key) {
+        if (key == null) return false;
+        String lower = key.toLowerCase();
+        return lower.contains("password") || lower.contains("secret") || lower.contains("token") || lower.contains("api_key");
     }
 
     public String resolveValue(String key, String defaultValue) {

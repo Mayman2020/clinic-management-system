@@ -28,4 +28,10 @@ export class ConsultationService {
   getByPatient(patientId: number): Observable<ApiResponse<Consultation[]>> {
     return this.api.get<ApiResponse<Consultation[]>>(AppConstants.API.CONSULTATIONS_BY_PATIENT(patientId));
   }
+  complete(id: number): Observable<ApiResponse<Consultation>> {
+    return this.api.post<ApiResponse<Consultation>>(AppConstants.API.CONSULTATION_COMPLETE(id), {});
+  }
+  generateInvoice(id: number): Observable<ApiResponse<unknown>> {
+    return this.api.post<ApiResponse<unknown>>(AppConstants.API.CONSULTATION_GENERATE_INVOICE(id), {});
+  }
 }

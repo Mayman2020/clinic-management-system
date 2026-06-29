@@ -11,8 +11,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuditLogService {
     private final AuditLogRepository repository;
 
-    public Page<AuditLog> list(Pageable pageable) {
-        return repository.findAllByOrderByCreatedAtDesc(pageable);
+    public Page<AuditLog> list(Pageable pageable, String q) {
+        String term = q == null ? "" : q.trim();
+        if (term.isEmpty()) {
+            return repository.findAllByOrderByCreatedAtDesc(pageable);
+        }
+        return repository.search(term, pageable);
     }
 
     @Transactional

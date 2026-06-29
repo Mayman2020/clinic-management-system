@@ -1,17 +1,126 @@
-<div class="page-shell dashboard-page">
-  <app-page-header [title]="'DASHBOARD.TITLE' | translate"></app-page-header>
-  <mat-spinner *ngIf="loading" diameter="40"></mat-spinner>
-  <ng-container *ngIf="!loading">
-    <div class="estate-stat-grid">
-      <div class="estate-stat-card"><span class="estate-stat-label">{{ 'DASHBOARD.PATIENTS_TODAY' | translate }}</span><span class="estate-stat-value">{{ stats?.patientsToday ?? 0 }}</span></div>
-      <div class="estate-stat-card"><span class="estate-stat-label">{{ 'DASHBOARD.APPOINTMENTS' | translate }}</span><span class="estate-stat-value">{{ stats?.appointmentsToday ?? 0 }}</span></div>
-      <div class="estate-stat-card"><span class="estate-stat-label">{{ 'DASHBOARD.QUEUE_WAITING' | translate }}</span><span class="estate-stat-value">{{ stats?.queueWaiting ?? 0 }}</span></div>
-      <div class="estate-stat-card"><span class="estate-stat-label">{{ 'DASHBOARD.DAILY_REVENUE' | translate }}</span><span class="estate-stat-value">{{ stats?.revenueToday ?? 0 | number:'1.0-0' }}</span></div>
-      <div class="estate-stat-card"><span class="estate-stat-label">{{ 'DASHBOARD.MONTHLY_REVENUE' | translate }}</span><span class="estate-stat-value">{{ stats?.revenueMonth ?? 0 | number:'1.0-0' }}</span></div>
+<div class="page-shell dashboard-page clinic-dashboard">
+  <div class="dashboard-welcome estate-card" *ngIf="!loading">
+    <div class="welcome-text">
+      <h1>{{ welcomeKey | translate: welcomeParams }}</h1>
+      <p>{{ 'DASHBOARD.WELCOME_SUB' | translate }}</p>
     </div>
-    <div class="dashboard-charts">
-      <div class="estate-card chart-card"><h3>{{ 'DASHBOARD.REVENUE' | translate }}</h3><div class="chart-wrap"><canvas baseChart [data]="revenueChart" [options]="lineOptions" type="line"></canvas></div></div>
-      <div class="estate-card chart-card"><h3>{{ 'DASHBOARD.APPOINTMENTS' | translate }}</h3><div class="chart-wrap"><canvas baseChart [data]="appointmentsChart" [options]="barOptions" type="bar"></canvas></div></div>
+    <img class="welcome-illustration" [src]="heroIllustration" alt="" aria-hidden="true" />
+  </div>
+
+  <div class="loading-wrap" *ngIf="loading">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
+  <ng-container *ngIf="!loading">
+    <div class="stat-grid">
+      <app-stat-card *ngFor="let s of statCards" [label]="s.labelKey | translate" [value]="s.value" [icon]="s.icon" [variant]="s.variant" [subtitle]="s.subtitleKey ? (s.subtitleKey | translate) : ''"></app-stat-card>
+    </div>
+
+    <div class="dashboard-layout">
+      <aside class="dashboard-sidebar-widgets">
+        <div class="estate-card widget-card calendar-widget">
+          <div class="app-card-header compact-header">
+            <span class="app-card-title">{{ 'DASHBOARD.CALENDAR' | translate }}</span>
+          </div>
+          <div class="app-card-body">
+            <div class="mini-calendar">
+              <div class="cal-header">{{ currentMonth }}</div>
+              <div class="cal-grid">
+                <span class="cal-day" *ngFor="let d of calendarDays" [class.today]="d.today" [class.muted]="d.muted">{{ d.day }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="estate-card widget-card quick-actions-widget">
+          <div class="app-card-header compact-header">
+            <span class="app-card-title">{{ 'DASHBOARD.QUICK_ACTIONS' | translate }}</span>
+          </div>
+          <div class="app-card-body quick-actions">
+            <a *ngFor="let link of quickLinks" class="quick-action-btn" [routerLink]="link.route">
+              <span class="material-icons">{{ link.icon }}</span>
+              <span>{{ link.labelKey | translate }}</span>
+            </a>
+          </div>
+        </div>
+      </aside>
+
+      <section class="dashboard-main">
+        <div class="estate-card panel-card directory-table-card">
+          <div class="app-card-header">
+            <span class="app-card-title">{{ 'DASHBOARD.UPCOMING_APPOINTMENTS' | translate }}</span>
+            <a routerLink="/admin/appointments" class="view-all">{{ 'COMMON.VIEW_ALL' | translate }}</a>
+          </div>
+          <div class="app-card-body appointments-table" *ngIf="upcomingAppointments.length; else noAppts">
+            <div class="appt-row" *ngFor="let a of upcomingAppointments">
+              <div class="appt-time">
+                <strong>{{ a.time }}</strong>
+                <span>{{ a.date }}</span>
+              </div>
+              <div class="appt-patient">
+                <div class="avatar">{{ a.patientInitials }}</div>
+                <span>{{ a.patientName }}</span>
+              </div>
+              <div class="appt-doctor">
+                <div class="avatar doctor">{{ a.doctorInitials }}</div>
+                <span>{{ a.doctorName }}</span>
+              </div>
+              <app-status-badge [status]="a.status"></app-status-badge>
+              <a class="view-btn" [routerLink]="['/admin/appointments']" [queryParams]="{ id: a.id }">
+                <span class="material-icons">visibility</span>
+              </a>
+            </div>
+          </div>
+          <ng-template #noAppts>
+            <div class="panel-empty">
+              <app-empty-state imageSrc="assets/illustrations/empty-appointments.svg" titleKey="DASHBOARD.NO_APPOINTMENTS" messageKey="DASHBOARD.NO_APPOINTMENTS_HINT"></app-empty-state>
+            </div>
+          </ng-template>
+        </div>
+      </section>
+
+      <aside class="dashboard-right">
+        <div class="estate-card widget-card notifications-widget">
+          <div class="app-card-header compact-header">
+            <span class="app-card-title">{{ 'DASHBOARD.LATEST_NOTIFICATIONS' | translate }}</span>
+          </div>
+          <div class="app-card-body notif-list">
+            <div class="notif-item" *ngFor="let n of notifications">
+              <div class="notif-icon" [class]="n.type"><span class="material-icons">{{ n.icon }}</span></div>
+              <div class="notif-body">
+                <strong>{{ n.title }}</strong>
+                <span>{{ n.time }}</span>
+                <p>{{ n.message }}</p>
+              </div>
+            </div>
+            <p *ngIf="!notifications.length" class="empty-state">{{ 'COMMON.NO_DATA' | translate }}</p>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <div class="charts-row" *ngIf="showCharts">
+      <div class="estate-card panel-card chart-card">
+        <div class="app-card-header compact-header">
+          <span class="app-card-title">{{ 'DASHBOARD.REVENUE' | translate }}</span>
+        </div>
+        <div class="app-card-body chart-wrap" *ngIf="hasChartData(revenueChart); else emptyRevenue">
+          <canvas baseChart [data]="revenueChart" [options]="lineOptions" type="line"></canvas>
+        </div>
+        <ng-template #emptyRevenue>
+          <div class="chart-empty"><span class="material-icons">show_chart</span><p>{{ 'COMMON.NO_DATA' | translate }}</p></div>
+        </ng-template>
+      </div>
+      <div class="estate-card panel-card chart-card">
+        <div class="app-card-header compact-header">
+          <span class="app-card-title">{{ 'DASHBOARD.APPOINTMENTS' | translate }}</span>
+        </div>
+        <div class="app-card-body chart-wrap" *ngIf="hasChartData(appointmentsChart); else emptyAppts">
+          <canvas baseChart [data]="appointmentsChart" [options]="barOptions" type="bar"></canvas>
+        </div>
+        <ng-template #emptyAppts>
+          <div class="chart-empty"><span class="material-icons">bar_chart</span><p>{{ 'COMMON.NO_DATA' | translate }}</p></div>
+        </ng-template>
+      </div>
     </div>
   </ng-container>
 </div>

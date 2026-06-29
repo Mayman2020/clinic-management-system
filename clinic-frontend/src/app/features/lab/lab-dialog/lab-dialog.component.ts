@@ -1,32 +1,80 @@
-import { Component } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
+import { APP_DIALOG_IMPORTS } from '../../../shared/dialog-ui';
+import { LookupSelectComponent } from '../../../shared/components/lookup-select/lookup-select.component';
 import { LabService } from '../../../core/services/lab.service';
 import { SnackService } from '../../../core/services/snack.service';
+import { PatientSearchFieldComponent } from '../../../shared/components/patient-search-field/patient-search-field.component';
+import { DoctorSearchFieldComponent } from '../../../shared/components/doctor-search-field/doctor-search-field.component';
+
+export interface LabDialogData {
+  patientId?: number;
+  doctorId?: number;
+  consultationId?: number;
+}
 
 @Component({
   selector: 'app-lab-dialog', standalone: true,
-  imports: [ReactiveFormsModule, MatDialogModule, MatFormFieldModule, MatInputModule, MatButtonModule, TranslateModule],
-  template: `<h2 mat-dialog-title>{{ 'LAB.NEW' | translate }}</h2>
-  <form [formGroup]="form" (ngSubmit)="save()"><mat-dialog-content>
-    <mat-form-field appearance="outline"><mat-label>{{ 'APPOINTMENTS.PATIENT' | translate }} ID</mat-label><input matInput type="number" formControlName="patientId"></mat-form-field>
-    <mat-form-field appearance="outline"><mat-label>{{ 'LAB.TEST_TYPE' | translate }}</mat-label><input matInput formControlName="testType"></mat-form-field>
-    <mat-form-field appearance="outline"><mat-label>{{ 'LAB.CATEGORY' | translate }}</mat-label><input matInput formControlName="testCategory"></mat-form-field>
-  </mat-dialog-content><mat-dialog-actions align="end">
-    <button mat-button type="button" mat-dialog-close>{{ 'COMMON.CANCEL' | translate }}</button>
-    <button mat-flat-button color="primary" type="submit">{{ 'COMMON.SAVE' | translate }}</button>
-  </mat-dialog-actions></form>`
+  imports: [
+    ReactiveFormsModule, MatButtonModule, TranslateModule, PatientSearchFieldComponent,
+    DoctorSearchFieldComponent, LookupSelectComponent, ...APP_DIALOG_IMPORTS
+  ],
+  template: `
+    <h2 mat-dialog-title>
+      <span class="material-icons dialog-title-icon">science</span>
+      {{ 'LAB.NEW' | translate }}
+    </h2>
+    <form [formGroup]="form" (ngSubmit)="save()">
+      <mat-dialog-content class="dialog-body">
+        <div class="rms-dialog-form cm-form-dialog">
+          <app-patient-search-field class="full" formControlName="patientId"></app-patient-search-field>
+          <app-doctor-search-field class="full" formControlName="doctorId"></app-doctor-search-field>
+          <app-lookup-select lookupType="LAB_TEST_TYPE" labelKey="LAB.TEST_TYPE" formControlName="testType" [required]="true"></app-lookup-select>
+          <app-lookup-select lookupType="LAB_TEST_CATEGORY" labelKey="LAB.CATEGORY" formControlName="testCategory"></app-lookup-select>
+        </div>
+      </mat-dialog-content>
+      <mat-dialog-actions align="end" class="app-dialog-actions">
+        <button mat-stroked-button type="button" mat-dialog-close class="btn-dialog-cancel">{{ 'COMMON.CANCEL' | translate }}</button>
+        <button mat-flat-button type="submit" class="btn-dialog-confirm" [disabled]="form.invalid">{{ 'COMMON.SAVE' | translate }}</button>
+      </mat-dialog-actions>
+    </form>
+  `
 })
 export class LabDialogComponent {
-  form = this.fb.group({ patientId: [null as number | null, Validators.required], testType: ['', Validators.required], testCategory: [''] });
-  constructor(private readonly fb: FormBuilder, private readonly svc: LabService, private readonly snack: SnackService, private readonly ref: MatDialogRef<LabDialogComponent>) {}
+  private consultationId?: number;
+  form = this.fb.group({
+    patientId: [null as number | null, Validators.required],
+    doctorId: [null as number | null],
+    testType: ['', Validators.required],
+    testCategory: ['']
+  });
+
+  constructor(
+    private readonly fb: FormBuilder,
+    private readonly svc: LabService,
+    private readonly snack: SnackService,
+    private readonly ref: MatDialogRef<LabDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) data: LabDialogData | null
+  ) {
+    if (data) {
+      this.form.patchValue({ patientId: data.patientId ?? null, doctorId: data.doctorId ?? null });
+      this.consultationId = data.consultationId;
+    }
+  }
+
   save(): void {
     if (this.form.invalid) return;
-    this.svc.create(this.form.getRawValue() as { patientId: number; testType: string; testCategory?: string }).subscribe({
+    const v = this.form.getRawValue();
+    this.svc.create({
+      patientId: v.patientId!,
+      doctorId: v.doctorId ?? undefined,
+      consultationId: this.consultationId,
+      testType: v.testType!,
+      testCategory: v.testCategory || undefined
+    }).subscribe({
       next: () => { this.snack.success('COMMON.SAVED'); this.ref.close(true); },
       error: (e) => this.snack.error(e.message)
     });

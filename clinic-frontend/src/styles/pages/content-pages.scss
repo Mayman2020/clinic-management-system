@@ -1,0 +1,546 @@
+/* Secondary pages — reception, queue, calendar, permissions, settings, notifications */
+
+.queue-page {
+  .queue-kpi {
+    margin-bottom: 20px;
+  }
+
+  .queue-current-card {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 24px 28px;
+    margin-bottom: 20px;
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.08), rgba(5, 150, 105, 0.06));
+    border-color: var(--blue-200, var(--line));
+  }
+
+  .queue-current-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+  }
+
+  .queue-current-num {
+    font-size: 3.5rem;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--blue-600, var(--accent));
+  }
+
+  .queue-current-meta {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-main);
+  }
+
+  .queue-filter-card {
+    padding: 0;
+    margin-bottom: 20px;
+  }
+
+  .queue-grid-card {
+    padding: 0;
+
+    .app-card-header {
+      border-top: 1px solid var(--line-2);
+    }
+  }
+
+  .queue-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 14px;
+    padding: 20px;
+  }
+
+  .queue-token {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 16px 12px;
+    text-align: center;
+    background: var(--paper-2);
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .queue-token.is-active {
+    border-color: var(--green-500, var(--accent));
+    background: rgba(5, 150, 105, 0.08);
+    box-shadow: 0 0 0 1px rgba(5, 150, 105, 0.15);
+  }
+
+  .queue-token.is-next {
+    border-color: var(--gold-500, #d97706);
+    background: rgba(217, 119, 6, 0.08);
+  }
+
+  .queue-token .num {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--blue-600, var(--accent));
+    line-height: 1.1;
+  }
+
+  .queue-token .meta {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-top: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .queue-token .meta.subtle {
+    font-size: 0.72rem;
+  }
+
+  .queue-token .status {
+    margin-top: 8px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-500);
+  }
+
+  .queue-token .actions {
+    display: flex;
+    justify-content: center;
+    gap: 2px;
+    margin-top: 10px;
+  }
+}
+
+.reception-page {
+  .search-card,
+  .patient-card {
+    padding: 0;
+  }
+
+  .search-card .app-card-body,
+  .patient-card .app-card-body {
+    padding: 20px 24px;
+  }
+
+  .search-card .cm-search-field {
+    width: 100%;
+    max-width: 560px;
+    margin: 0;
+  }
+
+  .patient-card {
+    margin-top: 0;
+  }
+
+  .patient-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .patient-head h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+
+  .meta {
+    color: var(--text-muted);
+    font-size: 0.88rem;
+  }
+
+  .quick-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .appt-section-title {
+    margin: 0 0 12px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-main);
+  }
+
+  .appt-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line-2);
+  }
+
+  .appt-row:last-child {
+    border-bottom: 0;
+  }
+}
+
+.calendar-page {
+  .month-badge {
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-inline-end: 8px;
+  }
+
+  .calendar-card {
+    padding: 0;
+  }
+
+  .calendar-layout {
+    display: grid;
+    grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+    min-height: 360px;
+  }
+
+  .mini-calendar-panel {
+    padding: 20px;
+    border-inline-end: 1px solid var(--line-2);
+    background: var(--paper-2);
+  }
+
+  .mini-calendar .cal-header {
+    text-align: center;
+    font-weight: 700;
+    color: var(--blue-700);
+    margin-bottom: 12px;
+  }
+
+  .cal-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    margin-bottom: 6px;
+    text-align: center;
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+  }
+
+  .mini-calendar .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    text-align: center;
+    font-size: 0.8rem;
+  }
+
+  .mini-calendar .cal-day {
+    aspect-ratio: 1;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    color: var(--ink-700);
+  }
+
+  .mini-calendar .cal-day.muted {
+    visibility: hidden;
+  }
+
+  .mini-calendar .cal-day.today {
+    background: var(--blue-600);
+    color: var(--white);
+    font-weight: 700;
+  }
+
+  .calendar-list {
+    min-width: 0;
+  }
+
+  .calendar-list .app-card-header {
+    border-bottom: 1px solid var(--line-2);
+  }
+
+  .appt-count {
+    min-width: 28px;
+    height: 28px;
+    padding: 0 8px;
+    border-radius: 999px;
+    background: var(--blue-50);
+    color: var(--blue-700);
+    font-size: 0.78rem;
+    font-weight: 700;
+    display: grid;
+    place-items: center;
+  }
+
+  .calendar-list .panel-empty {
+    padding: 32px 20px;
+  }
+
+  .calendar-row {
+    display: grid;
+    grid-template-columns: 100px minmax(0, 1fr) auto auto;
+    gap: 16px;
+    align-items: center;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--line-2);
+    transition: background 0.15s;
+  }
+
+  .calendar-row:hover {
+    background: var(--paper-2);
+  }
+
+  .calendar-row:last-child {
+    border-bottom: 0;
+  }
+
+  .cal-date {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .cal-date span {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  .cal-title {
+    font-weight: 600;
+  }
+
+  .cal-meta {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  .cal-actions {
+    display: flex;
+    gap: 4px;
+  }
+
+  .status-badge {
+    background: var(--accent-soft, rgba(37, 99, 235, 0.1));
+    color: var(--blue-700, var(--accent));
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    font-weight: 600;
+  }
+}
+
+.permissions-page {
+  .permissions-card {
+    padding: 0;
+  }
+
+  .permissions-toolbar {
+    gap: 12px;
+  }
+
+  .role-field-wrap {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--line-2);
+    background: var(--paper-2);
+    max-width: 360px;
+  }
+
+  .perm-grid {
+    padding: 8px 16px 20px;
+    overflow-x: auto;
+  }
+
+  .perm-header {
+    background: var(--paper-2);
+    border-radius: 8px 8px 0 0;
+  }
+
+  .panel-empty {
+    padding: 32px 20px;
+  }
+
+  .perm-header,
+  .perm-row {
+    display: grid;
+    grid-template-columns: minmax(140px, 180px) repeat(8, 52px);
+    align-items: center;
+    gap: 4px;
+    padding: 10px 8px;
+    border-bottom: 1px solid var(--line-2);
+    font-size: 0.78rem;
+  }
+
+  .perm-header {
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .module-name {
+    font-size: 0.88rem;
+    font-weight: 500;
+    text-transform: capitalize;
+  }
+}
+
+.settings-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  .settings-group {
+    padding: 0;
+  }
+
+  .settings-fields {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px 20px;
+    align-items: flex-start;
+  }
+
+  .settings-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .settings-field label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--ink-500);
+  }
+
+  .settings-field input {
+    height: 42px;
+    padding: 0 12px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--text-main);
+    font-family: inherit;
+    font-size: 0.9rem;
+  }
+
+  .settings-field input:focus {
+    outline: none;
+    border-color: var(--blue-400);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  }
+
+  .settings-actions {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 8px;
+    border-top: 1px solid var(--line-2);
+    margin-top: 8px;
+    grid-column: 1 / -1;
+  }
+}
+
+.notifications-page {
+  .notifications-card {
+    padding: 0;
+  }
+
+  .notif-row {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--line-2);
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .notif-row:hover {
+    background: var(--paper-2);
+  }
+
+  .notif-row.is-unread {
+    background: rgba(37, 99, 235, 0.04);
+    border-inline-start: 3px solid var(--blue-500);
+  }
+
+  .notif-title {
+    font-weight: 600;
+    color: var(--text-main);
+  }
+
+  .notif-body {
+    color: var(--text-muted);
+    font-size: 0.88rem;
+    margin-top: 4px;
+  }
+
+  .notif-date {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 6px;
+  }
+}
+
+.billing-detail-page {
+  .summary-card {
+    padding: 0;
+  }
+
+  .status-badge {
+    background: rgba(37, 99, 235, 0.1);
+    color: var(--blue-700, var(--accent));
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 0;
+  }
+
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--line-2);
+    font-size: 0.9rem;
+  }
+
+  .summary-row span {
+    color: var(--text-muted);
+  }
+
+  .summary-row.total {
+    background: var(--paper-2);
+    font-weight: 700;
+    font-size: 1rem;
+  }
+
+  .detail-table-card {
+    padding: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .calendar-page .calendar-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .calendar-page .mini-calendar-panel {
+    border-inline-end: 0;
+    border-bottom: 1px solid var(--line-2);
+  }
+
+  .calendar-page .calendar-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .queue-page .queue-current-card {
+    flex-direction: column;
+    text-align: center;
+  }
+}

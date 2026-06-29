@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, tap } from 'rxjs';
+import { Observable, of, tap, catchError } from 'rxjs';
 import { ApiService } from './api.service';
 import { AppConstants } from '../constants/app-constants';
 import { AuthService } from './auth.service';
@@ -23,7 +23,8 @@ export class PermissionService {
         const permissions = res.data?.permissions ?? {};
         this.permissions = permissions;
         this.auth.updateStoredPermissions(permissions);
-      })
+      }),
+      catchError(() => of(null))
     );
   }
 

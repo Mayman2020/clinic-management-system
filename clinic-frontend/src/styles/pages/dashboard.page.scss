@@ -4,7 +4,10 @@
   padding: 64px;
 }
 
-.dashboard-page {
+.dashboard-page,
+.reports-page,
+.queue-page,
+.patient-360-page {
   .estate-stat-grid {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));

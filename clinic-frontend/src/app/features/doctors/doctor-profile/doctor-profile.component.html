@@ -1,0 +1,39 @@
+<div class="page-shell doctor-profile-page">
+  <app-page-header [title]="doctorName || ('DOCTORS.TITLE' | translate)">
+  </app-page-header>
+
+  <div class="loading-wrap" *ngIf="loading">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
+  <div class="profile-grid" *ngIf="!loading && doctor">
+    <section class="estate-card profile-card hero">
+      <div class="profile-avatar">{{ initials }}</div>
+      <h2>{{ doctorName }}</h2>
+      <p class="specialty">{{ doctor.specialty || doctor.department }}</p>
+      <app-status-badge [status]="doctor.isActive ? 'ACTIVE' : 'CANCELLED'" [labelKey]="doctor.isActive ? 'COMMON.ACTIVE' : 'COMMON.INACTIVE'"></app-status-badge>
+    </section>
+
+    <section class="estate-card profile-card details">
+      <div class="app-card-header">
+        <span class="app-card-title">{{ 'DOCTORS.PROFILE_INFO' | translate }}</span>
+      </div>
+      <div class="app-card-body">
+        <dl class="profile-dl">
+          <dt>{{ 'AUTH.EMAIL' | translate }}</dt><dd>{{ doctor.email || '—' }}</dd>
+          <dt>{{ 'PATIENTS.PHONE' | translate }}</dt><dd>{{ doctor.phone || '—' }}</dd>
+          <dt>{{ 'DOCTORS.CODE' | translate }}</dt><dd>{{ doctor.doctorCode || '—' }}</dd>
+          <dt>{{ 'DOCTORS.DEPARTMENT' | translate }}</dt><dd>{{ doctor.department || '—' }}</dd>
+        </dl>
+        <div class="profile-actions">
+          <a mat-flat-button color="primary" routerLink="/admin/appointments" [queryParams]="{ doctorId: doctor.id }">
+            <span class="material-icons">event</span>{{ 'DASHBOARD.ACTION_BOOK_APPT' | translate }}
+          </a>
+          <a mat-stroked-button routerLink="/admin/calendar">
+            <span class="material-icons">calendar_month</span>{{ 'NAV.CALENDAR' | translate }}
+          </a>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>

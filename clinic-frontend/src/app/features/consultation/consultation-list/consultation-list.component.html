@@ -1,37 +1,58 @@
 <div class="page-shell">
   <app-page-header [title]="'CONSULTATION.TITLE' | translate">
-    <a mat-flat-button color="primary" routerLink="/admin/consultation/new"><span class="material-icons">add</span>{{ 'CONSULTATION.NEW' | translate }}</a>
-    <button mat-stroked-button type="button" (click)="load()"><span class="material-icons">refresh</span>{{ 'COMMON.REFRESH' | translate }}</button>
+    <div class="page-actions">
+      <rms-icon-btn icon="add" tooltipKey="CONSULTATION.NEW" variant="primary" routerLink="/admin/consultation/new"></rms-icon-btn>
+      <rms-icon-btn icon="refresh" tooltipKey="COMMON.REFRESH" (clicked)="load()"></rms-icon-btn>
+    </div>
   </app-page-header>
-  <div class="estate-card admin-filters" *ngIf="!patientFilter">
-    <mat-form-field appearance="outline" class="search-field">
-      <mat-label>{{ 'COMMON.SEARCH' | translate }}</mat-label>
-      <input matInput [(ngModel)]="search" (keyup.enter)="page=0; load()">
-    </mat-form-field>
-    <button mat-flat-button color="primary" (click)="page=0; load()">{{ 'COMMON.SEARCH' | translate }}</button>
-  </div>
-  <div class="estate-card" *ngIf="!loading; else loadingTpl">
-    <table mat-table [dataSource]="rows" class="app-data-table">
-      <ng-container *ngFor="let col of columns" [matColumnDef]="col.key">
-        <th mat-header-cell *matHeaderCellDef>{{ col.labelKey | translate }}</th>
-        <td mat-cell *matCellDef="let row">
-          <ng-container [ngSwitch]="col.key">
-            <span *ngSwitchCase="'status'">{{ row.status | tk:'STATUS' }}</span>
-            <span *ngSwitchDefault>{{ row[col.key] }}</span>
+
+  <div class="loading-wrap" *ngIf="loading"><mat-spinner diameter="40"></mat-spinner></div>
+
+  <div class="app-list-surface" *ngIf="!loading">
+    <section class="list-stats">
+      <article class="stat-pill stat-pill--green"><span class="stat-label">{{ 'COMMON.TOTAL' | translate }}</span><strong>{{ total }}</strong></article>
+      <article class="stat-pill stat-pill--orange"><span class="stat-label">{{ 'COMMON.ON_PAGE' | translate }}</span><strong>{{ rows.length }}</strong></article>
+    </section>
+    <section class="estate-card directory-table-card">
+      <div class="estate-table-toolbar directory-toolbar" *ngIf="!patientFilter">
+        <div class="directory-toolbar-top table-list-toolbar">
+          <div class="directory-search">
+            <span class="material-icons">search</span>
+            <input [(ngModel)]="search" (keyup.enter)="page=0; load()" [placeholder]="'COMMON.SEARCH' | translate">
+          </div>
+          <rms-icon-btn icon="search" tooltipKey="COMMON.SEARCH" variant="primary" (clicked)="page=0; load()"></rms-icon-btn>
+        </div>
+      </div>
+      <div class="app-table-wrap">
+        <table mat-table [dataSource]="rows" class="app-data-table">
+          <ng-container *ngFor="let col of columns" [matColumnDef]="col.key">
+            <th mat-header-cell *matHeaderCellDef>{{ col.labelKey | translate }}</th>
+            <td mat-cell *matCellDef="let row">
+              <ng-container [ngSwitch]="col.key">
+                <a *ngSwitchCase="'patientName'" class="row-link" [routerLink]="['/admin/consultation', row.id]">{{ row.patientName }}</a>
+                <span *ngSwitchCase="'status'">{{ row.status | tk:'STATUS' }}</span>
+                <span *ngSwitchDefault>{{ row[col.key] }}</span>
+              </ng-container>
+            </td>
           </ng-container>
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef>{{ 'COMMON.ACTIONS' | translate }}</th>
-        <td mat-cell *matCellDef="let row">
-          <a *appCan="'consultation'; appCanAction: 'edit'" mat-icon-button [routerLink]="['/admin/consultation', row.id, 'edit']"><span class="material-icons">edit</span></a>
-        </td>
-      </ng-container>
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-    </table>
-    <p *ngIf="!rows.length" class="empty-state">{{ 'COMMON.NO_DATA' | translate }}</p>
-    <mat-paginator *ngIf="!patientFilter" [length]="total" [pageSize]="size" [pageIndex]="page" [pageSizeOptions]="[10,20,50]" (page)="onPage($event)"></mat-paginator>
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>{{ 'COMMON.ACTIONS' | translate }}</th>
+            <td mat-cell *matCellDef="let row" class="action-cell">
+              <a *appCan="'consultation'; appCanAction: 'view'" mat-icon-button [matTooltip]="'COMMON.DETAILS' | translate" [routerLink]="['/admin/consultation', row.id]"><span class="material-icons">visibility</span></a>
+              <a *appCan="'consultation'; appCanAction: 'edit'" mat-icon-button [matTooltip]="'COMMON.EDIT' | translate" [routerLink]="['/admin/consultation', row.id, 'edit']"><span class="material-icons">edit</span></a>
+              <button *appCan="'prescription'; appCanAction: 'create'" mat-icon-button type="button" [matTooltip]="'PRESCRIPTION.NEW' | translate" (click)="onPrescription(row)" [disabled]="!isActive(row)"><span class="material-icons">medication</span></button>
+              <button *appCan="'lab'; appCanAction: 'create'" mat-icon-button type="button" [matTooltip]="'LAB.NEW' | translate" (click)="onLab(row)" [disabled]="!isActive(row)"><span class="material-icons">science</span></button>
+              <button *appCan="'radiology'; appCanAction: 'create'" mat-icon-button type="button" [matTooltip]="'RADIOLOGY.NEW' | translate" (click)="onRadiology(row)" [disabled]="!isActive(row)"><span class="material-icons">radiology</span></button>
+              <button *appCan="'billing'; appCanAction: 'create'" mat-icon-button type="button" [matTooltip]="'WORKFLOW.GENERATE_INVOICE' | translate" (click)="onGenerateInvoice(row)" [disabled]="!isActive(row)"><span class="material-icons">receipt_long</span></button>
+              <button *appCan="'consultation'; appCanAction: 'edit'" mat-icon-button type="button" [matTooltip]="'WORKFLOW.COMPLETE_CONSULTATION' | translate" (click)="onComplete(row)" [disabled]="!isActive(row)"><span class="material-icons">task_alt</span></button>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+      </div>
+      <p *ngIf="!rows.length" class="empty-state">{{ 'COMMON.NO_DATA' | translate }}</p>
+      <app-table-pager *ngIf="!patientFilter" [length]="total" [pageSize]="size" [pageIndex]="page" (pageIndexChange)="onPageIndexChange($event)"></app-table-pager>
+    </section>
   </div>
-  <ng-template #loadingTpl><mat-spinner diameter="40"></mat-spinner></ng-template>
 </div>

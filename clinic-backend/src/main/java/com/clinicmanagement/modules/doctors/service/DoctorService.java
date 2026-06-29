@@ -1,4 +1,5 @@
 package com.clinicmanagement.modules.doctors.service;
+import com.clinicmanagement.shared.util.SearchQueryUtil;
 import com.clinicmanagement.modules.doctors.dto.*;
 import com.clinicmanagement.modules.doctors.entity.*;
 import com.clinicmanagement.modules.doctors.repository.*;
@@ -57,7 +58,7 @@ public class DoctorService {
     }
 
     private Doctor find(Long id) { return doctorRepository.findById(id).orElseThrow(() -> AppException.notFound("Doctor not found")); }
-    private static String trim(String q) { return q == null || q.isBlank() ? null : q.trim(); }
+    private static String trim(String q) { return SearchQueryUtil.normalize(q); }
 
     public DoctorResponse toResponse(Doctor d) {
         return DoctorResponse.builder().id(d.getId()).userId(d.getUserId()).doctorCode(d.getDoctorCode())

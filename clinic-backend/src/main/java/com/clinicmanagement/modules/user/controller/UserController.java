@@ -1,5 +1,7 @@
 package com.clinicmanagement.modules.user.controller;
 import com.clinicmanagement.modules.permission.annotation.RequiresPermission;
+import com.clinicmanagement.modules.auth.dto.LoginResponse;
+import com.clinicmanagement.modules.auth.service.AuthService;
 import com.clinicmanagement.modules.user.dto.*;
 import com.clinicmanagement.modules.user.entity.UserRole;
 import com.clinicmanagement.modules.user.service.UserService;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController @RequestMapping("/users") @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+    private final AuthService authService;
     @GetMapping @RequiresPermission(module = "users", action = "view")
     public ResponseEntity<ApiResponse<Page<UserResponse>>> getAll(Pageable pageable,
             @RequestParam(required = false) String q, @RequestParam(required = false) UserRole role) {
@@ -40,9 +43,9 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.ok(userService.updateProfile(request)));
     }
     @PostMapping("/me/change-password")
-    public ResponseEntity<ApiResponse<Void>> changePassword(@Valid @RequestBody ChangePasswordRequest request) {
+    public ResponseEntity<ApiResponse<LoginResponse>> changePassword(@Valid @RequestBody ChangePasswordRequest request) {
         userService.changePassword(request);
-        return ResponseEntity.ok(ApiResponse.ok(null));
+        return ResponseEntity.ok(ApiResponse.ok(authService.issueTokensForCurrentUser()));
     }
     @DeleteMapping("/{id}") @RequiresPermission(module = "users", action = "delete")
     public ResponseEntity<ApiResponse<Void>> deactivate(@PathVariable Long id) {

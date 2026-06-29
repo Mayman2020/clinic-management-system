@@ -1,8 +1,10 @@
 package com.clinicmanagement.modules.insurance.service;
+import com.clinicmanagement.shared.util.SearchQueryUtil;
 import com.clinicmanagement.modules.audit.annotation.Auditable;
 import com.clinicmanagement.modules.insurance.dto.*;
 import com.clinicmanagement.modules.insurance.entity.*;
 import com.clinicmanagement.modules.insurance.repository.*;
+import com.clinicmanagement.modules.billing.repository.InvoiceRepository;
 import com.clinicmanagement.shared.exception.AppException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -16,6 +18,7 @@ import java.util.List;
 public class InsuranceService {
     private final InsuranceProviderRepository providerRepository;
     private final ClaimRepository claimRepository;
+    private final InvoiceRepository invoiceRepository;
 
     public List<InsuranceProviderDto> listProviders() {
         return providerRepository.findByActiveTrueOrderByNameAsc().stream().map(this::toResponse).toList();
@@ -84,12 +87,15 @@ public class InsuranceService {
     }
 
     public ClaimDto toResponse(Claim c) {
+        String invoiceNo = c.getInvoiceId() != null
+            ? invoiceRepository.findById(c.getInvoiceId()).map(inv -> inv.getInvoiceNo()).orElse(null)
+            : null;
         return ClaimDto.builder().id(c.getId()).claimNo(c.getClaimNo()).patientId(c.getPatientId())
-            .providerId(c.getProviderId()).invoiceId(c.getInvoiceId()).amount(c.getAmount())
-            .copayment(c.getCopayment()).status(c.getStatus()).submittedAt(c.getSubmittedAt())
+            .providerId(c.getProviderId()).invoiceId(c.getInvoiceId()).invoiceNo(invoiceNo)
+            .amount(c.getAmount()).copayment(c.getCopayment()).status(c.getStatus()).submittedAt(c.getSubmittedAt())
             .approvedAt(c.getApprovedAt()).notes(c.getNotes()).build();
     }
 
-    private static String trim(String q) { return q == null || q.isBlank() ? null : q.trim(); }
+    private static String trim(String q) { return SearchQueryUtil.normalize(q); }
     private static String blankToNull(String s) { return s == null || s.isBlank() ? null : s.trim(); }
 }

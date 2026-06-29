@@ -1,17 +1,56 @@
 <div class="tv-shell">
   <header class="tv-header">
-    <h1>{{ 'QUEUE.TITLE' | translate }}</h1>
-    <div class="tv-now" *ngIf="called">
-      <span>{{ 'QUEUE.CURRENT' | translate }}</span>
-      <strong>{{ called.tokenNumber }}</strong>
-      <span class="name" *ngIf="called.patientName">{{ called.patientName }}</span>
+    <div class="tv-brand">
+      <img src="assets/images/clinic-logo.png" alt="" class="tv-logo" />
+      <div class="tv-brand-text">
+        <strong>{{ 'APP.NAME' | translate }}</strong>
+        <span>{{ 'QUEUE.TITLE' | translate }}</span>
+      </div>
+    </div>
+    <div class="tv-clock">
+      <span class="tv-date">{{ now | rmsDate:'date' }}</span>
+      <strong>{{ clockTime }}</strong>
     </div>
   </header>
-  <div class="tv-grid">
-    <div class="tv-token" *ngFor="let t of tokens" [class.is-called]="t.status === 'CALLED' || t.status === 'IN_SERVICE'">
-      <div class="n">{{ t.tokenNumber }}</div>
-      <div class="name" *ngIf="t.patientName">{{ t.patientName }}</div>
-      <div class="status">{{ t.status | tk:'STATUS' }}</div>
-    </div>
-  </div>
+
+  <main class="tv-main">
+    <section class="tv-hero" [class.has-called]="called">
+      <p class="tv-hero-label">{{ 'QUEUE.NOW_SERVING' | translate }}</p>
+      <div class="tv-hero-number" *ngIf="called; else noCalledTpl">{{ called.tokenNumber }}</div>
+      <ng-template #noCalledTpl>
+        <div class="tv-hero-empty">
+          <span class="material-icons">hourglass_empty</span>
+          <p>{{ 'QUEUE.NO_CURRENT' | translate }}</p>
+        </div>
+      </ng-template>
+      <p class="tv-hero-name" *ngIf="called?.patientName as patientName">{{ patientName }}</p>
+      <span class="tv-hero-status" *ngIf="called">{{ called.status | tk:'STATUS' }}</span>
+    </section>
+
+    <section class="tv-queue-panel">
+      <div class="tv-panel-head">
+        <h2>{{ 'QUEUE.WAITING_LIST' | translate }}</h2>
+        <span class="tv-count">{{ waitingTokens.length }}</span>
+      </div>
+
+      <div class="tv-grid" *ngIf="waitingTokens.length; else emptyQueueTpl">
+        <article
+          class="tv-token"
+          *ngFor="let t of waitingTokens"
+          [class.is-next]="t === nextToken"
+          [class.is-called]="t.status === 'CALLED' || t.status === 'IN_SERVICE'">
+          <div class="tv-token-num">{{ t.tokenNumber }}</div>
+          <div class="tv-token-name" *ngIf="t.patientName">{{ t.patientName }}</div>
+          <div class="tv-token-status">{{ t.status | tk:'STATUS' }}</div>
+        </article>
+      </div>
+
+      <ng-template #emptyQueueTpl>
+        <div class="tv-empty">
+          <span class="material-icons">groups</span>
+          <p>{{ 'QUEUE.NO_TOKENS' | translate }}</p>
+        </div>
+      </ng-template>
+    </section>
+  </main>
 </div>

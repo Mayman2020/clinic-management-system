@@ -1,4 +1,5 @@
 package com.clinicmanagement.modules.patients.service;
+import com.clinicmanagement.shared.util.SearchQueryUtil;
 import com.clinicmanagement.modules.patients.dto.*;
 import com.clinicmanagement.modules.patients.entity.*;
 import com.clinicmanagement.modules.patients.mapper.PatientMapper;
@@ -62,6 +63,6 @@ public class PatientService {
             : patientRepository.existsByNationalIdAndActiveTrueAndIdNot(nationalId.trim(), excludeId);
         if (dup) throw AppException.conflict("Patient with this national ID already exists", "NATIONAL_ID_ALREADY_USED");
     }
-    private static String trim(String q) { return q == null || q.isBlank() ? null : q.trim(); }
+    private static String trim(String q) { return SearchQueryUtil.normalize(q); }
     private String generateCode() { return "PAT-" + String.format("%06d", patientRepository.count() + 1); }
 }

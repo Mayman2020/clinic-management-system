@@ -9,6 +9,6 @@ import java.util.List;
 
 public interface ConsultationRepository extends JpaRepository<Consultation, Long> {
     List<Consultation> findByPatientIdOrderByCreatedAtDesc(Long patientId);
-    @Query("SELECT c FROM Consultation c WHERE (:q IS NULL OR LOWER(COALESCE(c.diagnosis,'')) LIKE LOWER(CONCAT('%',:q,'%')) OR LOWER(COALESCE(c.symptoms,'')) LIKE LOWER(CONCAT('%',:q,'%'))) ORDER BY c.createdAt DESC")
-    Page<Consultation> search(@Param("q") String q, Pageable pageable);
+    @Query("SELECT c FROM Consultation c WHERE (:branchId IS NULL OR c.branchId = :branchId) AND (:q = '' OR LOWER(COALESCE(c.diagnosis,'')) LIKE LOWER(CONCAT('%',:q,'%')) OR LOWER(COALESCE(c.symptoms,'')) LIKE LOWER(CONCAT('%',:q,'%'))) ORDER BY c.createdAt DESC")
+    Page<Consultation> search(@Param("q") String q, @Param("branchId") Long branchId, Pageable pageable);
 }
