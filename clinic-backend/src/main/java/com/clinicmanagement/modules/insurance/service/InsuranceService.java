@@ -13,9 +13,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Service @RequiredArgsConstructor
 public class InsuranceService {
+    private static final Set<String> VALID_CLAIM_STATUSES = Set.of("PENDING", "SUBMITTED", "APPROVED", "REJECTED");
+
     private final InsuranceProviderRepository providerRepository;
     private final ClaimRepository claimRepository;
     private final InvoiceRepository invoiceRepository;
@@ -73,9 +76,16 @@ public class InsuranceService {
 
     @Transactional @Auditable(action = "UPDATE", entityType = "Claim")
     public ClaimDto updateClaimStatus(Long id, String status) {
+        if (status == null || status.isBlank()) {
+            throw AppException.badRequest("Claim status is required");
+        }
+        String normalized = status.trim().toUpperCase();
+        if (!VALID_CLAIM_STATUSES.contains(normalized)) {
+            throw AppException.badRequest("Invalid claim status");
+        }
         Claim c = findClaim(id);
-        c.setStatus(status);
-        if ("APPROVED".equalsIgnoreCase(status)) c.setApprovedAt(LocalDateTime.now());
+        c.setStatus(normalized);
+        if ("APPROVED".equals(normalized)) c.setApprovedAt(LocalDateTime.now());
         return toResponse(claimRepository.save(c));
     }
 

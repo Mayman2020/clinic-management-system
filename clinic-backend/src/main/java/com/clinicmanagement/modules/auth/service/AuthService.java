@@ -1,12 +1,17 @@
 package com.clinicmanagement.modules.auth.service;
+import com.clinicmanagement.modules.auth.dto.ForgotPasswordRequest;
 import com.clinicmanagement.modules.auth.dto.LoginRequest;
 import com.clinicmanagement.modules.auth.dto.LoginResponse;
 import com.clinicmanagement.modules.auth.dto.RefreshTokenRequest;
+import com.clinicmanagement.modules.auth.dto.ResetPasswordRequest;
+import com.clinicmanagement.modules.auth.entity.PasswordResetToken;
+import com.clinicmanagement.modules.auth.repository.PasswordResetTokenRepository;
 import com.clinicmanagement.modules.permission.service.RolePermissionService;
 import com.clinicmanagement.modules.user.entity.User;
 import com.clinicmanagement.modules.user.entity.UserRole;
 import com.clinicmanagement.modules.user.repository.UserRepository;
 import com.clinicmanagement.shared.exception.AppException;
+import com.clinicmanagement.shared.mail.PasswordResetDeliveryService;
 import com.clinicmanagement.shared.security.JwtUtil;
 import com.clinicmanagement.shared.security.LoginAttemptService;
 import com.clinicmanagement.shared.security.TokenBlacklistService;
@@ -18,6 +23,7 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
@@ -25,6 +31,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Service @RequiredArgsConstructor
 public class AuthService {
@@ -34,6 +41,9 @@ public class AuthService {
     private final RolePermissionService rolePermissionService;
     private final LoginAttemptService loginAttemptService;
     private final TokenBlacklistService tokenBlacklist;
+    private final PasswordResetTokenRepository passwordResetTokenRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final PasswordResetDeliveryService passwordResetDeliveryService;
 
     @Value("${jwt.expiration}") private long jwtExpiration;
 
@@ -86,6 +96,38 @@ public class AuthService {
             throw AppException.forbidden("Authenticated user is required");
         }
         return buildResponse(userRepository.findById(user.getId()).orElse(user));
+    }
+
+    @Transactional
+    public void forgotPassword(ForgotPasswordRequest request) {
+        String username = request.getUsername() != null ? request.getUsername().trim() : "";
+        if (username.isEmpty()) return;
+        userRepository.findByUsernameIgnoreCase(username).ifPresent(user -> {
+            String token = UUID.randomUUID().toString().replace("-", "");
+            passwordResetTokenRepository.save(PasswordResetToken.builder()
+                .user(user)
+                .token(token)
+                .expiresAt(LocalDateTime.now().plusHours(24))
+                .used(false)
+                .build());
+            passwordResetDeliveryService.deliver(user, token);
+        });
+    }
+
+    @Transactional
+    public void resetPassword(ResetPasswordRequest request) {
+        PasswordResetToken resetToken = passwordResetTokenRepository.findByTokenAndUsedFalse(request.getToken())
+            .orElseThrow(() -> AppException.badRequest("Reset token is invalid or already used."));
+        if (resetToken.getExpiresAt().isBefore(LocalDateTime.now())) {
+            throw AppException.badRequest("Reset token has expired.");
+        }
+        User user = resetToken.getUser();
+        if (!user.isActive()) throw AppException.badRequest("This account is inactive.");
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        user.setMustChangePassword(false);
+        userRepository.save(user);
+        resetToken.setUsed(true);
+        passwordResetTokenRepository.save(resetToken);
     }
 
     public LoginResponse refresh(RefreshTokenRequest request) {

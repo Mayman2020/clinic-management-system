@@ -8,10 +8,10 @@ import { Doctor, DoctorSchedule } from '../models/doctor.model';
 @Injectable({ providedIn: 'root' })
 export class DoctorService {
   constructor(private readonly api: ApiService) {}
-  list(page = 0, size = 20, search = ''): Observable<ApiResponse<PagedResponse<Doctor>>> {
-    const params: Record<string, string | number> = { page, size };
-    if (search) params['q'] = search;
-    return this.api.get<ApiResponse<PagedResponse<Doctor>>>(AppConstants.API.DOCTORS, params);
+  list(page = 0, size = 20, search = '', params: Record<string, string | number | boolean> = {}): Observable<ApiResponse<PagedResponse<Doctor>>> {
+    const query: Record<string, string | number | boolean> = { page, size, ...params };
+    if (search) query['q'] = search;
+    return this.api.get<ApiResponse<PagedResponse<Doctor>>>(AppConstants.API.DOCTORS, query);
   }
   listActive(): Observable<ApiResponse<Doctor[]>> {
     return this.api.get<ApiResponse<Doctor[]>>(AppConstants.API.DOCTORS_ACTIVE);

@@ -1,0 +1,146 @@
+/* ════════════════════════════════════════════════════════════
+   Clinic System — Global Animation Keyframes & Utility Classes
+   Mirrors Vzeeta / Nabd professional motion language
+   ════════════════════════════════════════════════════════════ */
+
+/* ── Entry animations ──────────────────────────────────────── */
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Card / panel pop-in with subtle scale */
+@keyframes appPopIn {
+  from { opacity: 0; transform: translateY(18px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)    scale(1); }
+}
+
+/* Horizontal slide (for drawers / panels from the side) */
+@keyframes slideInEnd {
+  from { opacity: 0; transform: translateX(24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ── Floating / breathing ──────────────────────────────────── */
+
+/* Gentle vertical float (hero watermarks, logos) */
+@keyframes appFloatSoft {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-8px); }
+}
+
+/* Scale breathing (large logo in hero / login) */
+@keyframes logoBreath {
+  0%, 100% { transform: scale(1);    opacity: 0.94; }
+  50%       { transform: scale(1.06); opacity: 1; }
+}
+
+/* ── Pulse / glow ──────────────────────────────────────────── */
+
+/* Blue icon / logo drop-shadow pulse */
+@keyframes appIconPulse {
+  0%, 100% { box-shadow: 0 0 0  0    rgba(21, 101, 184, 0); }
+  50%       { box-shadow: 0 0 0 10px rgba(21, 101, 184, 0); }
+}
+
+/* Teal/green icon glow (for action buttons) */
+@keyframes appTealPulse {
+  0%, 100% { box-shadow: 0 0 0  0    rgba(13, 148, 136, 0); }
+  50%       { box-shadow: 0 0 0 10px rgba(13, 148, 136, 0); }
+}
+
+/* Urgent red pulse (queue TV / critical rows) */
+@keyframes urgentPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4); }
+  50%       { box-shadow: 0 0 0 6px rgba(220, 38, 38, 0); }
+}
+
+/* Amber / warning pulse */
+@keyframes warnPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(217, 119, 6, 0.35); }
+  50%       { box-shadow: 0 0 0 6px rgba(217, 119, 6, 0); }
+}
+
+/* ── Loading ───────────────────────────────────────────────── */
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position:  400px 0; }
+}
+
+/* ── Specialty / feature card wave (decorative) ────────────── */
+
+@keyframes wave {
+  0%, 100% { transform: scale(1)    translateY(0); }
+  50%       { transform: scale(1.06) translateY(-4px); }
+}
+
+/* ── ECG line travel (inside logo component, re-exported globally) ── */
+
+@keyframes ecgTravel {
+  from { transform: translateX(64px); }
+  to   { transform: translateX(-128px); }
+}
+
+/* ════════════════════════════════════════════════════════════
+   Utility classes
+   ════════════════════════════════════════════════════════════ */
+
+.animate-fade-up {
+  animation: fadeUp var(--t-med, 280ms) var(--e-out, cubic-bezier(0.22, 1, 0.36, 1)) both;
+}
+
+.animate-fade-in {
+  animation: fadeIn var(--t-med, 280ms) var(--e-out, cubic-bezier(0.22, 1, 0.36, 1)) both;
+}
+
+.animate-pop-in {
+  animation: appPopIn var(--t-med, 280ms) var(--e-out, cubic-bezier(0.22, 1, 0.36, 1)) both;
+}
+
+/* Stagger children with --delay CSS var */
+.animate-stagger > * {
+  animation: fadeUp var(--t-med, 280ms) var(--e-out, cubic-bezier(0.22, 1, 0.36, 1)) both;
+}
+
+.animate-stagger > *:nth-child(1)  { animation-delay: 0ms; }
+.animate-stagger > *:nth-child(2)  { animation-delay: 55ms; }
+.animate-stagger > *:nth-child(3)  { animation-delay: 110ms; }
+.animate-stagger > *:nth-child(4)  { animation-delay: 165ms; }
+.animate-stagger > *:nth-child(5)  { animation-delay: 220ms; }
+.animate-stagger > *:nth-child(6)  { animation-delay: 275ms; }
+.animate-stagger > *:nth-child(7)  { animation-delay: 330ms; }
+.animate-stagger > *:nth-child(8)  { animation-delay: 385ms; }
+
+/* Skeleton shimmer for loading states */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--paper-2, #f1f5f9) 25%,
+    var(--paper-3, #e2e8f0) 50%,
+    var(--paper-2, #f1f5f9) 75%
+  );
+  background-size: 400px 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+  border-radius: var(--r-sm, 10px);
+}
+
+/* Urgent pulse helper */
+.pulse-urgent {
+  animation: urgentPulse 1.6s ease-in-out infinite;
+}
+
+/* Warn pulse helper */
+.pulse-warn {
+  animation: warnPulse 2s ease-in-out infinite;
+}

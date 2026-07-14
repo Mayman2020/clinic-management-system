@@ -33,6 +33,25 @@ export class AuthService {
     void this.router.navigateByUrl('/auth/login');
   }
 
+  forgotPassword(username: string): Observable<void> {
+    return this.api.post<ApiResponse<void>>(AppConstants.API.AUTH_FORGOT_PASSWORD, { username: username.trim() }).pipe(
+      map((res) => {
+        if (!res.success) throw new Error(res.message || 'Request failed');
+      })
+    );
+  }
+
+  resetPassword(token: string, newPassword: string): Observable<void> {
+    return this.api.post<ApiResponse<void>>(AppConstants.API.AUTH_RESET_PASSWORD, {
+      token: token.trim(),
+      newPassword
+    }).pipe(
+      map((res) => {
+        if (!res.success) throw new Error(res.message || 'Reset failed');
+      })
+    );
+  }
+
   isAuthenticated(): boolean {
     const token = this.tokenStorage.getToken();
     return !!token && !JwtUtils.isExpired(token);

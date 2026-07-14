@@ -20,18 +20,21 @@ import { TranslateKeyPipe } from '../../../shared/pipes/translate-key.pipe';
 import { InsuranceService } from '../../../core/services/insurance.service';
 import { InsuranceClaim, InsuranceProvider } from '../../../core/models/insurance.model';
 import { SnackService } from '../../../core/services/snack.service';
+import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 import { InsuranceClaimDialogComponent } from '../insurance-claim-dialog/insurance-claim-dialog.component';
 import { InsuranceProviderDialogComponent } from '../insurance-provider-dialog/insurance-provider-dialog.component';
+import { ListLoadController } from '../../../shared/utils/list-load.util';
 
 @Component({
   selector: 'app-insurance-list', standalone: true,
-  imports: [NgFor, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault, FormsModule, TranslateModule, MatTableModule, MatButtonModule, MatIconModule, MatInputModule, MatFormFieldModule, MatProgressSpinnerModule, MatSelectModule, TablePagerComponent, MatTabsModule, MatDialogModule, PageHeaderComponent, RmsIconBtnComponent, HasPermissionDirective, TranslateKeyPipe],
+  imports: [NgFor, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault, FormsModule, TranslateModule, MatTableModule, MatButtonModule, MatIconModule, MatInputModule, MatFormFieldModule, MatProgressSpinnerModule, MatSelectModule, TablePagerComponent, MatTabsModule, MatDialogModule, PageHeaderComponent, RmsIconBtnComponent, EmptyStateComponent, HasPermissionDirective, TranslateKeyPipe],
   templateUrl: './insurance-list.component.html',
   styleUrl: './insurance-list.component.scss'
 })
 export class InsuranceListComponent implements OnInit {
   tab = 0;
-  loading = false;
+  listLoad = new ListLoadController();
+  providersLoading = false;
   page = 0;
   size = 10;
   total = 0;
@@ -55,22 +58,41 @@ export class InsuranceListComponent implements OnInit {
   ngOnInit(): void { this.loadClaims(); this.loadProviders(); }
 
   loadClaims(): void {
-    this.loading = true;
+    this.listLoad.begin();
     const params: Record<string, string | number> = {};
     if (this.search.trim()) params['q'] = this.search.trim();
     if (this.statusFilter) params['status'] = this.statusFilter;
     this.svc.listClaims(this.page, this.size, params).subscribe({
-      next: (res) => { this.rows = res.data?.content ?? []; this.total = res.data?.totalElements ?? 0; this.loading = false; },
-      error: (err) => { this.snack.error(err.message); this.loading = false; }
+      next: (res) => {
+        this.rows = res.data?.content ?? [];
+        this.total = res.data?.totalElements ?? 0;
+        this.listLoad.end();
+      },
+      error: (err) => {
+        this.snack.error(err.message);
+        this.rows = [];
+        this.total = 0;
+        this.listLoad.end();
+      }
     });
   }
 
   loadProviders(): void {
+    this.providersLoading = true;
     this.svc.listProviders().subscribe({
-      next: (res) => { this.providers = res.data ?? []; },
-      error: (err) => this.snack.error(err.message)
+      next: (res) => {
+        this.providers = res.data ?? [];
+        this.providersLoading = false;
+      },
+      error: (err) => {
+        this.snack.error(err.message);
+        this.providersLoading = false;
+      }
     });
   }
+
+  onSearch(): void { this.page = 0; this.loadClaims(); }
+  hasActiveFilters(): boolean { return !!this.search.trim() || !!this.statusFilter; }
 
   onCreateClaim(): void {
     this.dialogs.open(InsuranceClaimDialogComponent, { width: '480px' }).afterClosed().subscribe((saved) => { if (saved) this.loadClaims(); });

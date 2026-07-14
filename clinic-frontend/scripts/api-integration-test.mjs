@@ -91,6 +91,7 @@ async function main() {
   await check('GET /billing/invoices', 'GET', '/billing/invoices?page=0&size=5');
   await check('GET /billing/invoices search', 'GET', '/billing/invoices?page=0&size=5&q=test');
   await check('GET /billing/payments', 'GET', '/billing/payments?page=0&size=5');
+  await check('GET /billing/payments search', 'GET', '/billing/payments?page=0&size=5&q=test');
   await check('GET /insurance/providers', 'GET', '/insurance/providers?page=0&size=5');
   await check('GET /users', 'GET', '/users?page=0&size=5');
   await check('GET /users search', 'GET', '/users?page=0&size=5&q=test');
@@ -101,6 +102,11 @@ async function main() {
   await check('GET /lookups/admin/by-type SPECIALTY', 'GET', '/lookups/admin/by-type?type=SPECIALTY');
   await check('GET /role-permissions/me', 'GET', '/role-permissions/me');
   await check('GET /queue/today', 'GET', `/queue/today?branchId=${branchId}`);
+  await check('POST /auth/forgot-password', 'POST', '/auth/forgot-password', {
+    body: { username: LOGIN.username },
+    auth: false,
+    branch: false
+  });
 
   const passed = results.filter((r) => r.ok).length;
   const total = results.length;

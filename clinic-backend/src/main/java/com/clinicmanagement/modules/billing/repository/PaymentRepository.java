@@ -12,4 +12,14 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
 
     @Query("SELECT p FROM Payment p JOIN p.invoice i WHERE (:branchId IS NULL OR i.branchId = :branchId) ORDER BY p.paidAt DESC")
     Page<Payment> findAllOrdered(@Param("branchId") Long branchId, Pageable pageable);
+
+    @Query("""
+        SELECT p FROM Payment p JOIN p.invoice i
+        WHERE (:branchId IS NULL OR i.branchId = :branchId)
+        AND (:q = '' OR LOWER(COALESCE(p.paymentMethod, '')) LIKE LOWER(CONCAT('%', :q, '%'))
+            OR LOWER(COALESCE(p.referenceNo, '')) LIKE LOWER(CONCAT('%', :q, '%'))
+            OR LOWER(COALESCE(p.notes, '')) LIKE LOWER(CONCAT('%', :q, '%')))
+        ORDER BY p.paidAt DESC
+        """)
+    Page<Payment> search(@Param("q") String q, @Param("branchId") Long branchId, Pageable pageable);
 }

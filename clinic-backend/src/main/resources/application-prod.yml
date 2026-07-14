@@ -3,6 +3,10 @@ spring:
     activate:
       on-profile: prod
 
+app:
+  cors:
+    allowed-origin-patterns: ${CORS_ALLOWED_ORIGINS}
+
 jwt:
   secret: ${JWT_SECRET}
 
@@ -11,5 +15,10 @@ user:
     password: ${USER_DEFAULT_PASSWORD}
 
 clinic:
+  mail:
+    enabled: ${MAIL_ENABLED:true}
+    from: ${MAIL_FROM}
+  password-reset:
+    base-url: ${PASSWORD_RESET_BASE_URL}
   tv:
     display-token: ${TV_DISPLAY_TOKEN}

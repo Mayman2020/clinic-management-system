@@ -20,6 +20,8 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
         @Param("doctorId") Long doctorId, @Param("status") AppointmentStatus status, @Param("branchId") Long branchId);
     @Query("SELECT a.status, COUNT(a) FROM Appointment a WHERE a.appointmentDate BETWEEN :from AND :to GROUP BY a.status")
     List<Object[]> countByStatus(@Param("from") LocalDate from, @Param("to") LocalDate to);
+    @Query("SELECT a.status, COUNT(a) FROM Appointment a WHERE a.appointmentDate BETWEEN :from AND :to AND (:branchId IS NULL OR a.branchId = :branchId) GROUP BY a.status")
+    List<Object[]> countByStatus(@Param("from") LocalDate from, @Param("to") LocalDate to, @Param("branchId") Long branchId);
     long countByAppointmentDateBetween(LocalDate from, LocalDate to);
     long countByAppointmentDate(LocalDate date);
     @Query("SELECT COUNT(a) FROM Appointment a WHERE a.active = true AND a.appointmentDate = :date AND (:branchId IS NULL OR a.branchId = :branchId)")

@@ -23,16 +23,19 @@ import { SnackService } from '../../../core/services/snack.service';
 import { PrescriptionDialogComponent } from '../../prescription/prescription-dialog/prescription-dialog.component';
 import { LabDialogComponent } from '../../lab/lab-dialog/lab-dialog.component';
 import { RadiologyDialogComponent } from '../../radiology/radiology-dialog/radiology-dialog.component';
+import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 import { ConfirmService } from '../../../core/services/confirm.service';
+import { ListLoadController } from '../../../shared/utils/list-load.util';
+import { RmsDatePipe } from '../../../shared/pipes/rms-date.pipe';
 
 @Component({
   selector: 'app-consultation-list', standalone: true,
-  imports: [NgFor, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault, FormsModule, RouterLink, TranslateModule, MatTableModule, MatButtonModule, MatIconModule, MatInputModule, MatFormFieldModule, MatProgressSpinnerModule, TablePagerComponent, MatDialogModule, MatTooltipModule, PageHeaderComponent, RmsIconBtnComponent, HasPermissionDirective, TranslateKeyPipe],
+  imports: [NgFor, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault, FormsModule, RouterLink, TranslateModule, MatTableModule, MatButtonModule, MatIconModule, MatInputModule, MatFormFieldModule, MatProgressSpinnerModule, TablePagerComponent, MatDialogModule, MatTooltipModule, PageHeaderComponent, RmsIconBtnComponent, EmptyStateComponent, HasPermissionDirective, TranslateKeyPipe, RmsDatePipe],
   templateUrl: './consultation-list.component.html',
   styleUrl: './consultation-list.component.scss'
 })
 export class ConsultationListComponent implements OnInit {
-  loading = false;
+  listLoad = new ListLoadController();
   page = 0;
   size = 10;
   total = 0;
@@ -64,11 +67,18 @@ export class ConsultationListComponent implements OnInit {
   }
 
   load(): void {
-    this.loading = true;
+    this.listLoad.begin();
     if (this.patientFilter) {
       this.svc.getByPatient(this.patientFilter).subscribe({
-        next: (r) => { this.rows = r.data ?? []; this.total = this.rows.length; this.loading = false; },
-        error: (err) => { this.snack.error(err.message); this.loading = false; }
+        next: (r) => {
+          this.rows = r.data ?? [];
+          this.total = this.rows.length;
+          this.listLoad.end();
+        },
+        error: (err) => {
+          this.snack.error(err.message);
+          this.listLoad.end();
+        }
       });
       return;
     }
@@ -76,11 +86,19 @@ export class ConsultationListComponent implements OnInit {
       next: (res) => {
         this.rows = res.data?.content ?? [];
         this.total = res.data?.totalElements ?? 0;
-        this.loading = false;
+        this.listLoad.end();
       },
-      error: (err) => { this.snack.error(err.message); this.loading = false; }
+      error: (err) => {
+        this.snack.error(err.message);
+        this.rows = [];
+        this.total = 0;
+        this.listLoad.end();
+      }
     });
   }
+
+  onSearch(): void { this.page = 0; this.load(); }
+  hasActiveFilters(): boolean { return !!this.search.trim() || !!this.patientFilter; }
 
   onPrescription(row: Consultation): void {
     this.dialogs.open(PrescriptionDialogComponent, {

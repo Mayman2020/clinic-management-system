@@ -48,7 +48,7 @@ spring:
           starttls:
             enable: true
 jwt:
-  secret: ${JWT_SECRET:ClinicManagementSecretKey2024VeryLongAndSecureKeyForJWT}
+  secret: ${JWT_SECRET}
   expiration: 86400000
   refresh-expiration: 604800000
 user:
@@ -58,7 +58,7 @@ file:
   upload-dir: ${UPLOAD_DIR:D:/clinic-files}
   base-url: ${FILE_BASE_URL:http://localhost:8086/api/v1}
 server:
-  port: 8086
+  port: ${SERVER_PORT:8086}
   servlet:
     context-path: /api/v1
 logging:
@@ -67,11 +67,26 @@ logging:
     org.springframework.security: WARN
     org.flywaydb: INFO
     org.hibernate.SQL: WARN
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  health:
+    mail:
+      enabled: ${clinic.mail.enabled:false}
 clinic:
   mail:
     enabled: ${MAIL_ENABLED:false}
     from: ${MAIL_FROM:noreply@clinic.local}
+  password-reset:
+    base-url: ${PASSWORD_RESET_BASE_URL:}
   reminders:
     cron: ${REMINDER_CRON:0 0 8 * * *}
   tv:
     display-token: ${TV_DISPLAY_TOKEN:dev-tv-display-token}
+
+app:
+  cors:
+    allowed-origin-patterns: ${CORS_ALLOWED_ORIGINS:}

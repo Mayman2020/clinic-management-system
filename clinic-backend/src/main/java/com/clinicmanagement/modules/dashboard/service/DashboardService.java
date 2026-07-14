@@ -58,12 +58,18 @@ public class DashboardService {
 
     @Transactional(readOnly = true)
     public List<ChartPoint> getDailyRevenueChart() {
+        return getDailyRevenueChart(null);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ChartPoint> getDailyRevenueChart(Long branchIdOverride) {
+        Long branchId = branchIdOverride != null ? branchIdOverride : branchContext.getFilterBranchId();
         LocalDate today = LocalDate.now();
         LocalDate weekStart = today.minusDays(6);
         List<ChartPoint> points = new ArrayList<>();
         for (int i = 0; i < 7; i++) {
             LocalDate d = weekStart.plusDays(i);
-            BigDecimal sum = invoiceRepository.sumPaidBetween(d.atStartOfDay(), d.atTime(LocalTime.MAX));
+            BigDecimal sum = invoiceRepository.sumPaidBetween(d.atStartOfDay(), d.atTime(LocalTime.MAX), branchId);
             points.add(ChartPoint.builder().label(d.toString()).value(sum == null ? BigDecimal.ZERO : sum).build());
         }
         return points;
@@ -71,9 +77,15 @@ public class DashboardService {
 
     @Transactional(readOnly = true)
     public List<ChartPoint> getAppointmentsChart() {
+        return getAppointmentsChart(null);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ChartPoint> getAppointmentsChart(Long branchIdOverride) {
+        Long branchId = branchIdOverride != null ? branchIdOverride : branchContext.getFilterBranchId();
         LocalDate today = LocalDate.now();
         List<ChartPoint> points = new ArrayList<>();
-        for (Object[] row : appointmentRepository.countByStatus(today.minusDays(6), today.plusDays(1))) {
+        for (Object[] row : appointmentRepository.countByStatus(today.minusDays(6), today.plusDays(1), branchId)) {
             points.add(ChartPoint.builder().label(String.valueOf(row[0])).count((Long) row[1]).build());
         }
         return points;
@@ -102,6 +114,12 @@ public class DashboardService {
 
     @Transactional(readOnly = true)
     public DashboardReportResponse buildReport() {
+        return buildReport(null);
+    }
+
+    @Transactional(readOnly = true)
+    public DashboardReportResponse buildReport(Long branchIdOverride) {
+        Long branchId = branchIdOverride != null ? branchIdOverride : branchContext.getFilterBranchId();
         LocalDate today = LocalDate.now();
         LocalDate weekStart = today.minusDays(6);
 
@@ -110,7 +128,7 @@ public class DashboardService {
             LocalDate d = weekStart.plusDays(i);
             LocalDateTime from = d.atStartOfDay();
             LocalDateTime to = d.atTime(LocalTime.MAX);
-            BigDecimal sum = invoiceRepository.sumPaidBetween(from, to);
+            BigDecimal sum = invoiceRepository.sumPaidBetween(from, to, branchId);
             dailyRevenue.add(ChartPoint.builder().label(d.toString()).value(sum == null ? BigDecimal.ZERO : sum).build());
         }
 
@@ -120,19 +138,19 @@ public class DashboardService {
             YearMonth month = ym.minusMonths(5 - m);
             LocalDateTime from = month.atDay(1).atStartOfDay();
             LocalDateTime to = month.atEndOfMonth().atTime(LocalTime.MAX);
-            BigDecimal sum = invoiceRepository.sumPaidBetween(from, to);
+            BigDecimal sum = invoiceRepository.sumPaidBetween(from, to, branchId);
             monthlyRevenue.add(ChartPoint.builder().label(month.toString()).value(sum == null ? BigDecimal.ZERO : sum).build());
         }
 
         List<ChartPoint> topServices = new ArrayList<>();
-        for (Object[] row : invoiceRepository.topServices()) {
+        for (Object[] row : invoiceRepository.topServices(branchId)) {
             topServices.add(ChartPoint.builder().label(String.valueOf(row[0])).value((BigDecimal) row[1]).build());
         }
 
         List<ChartPoint> doctorPerformance = getDoctorPerformanceChart(today.minusDays(29), today);
 
         Map<String, Long> appointmentStats = new LinkedHashMap<>();
-        for (Object[] row : appointmentRepository.countByStatus(today.minusMonths(1), today.plusDays(1))) {
+        for (Object[] row : appointmentRepository.countByStatus(today.minusMonths(1), today.plusDays(1), branchId)) {
             appointmentStats.put(String.valueOf(row[0]), (Long) row[1]);
         }
 

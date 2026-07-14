@@ -61,7 +61,7 @@
       <mat-tab [label]="'APPOINTMENTS.TITLE' | translate">
         <div class="tab-panel">
           <div class="timeline-item" *ngFor="let a of appointments">
-            <div class="timeline-date">{{ a.appointmentDate }}</div>
+            <div class="timeline-date">{{ a.appointmentDate | rmsDate }}</div>
             <div class="timeline-body">
               <strong>{{ a.appointmentNo }}</strong>
               <div class="timeline-meta">{{ a.doctorName }} · {{ a.startTime }} · {{ a.status | tk:'STATUS' }}</div>

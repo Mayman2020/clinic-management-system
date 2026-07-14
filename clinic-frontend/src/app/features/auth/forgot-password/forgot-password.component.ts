@@ -8,6 +8,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { I18nService } from '../../../core/i18n/i18n.service';
 import { ThemeService } from '../../../core/services/theme.service';
 import { SnackService } from '../../../core/services/snack.service';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-forgot-password',
@@ -30,7 +31,7 @@ import { SnackService } from '../../../core/services/snack.service';
             <span class="material-icons">person</span>
             <input formControlName="username" type="text" [placeholder]="'AUTH.USERNAME' | translate">
           </div>
-          <button type="submit" class="submit-btn" [disabled]="form.invalid || sent">
+          <button type="submit" class="submit-btn" [disabled]="form.invalid || sent || loading">
             {{ sent ? ('AUTH.RESET_SENT' | translate) : ('AUTH.SEND_RESET' | translate) }}
           </button>
         </form>
@@ -96,19 +97,33 @@ import { SnackService } from '../../../core/services/snack.service';
 export class ForgotPasswordComponent {
   form: FormGroup;
   sent = false;
+  loading = false;
 
   constructor(
     private readonly fb: FormBuilder,
     readonly i18n: I18nService,
     readonly theme: ThemeService,
-    private readonly snack: SnackService
+    private readonly snack: SnackService,
+    private readonly auth: AuthService
   ) {
     this.form = this.fb.group({ username: ['', Validators.required] });
   }
 
   submit(): void {
-    if (this.form.invalid || this.sent) return;
-    this.sent = true;
-    this.snack.success(this.i18n.instant('AUTH.RESET_SENT'));
+    if (this.form.invalid || this.sent || this.loading) return;
+    this.loading = true;
+    const username = this.form.get('username')?.value as string;
+    this.auth.forgotPassword(username).subscribe({
+      next: () => {
+        this.sent = true;
+        this.loading = false;
+        this.snack.success(this.i18n.instant('AUTH.RESET_SENT'));
+      },
+      error: () => {
+        this.loading = false;
+        this.sent = true;
+        this.snack.success(this.i18n.instant('AUTH.RESET_SENT'));
+      }
+    });
   }
 }

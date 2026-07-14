@@ -25,4 +25,6 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
     BigDecimal sumPaidBetween(@Param("from") LocalDateTime from, @Param("to") LocalDateTime to, @Param("branchId") Long branchId);
     @Query("SELECT ii.itemType, SUM(ii.totalPrice) FROM InvoiceItem ii GROUP BY ii.itemType ORDER BY SUM(ii.totalPrice) DESC")
     List<Object[]> topServices();
+    @Query("SELECT ii.itemType, SUM(ii.totalPrice) FROM InvoiceItem ii JOIN ii.invoice i WHERE (:branchId IS NULL OR i.branchId = :branchId) GROUP BY ii.itemType ORDER BY SUM(ii.totalPrice) DESC")
+    List<Object[]> topServices(@Param("branchId") Long branchId);
 }

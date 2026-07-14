@@ -12,22 +12,24 @@ import { TranslateModule } from '@ngx-translate/core';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 import { RmsIconBtnComponent } from '../../../shared/components/rms-icon-btn/rms-icon-btn.component';
 import { HasPermissionDirective } from '../../../shared/directives/has-permission.directive';
+import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 import { Branch, BranchService } from '../../../core/services/branch.service';
 import { SnackService } from '../../../core/services/snack.service';
 import { BranchDialogComponent } from '../branch-dialog/branch-dialog.component';
+import { ListLoadController } from '../../../shared/utils/list-load.util';
 
 @Component({
   selector: 'app-branch-list',
   standalone: true,
   imports: [
     NgFor, NgIf, FormsModule, TranslateModule, MatTableModule, MatButtonModule, MatIconModule,
-    MatProgressSpinnerModule, MatDialogModule, MatTooltipModule, PageHeaderComponent, RmsIconBtnComponent, HasPermissionDirective
+    MatProgressSpinnerModule, MatDialogModule, MatTooltipModule, PageHeaderComponent, RmsIconBtnComponent, EmptyStateComponent, HasPermissionDirective
   ],
   templateUrl: './branch-list.component.html',
   styleUrl: './branch-list.component.scss'
 })
 export class BranchListComponent implements OnInit {
-  loading = false;
+  listLoad = new ListLoadController();
   search = '';
   rows: Branch[] = [];
   displayedColumns = ['branchCode', 'name', 'phone', 'actions'];
@@ -41,12 +43,21 @@ export class BranchListComponent implements OnInit {
   ngOnInit(): void { this.load(); }
 
   load(): void {
-    this.loading = true;
+    this.listLoad.begin();
     this.svc.list().subscribe({
-      next: (r) => { this.rows = r.data ?? []; this.loading = false; },
-      error: (e) => { this.snack.error(e.message); this.loading = false; }
+      next: (r) => {
+        this.rows = r.data ?? [];
+        this.listLoad.end();
+      },
+      error: (e) => {
+        this.snack.error(e.message);
+        this.rows = [];
+        this.listLoad.end();
+      }
     });
   }
+
+  hasActiveFilters(): boolean { return !!this.search.trim(); }
 
   onCreate(): void {
     this.dialogs.open(BranchDialogComponent, { width: '480px' }).afterClosed().subscribe((saved) => { if (saved) this.load(); });

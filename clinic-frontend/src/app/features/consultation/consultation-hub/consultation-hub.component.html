@@ -13,7 +13,7 @@
     <div class="app-card-body detail-grid">
       <div class="detail-row"><span>{{ 'APPOINTMENTS.PATIENT' | translate }}</span><strong>{{ consultation.patientName }}</strong></div>
       <div class="detail-row"><span>{{ 'APPOINTMENTS.DOCTOR' | translate }}</span><strong>{{ consultation.doctorName }}</strong></div>
-      <div class="detail-row"><span>{{ 'COMMON.DATE' | translate }}</span><strong>{{ consultation.createdAt }}</strong></div>
+      <div class="detail-row"><span>{{ 'COMMON.DATE' | translate }}</span><strong>{{ consultation.createdAt | rmsDate:'datetime' }}</strong></div>
       <div class="detail-block" *ngIf="consultation.symptoms">
         <span class="label">{{ 'CONSULTATION.SYMPTOMS' | translate }}</span>
         <p>{{ consultation.symptoms }}</p>

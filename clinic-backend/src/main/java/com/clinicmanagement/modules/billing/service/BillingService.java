@@ -147,9 +147,13 @@ public class BillingService {
         return getById(invoice.getId());
     }
 
-    public Page<PaymentResponse> listPayments(Pageable pageable) {
-        return paymentRepository.findAllOrdered(branchContext.getFilterBranchId(), pageable)
-            .map(p -> PaymentResponse.builder().id(p.getId()).amount(p.getAmount())
+    public Page<PaymentResponse> listPayments(Pageable pageable, String q) {
+        String query = trim(q);
+        Long branchId = branchContext.getFilterBranchId();
+        Page<Payment> page = query.isEmpty()
+            ? paymentRepository.findAllOrdered(branchId, pageable)
+            : paymentRepository.search(query, branchId, pageable);
+        return page.map(p -> PaymentResponse.builder().id(p.getId()).amount(p.getAmount())
                 .paymentMethod(p.getPaymentMethod()).referenceNo(p.getReferenceNo())
                 .paidAt(p.getPaidAt()).notes(p.getNotes()).build());
     }

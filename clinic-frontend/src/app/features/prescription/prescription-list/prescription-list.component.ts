@@ -20,21 +20,25 @@ import { PrescriptionService } from '../../../core/services/prescription.service
 import { Prescription } from '../../../core/models/prescription.model';
 import { SnackService } from '../../../core/services/snack.service';
 import { PrintService } from '../../../core/services/print.service';
+import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 import { PrescriptionDialogComponent } from '../prescription-dialog/prescription-dialog.component';
+import { ListLoadController } from '../../../shared/utils/list-load.util';
 
 @Component({
   selector: 'app-prescription-list',
   standalone: true,
-  imports: [NgFor, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault, FormsModule, TranslateModule, MatTableModule, MatButtonModule, MatIconModule, MatInputModule, MatFormFieldModule, MatProgressSpinnerModule, TablePagerComponent, MatDialogModule, MatTooltipModule, PageHeaderComponent, RmsIconBtnComponent, HasPermissionDirective, TranslateKeyPipe],
+  imports: [NgFor, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault, FormsModule, TranslateModule, MatTableModule, MatButtonModule, MatIconModule, MatInputModule, MatFormFieldModule, MatProgressSpinnerModule, TablePagerComponent, MatDialogModule, MatTooltipModule, PageHeaderComponent, RmsIconBtnComponent, EmptyStateComponent, HasPermissionDirective, TranslateKeyPipe],
   templateUrl: './prescription-list.component.html',
   styleUrl: './prescription-list.component.scss'
 })
 export class PrescriptionListComponent implements OnInit {
-  loading = false;
+  listLoad = new ListLoadController();
   page = 0;
   size = 10;
   total = 0;
   search = '';
+  statusFilter = '';
+  statusOptions = ['ACTIVE', 'DISPENSED', 'CANCELLED'];
   rows: Prescription[] = [];
   displayedColumns = ['prescriptionNo', 'patientName', 'status', 'actions'];
   columns = [{ key: 'prescriptionNo', labelKey: 'PRESCRIPTION.NO' }, { key: 'patientName', labelKey: 'APPOINTMENTS.PATIENT' }, { key: 'status', labelKey: 'COMMON.STATUS' }];
@@ -44,15 +48,28 @@ export class PrescriptionListComponent implements OnInit {
   ngOnInit(): void { this.load(); }
 
   load(): void {
-    this.loading = true;
+    this.listLoad.begin();
     const params: Record<string, string | number> = {};
     if (this.search.trim()) params['q'] = this.search.trim();
+    if (this.statusFilter) params['status'] = this.statusFilter;
     this.svc.list(this.page, this.size, params).subscribe({
-      next: (res) => { this.rows = res.data?.content ?? [];
-        this.total = res.data?.totalElements ?? 0; this.loading = false; },
-      error: (err) => { this.snack.error(err.message); this.loading = false; }
+      next: (res) => {
+        this.rows = res.data?.content ?? [];
+        this.total = res.data?.totalElements ?? 0;
+        this.listLoad.end();
+      },
+      error: (err) => {
+        this.snack.error(err.message);
+        this.rows = [];
+        this.total = 0;
+        this.listLoad.end();
+      }
     });
   }
+
+  onSearch(): void { this.page = 0; this.load(); }
+  onFilterChange(): void { this.page = 0; this.load(); }
+  hasActiveFilters(): boolean { return !!this.search.trim() || !!this.statusFilter; }
 
   onCreate(): void {
     this.dialogs.open(PrescriptionDialogComponent, { width: '520px' }).afterClosed().subscribe((saved) => { if (saved) this.load(); });

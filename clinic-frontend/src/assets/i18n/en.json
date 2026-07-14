@@ -58,7 +58,16 @@
     "FORGOT_PASSWORD": "Forgot password?",
     "FORGOT_PASSWORD_HINT": "Enter your username and we will send reset instructions to your registered email.",
     "SEND_RESET": "Send reset link",
-    "RESET_SENT": "If an account exists, reset instructions have been sent."
+    "RESET_SENT": "If an account exists, reset instructions have been sent.",
+    "RESET_PASSWORD": "Reset password",
+    "RESET_PASSWORD_HINT": "Enter your new password below.",
+    "NEW_PASSWORD": "New password",
+    "CONFIRM_PASSWORD": "Confirm password",
+    "PASSWORD_MISMATCH": "Passwords do not match",
+    "UPDATE_PASSWORD": "Update password",
+    "PASSWORD_UPDATED": "Password updated successfully",
+    "INVALID_RESET_TOKEN": "Invalid or missing reset link. Request a new one from the login page.",
+    "RESET_FAILED": "Password reset failed"
   },
   "LOGIN": {
     "BRAND_NAME": "CareWell",

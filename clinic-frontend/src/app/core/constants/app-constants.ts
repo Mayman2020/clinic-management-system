@@ -23,6 +23,8 @@ export const AppConstants = {
     AUTH_LOGIN: '/auth/login',
     AUTH_LOGOUT: '/auth/logout',
     AUTH_REFRESH: '/auth/refresh',
+    AUTH_FORGOT_PASSWORD: '/auth/forgot-password',
+    AUTH_RESET_PASSWORD: '/auth/reset-password',
     USERS: '/users',
     USER_BY_ID: (id: number) => `/users/${id}`,
     USERS_ME: '/users/me',

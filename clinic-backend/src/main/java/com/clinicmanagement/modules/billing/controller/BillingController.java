@@ -57,8 +57,9 @@ public class BillingController {
         return ResponseEntity.ok(ApiResponse.ok(billingService.addMixedPayment(id, request, userId)));
     }
     @GetMapping("/payments") @RequiresPermission(module = "billing", action = "view")
-    public ResponseEntity<ApiResponse<Page<PaymentResponse>>> listPayments(Pageable pageable) {
-        return ResponseEntity.ok(ApiResponse.ok(billingService.listPayments(pageable)));
+    public ResponseEntity<ApiResponse<Page<PaymentResponse>>> listPayments(Pageable pageable,
+            @RequestParam(required = false) String q) {
+        return ResponseEntity.ok(ApiResponse.ok(billingService.listPayments(pageable, q)));
     }
     @GetMapping("/invoices/{id}/payments") @RequiresPermission(module = "billing", action = "view")
     public ResponseEntity<ApiResponse<List<PaymentResponse>>> paymentsByInvoice(@PathVariable Long id) {

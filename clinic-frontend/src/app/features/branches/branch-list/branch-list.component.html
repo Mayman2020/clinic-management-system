@@ -6,9 +6,18 @@
     </div>
   </app-page-header>
 
-  <div class="loading-wrap" *ngIf="loading"><mat-spinner diameter="40"></mat-spinner></div>
+  <div class="loading-wrap" *ngIf="listLoad.showInitialSpinner"><mat-spinner diameter="40"></mat-spinner></div>
 
-  <div class="app-list-surface" *ngIf="!loading">
+  <app-empty-state
+    *ngIf="listLoad.showSurface && filteredRows.length === 0 && !hasActiveFilters()"
+    icon="business"
+    titleKey="BRANCHES.TITLE"
+    messageKey="COMMON.NO_DATA">
+  </app-empty-state>
+
+  <div class="app-list-surface" [class.is-refreshing]="listLoad.refreshing"
+    *ngIf="listLoad.showSurface && (filteredRows.length > 0 || hasActiveFilters())">
+    <div class="list-refresh-spinner" *ngIf="listLoad.refreshing"><mat-spinner diameter="32"></mat-spinner></div>
     <section class="list-stats">
       <article class="stat-pill stat-pill--cyan"><span class="stat-label">{{ 'COMMON.TOTAL' | translate }}</span><strong>{{ rows.length }}</strong></article>
       <article class="stat-pill stat-pill--teal"><span class="stat-label">{{ 'COMMON.ON_PAGE' | translate }}</span><strong>{{ filteredRows.length }}</strong></article>
@@ -48,7 +57,6 @@
           <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
         </table>
       </div>
-      <p *ngIf="!filteredRows.length" class="empty-state">{{ 'COMMON.NO_DATA' | translate }}</p>
     </section>
   </div>
 </div>

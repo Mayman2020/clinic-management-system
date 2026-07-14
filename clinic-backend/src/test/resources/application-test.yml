@@ -1,0 +1,21 @@
+jwt:
+  secret: TestSecretKeyForClinicBackendUnitTestsOnlyMustBeLongEnough
+  expiration: 3600000
+  refresh-expiration: 7200000
+
+clinic:
+  mail:
+    enabled: false
+
+file:
+  upload-dir: ${java.io.tmpdir}/clinic-test-uploads
+  base-url: http://localhost:8086/api/v1
+
+app:
+  cors:
+    allowed-origin-patterns: http://localhost:[*],http://127.0.0.1:[*]
+
+server:
+  port: 0
+  servlet:
+    context-path: /api/v1

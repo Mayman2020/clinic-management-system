@@ -11,22 +11,30 @@
     </div>
   </app-page-header>
 
-  <section class="list-stats" *ngIf="!loading">
+  <section class="list-stats" *ngIf="listLoad.showSurface || providers.length">
     <article class="stat-pill stat-pill--teal"><span class="stat-label">{{ 'INSURANCE.CLAIMS' | translate }}</span><strong>{{ total }}</strong></article>
     <article class="stat-pill stat-pill--green"><span class="stat-label">{{ 'INSURANCE.PROVIDERS' | translate }}</span><strong>{{ providers.length }}</strong></article>
   </section>
 
-  <div class="loading-wrap" *ngIf="loading"><mat-spinner diameter="40"></mat-spinner></div>
+  <div class="loading-wrap" *ngIf="listLoad.showInitialSpinner"><mat-spinner diameter="40"></mat-spinner></div>
 
-  <mat-tab-group [(selectedIndex)]="tab" *ngIf="!loading">
+  <mat-tab-group [(selectedIndex)]="tab" *ngIf="listLoad.showSurface || providers.length || providersLoading">
     <mat-tab [label]="'INSURANCE.CLAIMS' | translate">
-      <div class="app-list-surface">
+      <app-empty-state
+        *ngIf="listLoad.showSurface && rows.length === 0 && !hasActiveFilters()"
+        icon="health_and_safety"
+        titleKey="INSURANCE.CLAIMS"
+        messageKey="COMMON.NO_DATA">
+      </app-empty-state>
+      <div class="app-list-surface" [class.is-refreshing]="listLoad.refreshing"
+        *ngIf="listLoad.showSurface && (rows.length > 0 || hasActiveFilters())">
+        <div class="list-refresh-spinner" *ngIf="listLoad.refreshing"><mat-spinner diameter="32"></mat-spinner></div>
         <section class="estate-card directory-table-card tab-body">
           <div class="estate-table-toolbar directory-toolbar">
             <div class="directory-toolbar-top table-list-toolbar">
               <div class="directory-search">
                 <span class="material-icons">search</span>
-                <input [(ngModel)]="search" (keyup.enter)="page=0; loadClaims()" [placeholder]="'COMMON.SEARCH' | translate">
+                <input [(ngModel)]="search" (keyup.enter)="onSearch()" [placeholder]="'COMMON.SEARCH' | translate">
               </div>
               <mat-form-field appearance="outline" class="filter-field">
                 <mat-label>{{ 'COMMON.STATUS' | translate }}</mat-label>
@@ -35,7 +43,7 @@
                   <mat-option *ngFor="let s of claimStatusOptions" [value]="s">{{ s | tk:'STATUS' }}</mat-option>
                 </mat-select>
               </mat-form-field>
-              <rms-icon-btn icon="search" tooltipKey="COMMON.SEARCH" variant="primary" (clicked)="page=0; loadClaims()"></rms-icon-btn>
+              <rms-icon-btn icon="search" tooltipKey="COMMON.SEARCH" variant="primary" (clicked)="onSearch()"></rms-icon-btn>
             </div>
           </div>
           <div class="app-table-wrap">
@@ -64,7 +72,6 @@
               <tr mat-row *matRowDef="let row; columns: claimColumns"></tr>
             </table>
           </div>
-          <p *ngIf="!rows.length" class="empty-state">{{ 'COMMON.NO_DATA' | translate }}</p>
           <app-table-pager [length]="total" [pageSize]="size" [pageIndex]="page" (pageIndexChange)="onPageIndexChange($event)"></app-table-pager>
         </section>
       </div>

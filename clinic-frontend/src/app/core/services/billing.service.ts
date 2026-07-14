@@ -32,8 +32,8 @@ export class BillingService {
   downloadPdf(id: number): Observable<Blob> {
     return this.api.getBlob(AppConstants.API.INVOICE_PDF(id));
   }
-  recordPayment(invoiceId: number, payload: Partial<Payment>): Observable<ApiResponse<Payment>> {
-    return this.api.post<ApiResponse<Payment>>(AppConstants.API.PAYMENTS_BY_INVOICE(invoiceId), payload);
+  recordPayment(invoiceId: number, payload: Partial<Payment>): Observable<ApiResponse<Invoice>> {
+    return this.mixedPayment(invoiceId, { payments: [payload] });
   }
 
   getPaymentsByInvoice(invoiceId: number): Observable<ApiResponse<Payment[]>> {

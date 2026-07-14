@@ -18,17 +18,17 @@ public class DashboardController {
     }
 
     @GetMapping("/revenue") @RequiresPermission(module = "dashboard", action = "view")
-    public ResponseEntity<ApiResponse<List<ChartPoint>>> revenue() {
-        return ResponseEntity.ok(ApiResponse.ok(dashboardService.getDailyRevenueChart()));
+    public ResponseEntity<ApiResponse<List<ChartPoint>>> revenue(@RequestParam(required = false) Long branchId) {
+        return ResponseEntity.ok(ApiResponse.ok(dashboardService.getDailyRevenueChart(branchId)));
     }
 
     @GetMapping("/appointments") @RequiresPermission(module = "dashboard", action = "view")
-    public ResponseEntity<ApiResponse<List<ChartPoint>>> appointments() {
-        return ResponseEntity.ok(ApiResponse.ok(dashboardService.getAppointmentsChart()));
+    public ResponseEntity<ApiResponse<List<ChartPoint>>> appointments(@RequestParam(required = false) Long branchId) {
+        return ResponseEntity.ok(ApiResponse.ok(dashboardService.getAppointmentsChart(branchId)));
     }
 
     @GetMapping("/reports") @RequiresPermission(module = "reports", action = "view")
-    public ResponseEntity<ApiResponse<DashboardReportResponse>> reports() {
-        return ResponseEntity.ok(ApiResponse.ok(dashboardService.buildReport()));
+    public ResponseEntity<ApiResponse<DashboardReportResponse>> reports(@RequestParam(required = false) Long branchId) {
+        return ResponseEntity.ok(ApiResponse.ok(dashboardService.buildReport(branchId)));
     }
 }

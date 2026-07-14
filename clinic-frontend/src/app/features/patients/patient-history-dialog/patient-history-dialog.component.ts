@@ -5,6 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatTabsModule } from '@angular/material/tabs';
 import { TranslateModule } from '@ngx-translate/core';
 import { TranslateKeyPipe } from '../../../shared/pipes/translate-key.pipe';
+import { RmsDatePipe } from '../../../shared/pipes/rms-date.pipe';
 import { ConsultationService } from '../../../core/services/consultation.service';
 import { AppointmentService } from '../../../core/services/appointment.service';
 import { LabService } from '../../../core/services/lab.service';
@@ -17,14 +18,14 @@ import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-patient-history-dialog', standalone: true,
-  imports: [NgFor, NgIf, MatDialogModule, MatButtonModule, MatTabsModule, TranslateModule, TranslateKeyPipe],
+  imports: [NgFor, NgIf, MatDialogModule, MatButtonModule, MatTabsModule, TranslateModule, TranslateKeyPipe, RmsDatePipe],
   template: `
     <h2 mat-dialog-title>{{ 'PATIENTS.FULL_HISTORY' | translate }} — {{ patient.firstName }} {{ patient.lastName }}</h2>
     <mat-dialog-content class="patient-timeline">
       <mat-tab-group>
         <mat-tab [label]="'CONSULTATION.TITLE' | translate">
           <div class="history-row" *ngFor="let c of consultations">
-            <div class="date">{{ c.createdAt }}</div>
+            <div class="date">{{ c.createdAt | rmsDate:'datetime' }}</div>
             <div class="body">
               <strong>{{ c.diagnosis || ('COMMON.UNKNOWN' | translate) }}</strong>
               <div class="meta">{{ c.doctorName }} · {{ c.status | tk:'STATUS' }}</div>
@@ -35,7 +36,7 @@ import { forkJoin } from 'rxjs';
         </mat-tab>
         <mat-tab [label]="'APPOINTMENTS.TITLE' | translate">
           <div class="history-row" *ngFor="let a of appointments">
-            <div class="date">{{ a.appointmentDate }}</div>
+            <div class="date">{{ a.appointmentDate | rmsDate }}</div>
             <div class="body">
               <strong>{{ a.appointmentNo }}</strong>
               <div class="meta">{{ a.doctorName }} · {{ a.status | tk:'STATUS' }}</div>
@@ -45,7 +46,7 @@ import { forkJoin } from 'rxjs';
         </mat-tab>
         <mat-tab [label]="'LAB.TITLE' | translate">
           <div class="history-row" *ngFor="let l of labRequests">
-            <div class="date">{{ l.requestedAt || l.createdAt }}</div>
+            <div class="date">{{ (l.requestedAt || l.createdAt) | rmsDate:'datetime' }}</div>
             <div class="body">
               <strong>{{ l.testType }}</strong>
               <div class="meta">{{ l.requestNo }} · {{ l.status | tk:'STATUS' }}</div>
@@ -55,7 +56,7 @@ import { forkJoin } from 'rxjs';
         </mat-tab>
         <mat-tab [label]="'BILLING.TITLE' | translate">
           <div class="history-row" *ngFor="let inv of invoices">
-            <div class="date">{{ inv.createdAt }}</div>
+            <div class="date">{{ inv.createdAt | rmsDate:'datetime' }}</div>
             <div class="body">
               <strong>{{ inv.invoiceNo }}</strong>
               <div class="meta">{{ inv.total }} · {{ inv.status | tk:'STATUS' }}</div>

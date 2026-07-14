@@ -6,9 +6,18 @@
     </div>
   </app-page-header>
 
-  <div class="loading-wrap" *ngIf="loading"><mat-spinner diameter="40"></mat-spinner></div>
+  <div class="loading-wrap" *ngIf="listLoad.showInitialSpinner"><mat-spinner diameter="40"></mat-spinner></div>
 
-  <div class="app-list-surface" *ngIf="!loading">
+  <app-empty-state
+    *ngIf="listLoad.showSurface && rows.length === 0 && !hasActiveFilters()"
+    icon="medical_services"
+    titleKey="DOCTORS.TITLE"
+    messageKey="COMMON.NO_DATA">
+  </app-empty-state>
+
+  <div class="app-list-surface" [class.is-refreshing]="listLoad.refreshing"
+    *ngIf="listLoad.showSurface && (rows.length > 0 || hasActiveFilters())">
+    <div class="list-refresh-spinner" *ngIf="listLoad.refreshing"><mat-spinner diameter="32"></mat-spinner></div>
     <section class="list-stats">
       <article class="stat-pill stat-pill--teal"><span class="stat-label">{{ 'COMMON.TOTAL' | translate }}</span><strong>{{ total }}</strong></article>
       <article class="stat-pill stat-pill--cyan"><span class="stat-label">{{ 'COMMON.ON_PAGE' | translate }}</span><strong>{{ rows.length }}</strong></article>
@@ -18,9 +27,18 @@
         <div class="directory-toolbar-top table-list-toolbar">
           <div class="directory-search">
             <span class="material-icons">search</span>
-            <input [(ngModel)]="search" (keyup.enter)="page=0; load()" [placeholder]="'COMMON.SEARCH' | translate">
+            <input [(ngModel)]="search" (keyup.enter)="onSearch()" [placeholder]="'COMMON.SEARCH' | translate">
           </div>
-          <rms-icon-btn icon="search" tooltipKey="COMMON.SEARCH" variant="primary" (clicked)="page=0; load()"></rms-icon-btn>
+          <select class="estate-filter-select" [(ngModel)]="specialtyFilter" (ngModelChange)="onFilterChange()">
+            <option value="">{{ 'DOCTORS.SPECIALTY' | translate }} — {{ 'COMMON.ALL' | translate }}</option>
+            <option *ngFor="let s of specialtyOptions" [value]="s">{{ s | tk:'SPECIALTY' }}</option>
+          </select>
+          <select class="estate-filter-select" [(ngModel)]="activeFilter" (ngModelChange)="onFilterChange()">
+            <option value="">{{ 'COMMON.ALL' | translate }}</option>
+            <option value="true">{{ 'COMMON.ACTIVE' | translate }}</option>
+            <option value="false">{{ 'COMMON.INACTIVE' | translate }}</option>
+          </select>
+          <rms-icon-btn icon="search" tooltipKey="COMMON.SEARCH" variant="primary" (clicked)="onSearch()"></rms-icon-btn>
         </div>
       </div>
       <div class="app-table-wrap">
@@ -46,7 +64,6 @@
           <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
         </table>
       </div>
-      <p *ngIf="!rows.length" class="empty-state">{{ 'COMMON.NO_DATA' | translate }}</p>
       <app-table-pager [length]="total" [pageSize]="size" [pageIndex]="page" (pageIndexChange)="onPageIndexChange($event)"></app-table-pager>
     </section>
   </div>

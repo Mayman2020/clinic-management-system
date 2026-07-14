@@ -22,9 +22,6 @@ export class ConsultationService {
   update(id: number, payload: Partial<Consultation>): Observable<ApiResponse<Consultation>> {
     return this.api.put<ApiResponse<Consultation>>(AppConstants.API.CONSULTATION_BY_ID(id), payload);
   }
-  delete(id: number): Observable<ApiResponse<void>> {
-    return this.api.delete<ApiResponse<void>>(AppConstants.API.CONSULTATION_BY_ID(id));
-  }
   getByPatient(patientId: number): Observable<ApiResponse<Consultation[]>> {
     return this.api.get<ApiResponse<Consultation[]>>(AppConstants.API.CONSULTATIONS_BY_PATIENT(patientId));
   }

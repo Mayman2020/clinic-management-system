@@ -11,6 +11,12 @@ export class DashboardService {
     const params = branchId != null ? { branchId } : undefined;
     return this.api.get<ApiResponse<DashboardStats>>(AppConstants.API.DASHBOARD_STATS, params);
   }
-  getRevenueChart(): Observable<ApiResponse<ChartPoint[]>> { return this.api.get<ApiResponse<ChartPoint[]>>(AppConstants.API.DASHBOARD_REVENUE); }
-  getAppointmentsChart(): Observable<ApiResponse<ChartPoint[]>> { return this.api.get<ApiResponse<ChartPoint[]>>(AppConstants.API.DASHBOARD_APPOINTMENTS); }
+  getRevenueChart(branchId?: number): Observable<ApiResponse<ChartPoint[]>> {
+    const params = branchId != null ? { branchId } : undefined;
+    return this.api.get<ApiResponse<ChartPoint[]>>(AppConstants.API.DASHBOARD_REVENUE, params);
+  }
+  getAppointmentsChart(branchId?: number): Observable<ApiResponse<ChartPoint[]>> {
+    const params = branchId != null ? { branchId } : undefined;
+    return this.api.get<ApiResponse<ChartPoint[]>>(AppConstants.API.DASHBOARD_APPOINTMENTS, params);
+  }
 }

@@ -46,6 +46,13 @@ $env:Path = "$($env:JAVA_HOME)\bin;$env:Path"
 Set-Location $ScriptDir
 $env:SERVER_PORT = "$Port"
 $env:FILE_BASE_URL = "http://localhost:$Port$ContextPath"
+if (-not $env:JWT_SECRET) {
+    $env:JWT_SECRET = "DevOnly-Clinic-Local-JWT-Secret-Min32Chars!"
+    Write-Step "JWT_SECRET not set - using local dev secret (not for production)" "Yellow"
+}
+if (-not $env:SPRING_PROFILES_ACTIVE) {
+    $env:SPRING_PROFILES_ACTIVE = "dev"
+}
 
 Stop-ListenerOnPort -TargetPort $Port
 
@@ -73,7 +80,7 @@ window.__CM_FILE_URL__ = '$BaseUrl/files';
 }
 
 Write-Step "Starting Clinic backend on $BaseUrl" "Green"
-Write-Step "Default login: admin / admin123" "Gray"
+Write-Step "Default login: admin / Dev@Local2026!" "Gray"
 Write-Step "Stop with Ctrl+C" "Gray"
 
 & $MvnwPath spring-boot:run "-Dspring-boot.run.arguments=--server.port=$Port --file.base-url=http://localhost:$Port$ContextPath"

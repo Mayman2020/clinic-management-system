@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -16,6 +17,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("test")
 @Testcontainers
 class ClinicIntegrationTest {
 
@@ -29,6 +31,7 @@ class ClinicIntegrationTest {
         registry.add("spring.datasource.username", postgres::getUsername);
         registry.add("spring.datasource.password", postgres::getPassword);
         registry.add("clinic.mail.enabled", () -> "false");
+        registry.add("jwt.secret", () -> "TestSecretKeyForClinicIntegrationTestsOnlyMustBeLongEnough");
     }
 
     @Autowired
@@ -37,7 +40,7 @@ class ClinicIntegrationTest {
     @Test
     void loginAndBranchContext() {
         ResponseEntity<Map> login = rest.postForEntity("/auth/login",
-            Map.of("username", "admin", "password", "admin123"), Map.class);
+            Map.of("username", "admin", "password", "Dev@Local2026!"), Map.class);
         assertThat(login.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(login.getBody()).isNotNull();
         @SuppressWarnings("unchecked")

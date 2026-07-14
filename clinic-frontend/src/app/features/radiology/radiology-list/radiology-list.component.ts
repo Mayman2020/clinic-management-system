@@ -20,24 +20,28 @@ import { RadiologyService } from '../../../core/services/radiology.service';
 import { FileService } from '../../../core/services/file.service';
 import { RadiologyRequest } from '../../../core/models/radiology.model';
 import { SnackService } from '../../../core/services/snack.service';
+import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 import { RadiologyDialogComponent } from '../radiology-dialog/radiology-dialog.component';
 import { RadiologyResultDialogComponent } from '../radiology-result-dialog/radiology-result-dialog.component';
+import { ListLoadController } from '../../../shared/utils/list-load.util';
 
 const RADIOLOGY_FLOW = ['REQUESTED', 'SCHEDULED', 'IN_PROGRESS', 'COMPLETED'];
 
 @Component({
   selector: 'app-radiology-list',
   standalone: true,
-  imports: [NgFor, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault, FormsModule, TranslateModule, MatTableModule, MatButtonModule, MatIconModule, MatInputModule, MatFormFieldModule, MatProgressSpinnerModule, TablePagerComponent, MatDialogModule, MatTooltipModule, PageHeaderComponent, RmsIconBtnComponent, HasPermissionDirective, TranslateKeyPipe],
+  imports: [NgFor, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault, FormsModule, TranslateModule, MatTableModule, MatButtonModule, MatIconModule, MatInputModule, MatFormFieldModule, MatProgressSpinnerModule, TablePagerComponent, MatDialogModule, MatTooltipModule, PageHeaderComponent, RmsIconBtnComponent, EmptyStateComponent, HasPermissionDirective, TranslateKeyPipe],
   templateUrl: './radiology-list.component.html',
   styleUrl: './radiology-list.component.scss'
 })
 export class RadiologyListComponent implements OnInit {
-  loading = false;
+  listLoad = new ListLoadController();
   page = 0;
   size = 10;
   total = 0;
   search = '';
+  statusFilter = '';
+  statusOptions = RADIOLOGY_FLOW;
   rows: RadiologyRequest[] = [];
   displayedColumns = ['requestNo', 'studyType', 'status', 'attachment', 'actions'];
   columns = [{ key: 'requestNo', labelKey: 'RADIOLOGY.REQUEST_NO' }, { key: 'studyType', labelKey: 'RADIOLOGY.STUDY_TYPE' }, { key: 'status', labelKey: 'COMMON.STATUS' }];
@@ -53,15 +57,28 @@ export class RadiologyListComponent implements OnInit {
   ngOnInit(): void { this.load(); }
 
   load(): void {
-    this.loading = true;
+    this.listLoad.begin();
     const params: Record<string, string | number> = {};
     if (this.search.trim()) params['q'] = this.search.trim();
+    if (this.statusFilter) params['status'] = this.statusFilter;
     this.svc.list(this.page, this.size, params).subscribe({
-      next: (res) => { this.rows = res.data?.content ?? [];
-        this.total = res.data?.totalElements ?? 0; this.loading = false; },
-      error: (err) => { this.snack.error(err.message); this.loading = false; }
+      next: (res) => {
+        this.rows = res.data?.content ?? [];
+        this.total = res.data?.totalElements ?? 0;
+        this.listLoad.end();
+      },
+      error: (err) => {
+        this.snack.error(err.message);
+        this.rows = [];
+        this.total = 0;
+        this.listLoad.end();
+      }
     });
   }
+
+  onSearch(): void { this.page = 0; this.load(); }
+  onFilterChange(): void { this.page = 0; this.load(); }
+  hasActiveFilters(): boolean { return !!this.search.trim() || !!this.statusFilter; }
 
   onCreate(): void {
     this.dialogs.open(RadiologyDialogComponent, { width: '480px' }).afterClosed().subscribe((saved) => { if (saved) this.load(); });

@@ -103,8 +103,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
       forkJoin({
         stats: this.dash.getStats(branchId),
         appts: this.appointments.list(0, 8, { statuses: ['SCHEDULED', 'CONFIRMED'] }),
-        revenue: this.dash.getRevenueChart(),
-        appointments: this.dash.getAppointmentsChart()
+        revenue: this.dash.getRevenueChart(branchId),
+        appointments: this.dash.getAppointmentsChart(branchId)
       }).subscribe({
         next: (res) => this.handleDashboardData(res),
         error: (err) => { this.snack.error(err.message); this.loading = false; }

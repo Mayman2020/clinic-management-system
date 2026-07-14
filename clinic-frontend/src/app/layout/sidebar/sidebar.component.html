@@ -1,6 +1,8 @@
 <aside class="sidebar" [class.collapsed]="collapsed">
   <div class="sidebar-brand">
-    <div class="brand-icon"><img src="assets/brand/clinic-mark.svg" alt="" class="brand-logo" width="40" height="40" /></div>
+    <div class="brand-icon-wrap">
+      <app-clinic-logo [size]="40"/>
+    </div>
     <div class="brand-text" *ngIf="!collapsed">
       <span class="brand-name">{{ 'APP.NAME' | translate }}</span>
       <span class="brand-tagline">{{ 'APP.TAGLINE_SHORT' | translate }}</span>

@@ -13,6 +13,7 @@ import { RmsDialogService } from '../../../shared/services/rms-dialog.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 import { RmsIconBtnComponent } from '../../../shared/components/rms-icon-btn/rms-icon-btn.component';
+import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 import { HasPermissionDirective } from '../../../shared/directives/has-permission.directive';
 import { TranslateKeyPipe } from '../../../shared/pipes/translate-key.pipe';
 import { DoctorService } from '../../../core/services/doctor.service';
@@ -20,20 +21,29 @@ import { Doctor } from '../../../core/models/doctor.model';
 import { SnackService } from '../../../core/services/snack.service';
 import { DoctorDialogComponent } from '../doctor-dialog/doctor-dialog.component';
 import { DoctorScheduleDialogComponent } from '../doctor-schedule-dialog/doctor-schedule-dialog.component';
+import { ListLoadController } from '../../../shared/utils/list-load.util';
+
+const SPECIALTY_OPTIONS = [
+  'GENERAL_MEDICINE', 'PEDIATRICS', 'DENTAL', 'DERMATOLOGY', 'CARDIOLOGY', 'ORTHOPEDICS',
+  'OPHTHALMOLOGY', 'ENT', 'GYNECOLOGY', 'NEUROLOGY', 'PSYCHIATRY', 'UROLOGY', 'OTHER'
+];
 
 @Component({
   selector: 'app-doctor-list',
   standalone: true,
-  imports: [NgFor, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault, FormsModule, TranslateModule, MatTableModule, MatButtonModule, MatIconModule, MatInputModule, MatFormFieldModule, MatProgressSpinnerModule, TablePagerComponent, MatDialogModule, PageHeaderComponent, RmsIconBtnComponent, HasPermissionDirective, TranslateKeyPipe],
+  imports: [NgFor, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault, FormsModule, TranslateModule, MatTableModule, MatButtonModule, MatIconModule, MatInputModule, MatFormFieldModule, MatProgressSpinnerModule, TablePagerComponent, MatDialogModule, PageHeaderComponent, RmsIconBtnComponent, EmptyStateComponent, HasPermissionDirective, TranslateKeyPipe],
   templateUrl: './doctor-list.component.html',
   styleUrl: './doctor-list.component.scss'
 })
 export class DoctorListComponent implements OnInit {
-  loading = false;
+  listLoad = new ListLoadController();
   page = 0;
   size = 10;
   total = 0;
   search = '';
+  specialtyFilter = '';
+  activeFilter = '';
+  specialtyOptions = SPECIALTY_OPTIONS;
   rows: Doctor[] = [];
   displayedColumns = ['doctorCode', 'firstName', 'specialty', 'department', 'actions'];
   columns = [{ key: 'doctorCode', labelKey: 'DOCTORS.CODE' }, { key: 'firstName', labelKey: 'DOCTORS.NAME' }, { key: 'specialty', labelKey: 'DOCTORS.SPECIALTY' }, { key: 'department', labelKey: 'DOCTORS.DEPARTMENT' }];
@@ -43,12 +53,29 @@ export class DoctorListComponent implements OnInit {
   ngOnInit(): void { this.load(); }
 
   load(): void {
-    this.loading = true;
-    this.svc.list(this.page, this.size, this.search).subscribe({
-      next: (res) => { this.rows = res.data?.content ?? [];
-        this.total = res.data?.totalElements ?? 0; this.loading = false; },
-      error: (err) => { this.snack.error(err.message); this.loading = false; }
+    this.listLoad.begin();
+    const params: Record<string, string | number | boolean> = {};
+    if (this.specialtyFilter) params['specialty'] = this.specialtyFilter;
+    if (this.activeFilter !== '') params['active'] = this.activeFilter === 'true';
+    this.svc.list(this.page, this.size, this.search, params).subscribe({
+      next: (res) => {
+        this.rows = res.data?.content ?? [];
+        this.total = res.data?.totalElements ?? 0;
+        this.listLoad.end();
+      },
+      error: (err) => {
+        this.snack.error(err.message);
+        this.rows = [];
+        this.total = 0;
+        this.listLoad.end();
+      }
     });
+  }
+
+  onSearch(): void { this.page = 0; this.load(); }
+  onFilterChange(): void { this.page = 0; this.load(); }
+  hasActiveFilters(): boolean {
+    return !!this.search.trim() || !!this.specialtyFilter || this.activeFilter !== '';
   }
 
   onCreate(): void {

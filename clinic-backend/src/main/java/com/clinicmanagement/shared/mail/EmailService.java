@@ -18,15 +18,15 @@ public class EmailService {
     @Value("${clinic.mail.enabled:false}")
     private boolean enabled;
 
-    public void sendOptional(String to, String subject, String body) {
+    public boolean sendOptional(String to, String subject, String body) {
         if (!enabled || to == null || to.isBlank()) {
             log.debug("Email skipped (enabled={}, to={})", enabled, to);
-            return;
+            return false;
         }
         JavaMailSender sender = mailSender.getIfAvailable();
         if (sender == null) {
             log.debug("JavaMailSender not configured — email skipped");
-            return;
+            return false;
         }
         try {
             SimpleMailMessage msg = new SimpleMailMessage();
@@ -36,8 +36,10 @@ public class EmailService {
             msg.setText(body);
             sender.send(msg);
             log.info("Email sent to {}", to);
+            return true;
         } catch (Exception e) {
             log.warn("Failed to send email to {}: {}", to, e.getMessage());
+            return false;
         }
     }
 }

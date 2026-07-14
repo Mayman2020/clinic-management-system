@@ -1,0 +1,65 @@
+<div class="logo-outer" [class.logo-float]="float">
+  <div class="logo-pulse">
+    <svg
+      [attr.width]="size"
+      [attr.height]="size"
+      viewBox="0 0 64 64"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      [style.display]="'block'"
+    >
+      <defs>
+        <!-- Background gradient: deep medical blue -->
+        <linearGradient [attr.id]="'clBg' + uid" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#1565b8"/>
+          <stop offset="100%" stop-color="#0c4a8a"/>
+        </linearGradient>
+
+        <!-- ECG stroke gradient: fades in from left, fades out to right -->
+        <linearGradient [attr.id]="'clEcg' + uid" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%"   stop-color="#60a5fa" stop-opacity="0"/>
+          <stop offset="28%"  stop-color="#38bdf8" stop-opacity="0.85"/>
+          <stop offset="55%"  stop-color="#93c5fd" stop-opacity="0.9"/>
+          <stop offset="100%" stop-color="#60a5fa" stop-opacity="0"/>
+        </linearGradient>
+
+        <!-- Clip to rounded rect so ECG doesn't bleed outside logo -->
+        <clipPath [attr.id]="'clClip' + uid">
+          <rect width="64" height="64" rx="16"/>
+        </clipPath>
+      </defs>
+
+      <!-- Logo background -->
+      <rect width="64" height="64" rx="16" [attr.fill]="'url(#clBg' + uid + ')'"/>
+
+      <!-- Subtle inner glow overlay -->
+      <rect width="64" height="64" rx="16" fill="white" opacity="0.04"/>
+
+      <!-- Medical cross — pulses like a heartbeat -->
+      <g class="cross-beat">
+        <rect x="28.5" y="17" width="7" height="30" rx="3.5" fill="white" opacity="0.96"/>
+        <rect x="17"   y="28.5" width="30" height="7" rx="3.5" fill="white" opacity="0.96"/>
+      </g>
+
+      <!-- ECG base line: static, very faint -->
+      <line x1="4" y1="46" x2="60" y2="46"
+            [attr.stroke]="'#60a5fa'" stroke-width="0.8" stroke-opacity="0.18"
+            [attr.clip-path]="'url(#clClip' + uid + ')'"/>
+
+      <!-- ECG live animated group — travels left across the logo -->
+      <g class="ecg-travel" [attr.clip-path]="'url(#clClip' + uid + ')'">
+        <!-- ECG waveform path (wider than viewBox so it scrolls through) -->
+        <path
+          d="M 0 46 L 12 46 L 16 42 L 20 46 L 24 30 L 28 60 L 32 50 L 36 46 L 128 46"
+          [attr.stroke]="'url(#clEcg' + uid + ')'"
+          stroke-width="1.6"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          fill="none"
+        />
+        <!-- Spark dot at ECG peak (R-wave) -->
+        <circle class="ecg-spark" cx="24" cy="30" r="2.8" fill="#38bdf8"/>
+      </g>
+    </svg>
+  </div>
+</div>

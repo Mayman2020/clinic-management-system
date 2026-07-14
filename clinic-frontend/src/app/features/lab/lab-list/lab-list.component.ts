@@ -19,24 +19,28 @@ import { TranslateKeyPipe } from '../../../shared/pipes/translate-key.pipe';
 import { LabService } from '../../../core/services/lab.service';
 import { LabRequest } from '../../../core/models/lab.model';
 import { SnackService } from '../../../core/services/snack.service';
+import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 import { LabDialogComponent } from '../lab-dialog/lab-dialog.component';
 import { LabResultDialogComponent } from '../lab-result-dialog/lab-result-dialog.component';
+import { ListLoadController } from '../../../shared/utils/list-load.util';
 
 const LAB_FLOW = ['REQUESTED', 'SAMPLE_COLLECTED', 'IN_PROGRESS', 'COMPLETED'];
 
 @Component({
   selector: 'app-lab-list',
   standalone: true,
-  imports: [NgFor, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault, FormsModule, TranslateModule, MatTableModule, MatButtonModule, MatIconModule, MatInputModule, MatFormFieldModule, MatProgressSpinnerModule, TablePagerComponent, MatDialogModule, MatTooltipModule, PageHeaderComponent, RmsIconBtnComponent, HasPermissionDirective, TranslateKeyPipe],
+  imports: [NgFor, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault, FormsModule, TranslateModule, MatTableModule, MatButtonModule, MatIconModule, MatInputModule, MatFormFieldModule, MatProgressSpinnerModule, TablePagerComponent, MatDialogModule, MatTooltipModule, PageHeaderComponent, RmsIconBtnComponent, EmptyStateComponent, HasPermissionDirective, TranslateKeyPipe],
   templateUrl: './lab-list.component.html',
   styleUrl: './lab-list.component.scss'
 })
 export class LabListComponent implements OnInit {
-  loading = false;
+  listLoad = new ListLoadController();
   page = 0;
   size = 10;
   total = 0;
   search = '';
+  statusFilter = '';
+  statusOptions = LAB_FLOW;
   rows: LabRequest[] = [];
   displayedColumns = ['requestNo', 'testType', 'status', 'actions'];
   columns = [{ key: 'requestNo', labelKey: 'LAB.REQUEST_NO' }, { key: 'testType', labelKey: 'LAB.TEST_TYPE' }, { key: 'status', labelKey: 'COMMON.STATUS' }];
@@ -46,15 +50,28 @@ export class LabListComponent implements OnInit {
   ngOnInit(): void { this.load(); }
 
   load(): void {
-    this.loading = true;
+    this.listLoad.begin();
     const params: Record<string, string | number> = {};
     if (this.search.trim()) params['q'] = this.search.trim();
+    if (this.statusFilter) params['status'] = this.statusFilter;
     this.svc.list(this.page, this.size, params).subscribe({
-      next: (res) => { this.rows = res.data?.content ?? [];
-        this.total = res.data?.totalElements ?? 0; this.loading = false; },
-      error: (err) => { this.snack.error(err.message); this.loading = false; }
+      next: (res) => {
+        this.rows = res.data?.content ?? [];
+        this.total = res.data?.totalElements ?? 0;
+        this.listLoad.end();
+      },
+      error: (err) => {
+        this.snack.error(err.message);
+        this.rows = [];
+        this.total = 0;
+        this.listLoad.end();
+      }
     });
   }
+
+  onSearch(): void { this.page = 0; this.load(); }
+  onFilterChange(): void { this.page = 0; this.load(); }
+  hasActiveFilters(): boolean { return !!this.search.trim() || !!this.statusFilter; }
 
   onCreate(): void {
     this.dialogs.open(LabDialogComponent, { width: '480px' }).afterClosed().subscribe((saved) => { if (saved) this.load(); });

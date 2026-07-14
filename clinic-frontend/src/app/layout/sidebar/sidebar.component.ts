@@ -7,6 +7,7 @@ import { AuthService } from '../../core/services/auth.service';
 import { PermissionService } from '../../core/services/permission.service';
 import { NavigationHistoryService } from '../../core/services/navigation-history.service';
 import { UserRole } from '../../core/models/user.model';
+import { ClinicLogoComponent } from '../../shared/components/clinic-logo/clinic-logo.component';
 
 interface NavItem {
   icon: string; labelKey: string; route: string; roles: UserRole[]; permissionKey: string; tone: string;
@@ -15,7 +16,7 @@ interface NavItem {
 
 @Component({
   selector: 'app-sidebar', standalone: true,
-  imports: [NgFor, NgIf, RouterLink, RouterLinkActive, MatTooltipModule, TranslateModule],
+  imports: [NgFor, NgIf, RouterLink, RouterLinkActive, MatTooltipModule, TranslateModule, ClinicLogoComponent],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.scss'
 })

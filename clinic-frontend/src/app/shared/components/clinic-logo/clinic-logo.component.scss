@@ -1,0 +1,78 @@
+:host {
+  display: inline-flex;
+  flex-shrink: 0;
+  line-height: 0;
+}
+
+/* ── Outer wrapper: optional floating animation ── */
+.logo-outer {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.logo-float {
+  animation: appFloatSoft 4s ease-in-out infinite;
+}
+
+/* ── Inner wrapper: blue drop-shadow pulse ── */
+.logo-pulse {
+  display: inline-flex;
+  flex-shrink: 0;
+  border-radius: 16px;
+  animation: logoPulse 2.6s ease-in-out infinite;
+}
+
+/* ── Medical cross: heartbeat rhythm ── */
+.cross-beat {
+  transform-origin: 32px 32px;
+  transform-box: fill-box;
+  animation: clinicHeartBeat 2.2s ease-in-out infinite;
+}
+
+/* ── ECG waveform: travels left across the logo ── */
+.ecg-travel {
+  animation: ecgTravel 2.6s linear infinite;
+}
+
+/* ── Spark dot at R-wave peak ── */
+.ecg-spark {
+  animation: ecgSpark 2.6s ease-in-out infinite;
+}
+
+/* ════════════════════════════════════════
+   Keyframes — component-scoped
+   ════════════════════════════════════════ */
+
+/* Logo outer floating (hero / sidebar watermark context) */
+@keyframes appFloatSoft {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-7px); }
+}
+
+/* Pulsing blue drop shadow */
+@keyframes logoPulse {
+  0%, 100% { filter: drop-shadow(0 4px 18px rgba(21, 101, 184, 0)); }
+  50%       { filter: drop-shadow(0 4px 18px rgba(21, 101, 184, 0.55)); }
+}
+
+/* Two-beat heartbeat (lub-dub) */
+@keyframes clinicHeartBeat {
+  0%, 15%, 65%, 100% { transform: scale(1); }
+  28%  { transform: scale(1.055); }
+  36%  { transform: scale(0.975); }
+  44%  { transform: scale(1.03); }
+}
+
+/* ECG group slides from right → left across the 64px viewBox */
+@keyframes ecgTravel {
+  from { transform: translateX(64px); }
+  to   { transform: translateX(-128px); }
+}
+
+/* Spark glows when the R-wave passes through view */
+@keyframes ecgSpark {
+  0%, 18%, 60%, 100% { opacity: 0; r: 1; }
+  35%  { opacity: 1;   r: 2.8; }
+  48%  { opacity: 0.5; r: 3.6; }
+  55%  { opacity: 0;   r: 1; }
+}

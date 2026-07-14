@@ -9,6 +9,7 @@ import { RmsDialogService } from '../../../shared/services/rms-dialog.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 import { TranslateKeyPipe } from '../../../shared/pipes/translate-key.pipe';
+import { RmsDatePipe } from '../../../shared/pipes/rms-date.pipe';
 import { HasPermissionDirective } from '../../../shared/directives/has-permission.directive';
 import { ConsultationService } from '../../../core/services/consultation.service';
 import { Consultation } from '../../../core/models/consultation.model';
@@ -23,7 +24,7 @@ import { RadiologyDialogComponent } from '../../radiology/radiology-dialog/radio
   standalone: true,
   imports: [
     NgIf, RouterLink, TranslateModule, MatButtonModule, MatIconModule,
-    MatProgressSpinnerModule, MatDialogModule, PageHeaderComponent, TranslateKeyPipe, HasPermissionDirective
+    MatProgressSpinnerModule, MatDialogModule, PageHeaderComponent, TranslateKeyPipe, HasPermissionDirective, RmsDatePipe
   ],
   templateUrl: './consultation-hub.component.html',
   styleUrl: './consultation-hub.component.scss'
