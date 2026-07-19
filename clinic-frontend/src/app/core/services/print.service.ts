@@ -47,17 +47,36 @@ export class PrintService {
   }
 
   invoice(data: {
-    invoiceNo: string; patientName?: string; status?: string; createdAt?: string; clinicName?: string;
-    subtotal?: number; discount?: number; tax?: number; total?: number; paidAmount?: number;
+    invoiceNo?: string; patientName?: string; status?: string; createdAt?: string; clinicName?: string;
+    clinicPhone?: string; clinicAddress?: string; consultationTitle?: string; doctorName?: string;
+    doctorSpecialty?: string; patientPhone?: string; patientDob?: string; patientAge?: string;
+    consultationDateTime?: string; subtotal?: number; discount?: number; tax?: number; total?: number; paidAmount?: number;
     items?: { description?: string; quantity?: number; unitPrice?: number; totalPrice?: number }[];
   }): void {
     const rows = (data.items ?? []).map(i =>
       `<tr><td>${i.description ?? ''}</td><td>${i.quantity ?? 1}</td><td>${i.unitPrice ?? ''}</td><td>${i.totalPrice ?? ''}</td></tr>`
     ).join('');
-    this.openHtml(data.invoiceNo, `
-      <h1>${data.clinicName ?? this.t('PRINT.CLINIC')}</h1>
-      <div class="meta">${data.invoiceNo} · ${data.createdAt ?? ''} · ${data.status ?? ''}</div>
-      <div class="meta">${data.patientName ?? ''}</div>
+    const details = [
+      data.consultationTitle ? `<div><strong>${this.t('PRINT.CONSULTATION')}:</strong> ${data.consultationTitle}</div>` : '',
+      data.consultationDateTime ? `<div><strong>${this.t('PRINT.DATE')}:</strong> ${data.consultationDateTime}</div>` : '',
+      data.doctorName ? `<div><strong>${this.t('PRINT.DOCTOR')}:</strong> ${data.doctorName}${data.doctorSpecialty ? ` · ${data.doctorSpecialty}` : ''}</div>` : '',
+      data.patientName ? `<div><strong>${this.t('PRINT.PATIENT')}:</strong> ${data.patientName}</div>` : '',
+      data.patientPhone ? `<div><strong>${this.t('PRINT.PHONE')}:</strong> ${data.patientPhone}</div>` : '',
+      data.patientAge ? `<div><strong>${this.t('PRINT.AGE')}:</strong> ${data.patientAge}</div>` : ''
+    ].filter(Boolean).join('');
+    this.openHtml(data.invoiceNo ?? 'Invoice', `
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:16px;">
+        <div>
+          <h1 style="margin:0 0 4px;">${data.clinicName ?? this.t('PRINT.CLINIC')}</h1>
+          <div class="meta">${data.clinicAddress ?? ''}</div>
+          <div class="meta">${data.clinicPhone ?? ''}</div>
+        </div>
+        <div style="border:1px solid #dfe7ef;padding:10px 12px;border-radius:8px;min-width:180px;text-align:center;color:#1f4e79;">
+          <strong>${this.t('BILLING.INVOICE')}</strong><br>${data.invoiceNo ?? ''}
+        </div>
+      </div>
+      <div class="meta">${data.createdAt ?? ''} · ${data.status ?? ''}</div>
+      <div class="meta">${details}</div>
       <table><thead><tr><th>${this.t('PRINT.DESCRIPTION')}</th><th>${this.t('PRINT.QTY')}</th><th>${this.t('PRINT.UNIT')}</th><th>${this.t('PRINT.TOTAL')}</th></tr></thead><tbody>${rows}</tbody></table>
       <div class="totals">
         <div>${this.t('BILLING.SUBTOTAL')}: ${data.subtotal ?? 0}</div>

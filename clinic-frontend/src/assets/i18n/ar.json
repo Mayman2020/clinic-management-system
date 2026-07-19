@@ -98,14 +98,19 @@
     "CREATE": "إنشاء",
     "EDIT": "تعديل",
     "DELETE": "حذف",
+    "DEACTIVATE": "إلغاء التفعيل",
     "ARCHIVE": "أرشفة",
     "CONFIRM": "تأكيد",
     "ACTIONS": "إجراءات",
     "REFRESH": "تحديث",
     "ON_PAGE": "في هذه الصفحة",
     "APPLY": "تطبيق",
+    "CLEAR_FILTERS": "مسح عوامل التصفية",
+    "JUST_NOW": "الآن",
+    "TODAY": "اليوم",
     "NO_DATA": "لا توجد سجلات",
     "VIEW_ALL": "عرض الكل",
+    "ACTIVE": "نشط",
     "INACTIVE": "غير نشط",
     "UNKNOWN": "غير معروف",
     "STATUS": "الحالة",
@@ -126,12 +131,56 @@
     "SUCCESS": "تمت العملية",
     "ERROR": "حدث خطأ",
     "DELETE_CONFIRM": "هل أنت متأكد من حذف هذا السجل؟",
+    "CONFIRM_MESSAGE": "هل أنت متأكد من تنفيذ هذا الإجراء؟",
     "CONFIRM_TITLE": "تأكيد الإجراء",
     "BACK": "رجوع",
+    "VIEW_FILE": "عرض الملف",
     "PAGINATION": "التنقل بين الصفحات",
     "PREVIOUS": "السابق",
     "NEXT": "التالي",
-    "PAGE_OF": "صفحة {{current}} من {{total}}"
+    "PAGE_OF": "صفحة {{current}} من {{total}}",
+    "EXPORT_EXCEL": "تصدير Excel",
+    "NO_RESULTS": "لا توجد نتائج"
+  },
+  "DIALOG": {
+    "DELETE_TITLE": "تأكيد الحذف",
+    "DELETE_GENERIC": "هل أنت متأكد من حذف هذا السجل؟ لا يمكن التراجع عن هذا الإجراء.",
+    "DELETE_NAMED": "هل أنت متأكد من حذف \"{{name}}\"؟",
+    "DELETE_BLOCKED_TITLE": "تعذر الحذف",
+    "DELETE_BLOCKED_GENERIC": "لا يمكن حذف هذا العنصر لأنه مرتبط ببيانات أخرى.",
+    "DELETE_BLOCKED_WITH_DETAIL": "لا يمكن حذف هذا العنصر لأنه مرتبط ببيانات أخرى.\n\n{{detail}}"
+  },
+  "AUDIT": {
+    "INFO_TITLE": "معلومات التدقيق",
+    "CREATED_BY": "أنشئ بواسطة",
+    "CREATED_AT": "تاريخ الإنشاء",
+    "MODIFIED_BY": "عدّل بواسطة",
+    "UPDATED_AT": "آخر تحديث",
+    "APPROVED_BY": "اعتمد بواسطة",
+    "UNKNOWN": "غير معروف",
+    "TITLE": "سجل التدقيق",
+    "ACTION": "الإجراء",
+    "ENTITY": "الكيان",
+    "ENTITY_ID": "معرف الكيان",
+    "USER": "المستخدم",
+    "DETAILS": "التفاصيل"
+  },
+  "LOV": {
+    "SELECT_PLACEHOLDER": "اضغط العدسة للاختيار",
+    "SEARCH_PLACEHOLDER": "ابحث في القائمة...",
+    "CLEAR": "مسح الاختيار",
+    "OPEN": "فتح الاختيار"
+  },
+  "ACTIONS": {
+    "CANCEL": "إلغاء",
+    "DOWNLOAD": "تحميل"
+  },
+  "UPLOAD": {
+    "REPLACE_FILE": "استبدال الملف",
+    "REMOVE_FILE": "إزالة الملف"
+  },
+  "PAGE": {
+    "BREADCRUMB_LABEL": "مسار التنقل"
   },
   "TOPBAR": {
     "TOGGLE_MENU": "إظهار/إخفاء القائمة",
@@ -154,7 +203,9 @@
     "EMAIL_ALREADY_USED": "البريد الإلكتروني مستخدم",
     "NATIONAL_ID_ALREADY_USED": "الرقم الوطني مسجل بالفعل",
     "NOT_FOUND": "السجل غير موجود",
-    "FORBIDDEN": "غير مصرح"
+    "FORBIDDEN": "غير مصرح",
+    "ACCESS_DENIED": "غير مصرح بالدخول",
+    "ACCESS_DENIED_MESSAGE": "ليس لديك صلاحية للوصول إلى هذه الصفحة."
   },
   "MESSAGES": {
     "ARCHIVED": "تمت الأرشفة",
@@ -198,6 +249,13 @@
     "NOTIF_REMINDER": "تذكير بموعد",
     "NOTIF_REMINDER_MSG": "موعد قادم خلال ساعة.",
     "TIME_AGO": "منذ {{n}} دقيقة"
+    ,"TODAY_APPOINTMENTS": "مواعيد اليوم"
+    ,"NEW_PATIENTS": "المرضى الجدد"
+    ,"NEW_PATIENTS_HINT": "راجع المرضى المسجلين حديثاً"
+    ,"CHECK_IN_QUEUE": "قائمة تسجيل الوصول"
+    ,"CHECK_IN_QUEUE_HINT": "إدارة المرضى المنتظرين لتسجيل الوصول"
+    ,"CHECK_LAB_RESULTS": "مراجعة نتائج التحاليل"
+    ,"REVIEW_BILLING": "مراجعة الفواتير"
   },
   "PATIENTS": {
     "TITLE": "المرضى",
@@ -281,6 +339,7 @@
     "NEW": "استشارة جديدة",
     "HUB_TITLE": "تفاصيل الاستشارة",
     "SYMPTOMS": "الأعراض",
+    "CHIEF_COMPLAINT": "الشكوى الرئيسية",
     "DIAGNOSIS": "التشخيص",
     "NOTES": "ملاحظات",
     "TREATMENT": "خطة العلاج",
@@ -359,15 +418,8 @@
     "COPAYMENT": "المشاركة",
     "SUBMIT": "تقديم مطالبة",
     "NEW_PROVIDER": "مزود جديد",
-    "PROVIDER_NAME": "اسم المزود"
-  },
-  "AUDIT": {
-    "TITLE": "سجل التدقيق",
-    "ACTION": "الإجراء",
-    "ENTITY": "الكيان",
-    "ENTITY_ID": "معرف الكيان",
-    "USER": "المستخدم",
-    "DETAILS": "التفاصيل"
+    "PROVIDER_NAME": "اسم المزود",
+    "DEACTIVATE_PROVIDER_CONFIRM": "إلغاء تفعيل مزود التأمين هذا؟ ستبقى المطالبات الحالية مسجلة."
   },
   "REPORTS": {
     "TITLE": "التقارير",
@@ -454,17 +506,41 @@
     "USERNAME": "اسم المستخدم",
     "ROLE": "الدور",
     "FULL_NAME": "الاسم الكامل",
-    "ACTIVE": "نشط"
+    "ACTIVE": "نشط",
+    "ACTIVATE": "تفعيل المستخدم",
+    "DEACTIVATE": "تعطيل المستخدم",
+    "ACTIVATE_CONFIRM": "تفعيل حساب هذا المستخدم؟",
+    "DEACTIVATE_CONFIRM": "تعطيل حساب هذا المستخدم؟ لن يتمكن من تسجيل الدخول."
   },
   "PROFILE": {
     "TITLE": "ملفي الشخصي",
+    "SUBTITLE": "حدّث معلوماتك الشخصية",
     "CHANGE_PASSWORD": "تغيير كلمة المرور",
     "CURRENT_PASSWORD": "كلمة المرور الحالية",
     "NEW_PASSWORD": "كلمة المرور الجديدة",
     "CONFIRM_PASSWORD": "تأكيد كلمة المرور",
     "PASSWORD_MISMATCH": "كلمتا المرور غير متطابقتين",
     "PASSWORD_CHANGED": "تم تغيير كلمة المرور بنجاح",
-    "AVATAR_ALT": "صورة الملف الشخصي"
+    "PASSWORD_CHANGE_ERROR": "فشل تغيير كلمة المرور",
+    "AVATAR_ALT": "صورة الملف الشخصي",
+    "DEFAULT_USER": "مستخدم",
+    "FULL_NAME_AR": "الاسم الكامل (عربي)",
+    "FULL_NAME_EN": "الاسم الكامل (إنجليزي)",
+    "ACCOUNT_EMAIL": "البريد الإلكتروني (تسجيل الدخول)",
+    "EMAIL_READONLY_HINT": "البريد الإلكتروني هو معرّف تسجيل الدخول. لتغييره، تواصل مع مسؤول النظام.",
+    "PHONE": "الهاتف",
+    "SECTION_PROFILE": "الملف الشخصي",
+    "YOUR_DETAILS": "بياناتك",
+    "SECTION_SECURITY": "الأمان",
+    "SAVE_BUTTON": "حفظ الملف",
+    "SAVE_SUCCESS": "تم تحديث الملف الشخصي بنجاح",
+    "SAVE_ERROR": "فشل تحديث الملف الشخصي",
+    "CHANGE_PASSWORD_BUTTON": "تحديث كلمة المرور",
+    "PASSWORD_HINT": "6 أحرف على الأقل. استخدم مزيجاً قوياً من حروف وأرقام ورموز.",
+    "BIO": "نبذة",
+    "PHOTO_BELOW_HINT": "ارفع أو غيّر صورتك الشخصية أدناه",
+    "IMAGE_UPLOAD": "صورة الملف الشخصي",
+    "UPLOAD_PHOTO": "رفع صورة"
   },
   "NOTIFICATIONS": {
     "TITLE": "الإشعارات",

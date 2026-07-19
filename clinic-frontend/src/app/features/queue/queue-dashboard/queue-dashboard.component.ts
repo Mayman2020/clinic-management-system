@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { NgFor, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -22,7 +23,7 @@ import { QueueTokenDialogComponent } from '../queue-token-dialog/queue-token-dia
 
 @Component({
   selector: 'app-queue-dashboard', standalone: true,
-  imports: [NgFor, NgIf, FormsModule, RouterLink, TranslateModule, MatButtonModule, MatDialogModule, MatFormFieldModule, MatSelectModule, MatIconModule, PageHeaderComponent, RmsIconBtnComponent, TranslateKeyPipe],
+  imports: [MatTooltipModule, NgFor, NgIf, FormsModule, RouterLink, TranslateModule, MatButtonModule, MatDialogModule, MatFormFieldModule, MatSelectModule, MatIconModule, PageHeaderComponent, RmsIconBtnComponent, TranslateKeyPipe],
   templateUrl: './queue-dashboard.component.html',
   styleUrl: './queue-dashboard.component.scss'
 })

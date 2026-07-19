@@ -12,6 +12,7 @@ import { CurrentUser, LoginRequest, LoginResponse, PermissionMap, UserRole } fro
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly activeRoleChanged$ = new Subject<void>();
+  private readonly returnUrlStorageKey = 'auth.returnUrl';
   readonly activeRoleChanged = this.activeRoleChanged$.asObservable();
 
   constructor(private readonly api: ApiService, private readonly tokenStorage: TokenStorageService, private readonly router: Router) {}
@@ -30,6 +31,7 @@ export class AuthService {
   logout(): void {
     this.api.post<ApiResponse<void>>(AppConstants.API.AUTH_LOGOUT, {}).subscribe({ error: () => {} });
     this.tokenStorage.clearAll();
+    this.clearReturnUrl();
     void this.router.navigateByUrl('/auth/login');
   }
 
@@ -100,6 +102,27 @@ export class AuthService {
     if (user) this.tokenStorage.setUser({ ...user, mustChangePassword: false });
   }
 
+  syncProfileLocal(patch: {
+    fullName?: string;
+    fullNameAr?: string;
+    fullNameEn?: string;
+    phone?: string;
+    profileImageUrl?: string;
+  }): void {
+    const user = this.getCurrentUser();
+    if (!user) return;
+    const displayName = patch.fullNameAr || patch.fullNameEn || patch.fullName || user.fullName;
+    this.tokenStorage.setUser({
+      ...user,
+      fullName: patch.fullName ?? user.fullName,
+      fullNameAr: patch.fullNameAr ?? user.fullNameAr,
+      fullNameEn: patch.fullNameEn ?? user.fullNameEn,
+      phone: patch.phone ?? user.phone,
+      profileImageUrl: patch.profileImageUrl ?? user.profileImageUrl,
+      initials: this.buildInitials(displayName)
+    });
+  }
+
   applyLoginResponse(data: LoginResponse): void {
     if (data.accessToken) this.tokenStorage.setToken(data.accessToken);
     if (data.refreshToken) this.tokenStorage.setRefreshToken(data.refreshToken);
@@ -133,6 +156,27 @@ export class AuthService {
       case 'RADIOLOGY_STAFF': return '/admin/radiology';
       default: return '/admin/dashboard';
     }
+  }
+
+  storeReturnUrl(url: string | null | undefined): void {
+    if (!url || url.startsWith('/auth') || url === '/' || url === '') {
+      this.clearReturnUrl();
+      return;
+    }
+    sessionStorage.setItem(this.returnUrlStorageKey, url);
+  }
+
+  getStoredReturnUrl(): string | null {
+    const url = sessionStorage.getItem(this.returnUrlStorageKey);
+    if (!url || url.startsWith('/auth') || url === '/' || url === '') {
+      this.clearReturnUrl();
+      return null;
+    }
+    return url;
+  }
+
+  clearReturnUrl(): void {
+    sessionStorage.removeItem(this.returnUrlStorageKey);
   }
 
   private buildInitials(name: string): string {

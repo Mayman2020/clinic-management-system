@@ -70,6 +70,13 @@ export class SidebarComponent {
   }
 
   get currentUser() { return this.auth.getCurrentUser(); }
+
+  get profileImageUrl(): string | null {
+    const u = this.currentUser;
+    const url = (u?.profileImageUrl || '').trim();
+    return url || null;
+  }
+
   get currentUserDisplayName(): string {
     const u = this.currentUser;
     if (!u) return '';

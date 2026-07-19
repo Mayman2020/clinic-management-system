@@ -53,7 +53,7 @@ export class AppointmentDetailComponent implements OnInit {
   checkIn(): void {
     if (!this.appt) return;
     this.appointments.checkIn(this.appt.id).subscribe({
-      next: (r) => { this.appt = r.data?.appointment ?? this.appt; this.snack.success(this.i18n.instant('APPOINTMENTS.CHECKED_IN')); },
+      next: (r) => { this.appt = r.data?.appointment ?? this.appt; this.snack.success(this.i18n.instant('WORKFLOW.CHECKED_IN')); },
       error: (e) => this.snack.error(e.message)
     });
   }

@@ -48,7 +48,7 @@ spring:
           starttls:
             enable: true
 jwt:
-  secret: ${JWT_SECRET}
+  secret: ${JWT_SECRET:DevOnly-Clinic-Local-JWT-Secret-Min32Chars!}
   expiration: 86400000
   refresh-expiration: 604800000
 user:
@@ -89,4 +89,4 @@ clinic:
 
 app:
   cors:
-    allowed-origin-patterns: ${CORS_ALLOWED_ORIGINS:}
+    allowed-origin-patterns: ${CORS_ALLOWED_ORIGINS:http://localhost:[*],http://127.0.0.1:[*]}

@@ -75,7 +75,14 @@ export class LoginComponent {
       next: () => {
         this.loading = false;
         if (this.auth.mustChangePassword()) {
+          this.auth.clearReturnUrl();
           void this.router.navigateByUrl('/admin/profile?changePassword=1');
+          return;
+        }
+        const returnUrl = this.auth.getStoredReturnUrl();
+        if (returnUrl) {
+          this.auth.clearReturnUrl();
+          void this.router.navigateByUrl(returnUrl);
           return;
         }
         void this.router.navigateByUrl(this.auth.getDashboardRoute());

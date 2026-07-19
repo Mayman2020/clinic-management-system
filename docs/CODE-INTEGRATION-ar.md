@@ -9,7 +9,7 @@
 
 ```mermaid
 flowchart TB
-  subgraph fe [clinic-frontend :4310]
+  subgraph fe [clinic-frontend :4200]
     Routes[admin.routes.ts]
     ListComp["*-list components"]
     Services[core/services]

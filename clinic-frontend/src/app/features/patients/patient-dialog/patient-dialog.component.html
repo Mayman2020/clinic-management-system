@@ -34,6 +34,13 @@
     <ul class="full doc-list" *ngIf="documents.length">
       <li *ngFor="let d of documents"><a [href]="d.fileUrl" target="_blank" rel="noopener">{{ d.fileName || d.documentType }}</a></li>
     </ul>
+    <app-audit-trail
+      *ngIf="data?.id"
+      class="full"
+      [createdAt]="auditMeta.createdAt"
+      [updatedAt]="auditMeta.updatedAt"
+      [createdBy]="auditMeta.createdBy">
+    </app-audit-trail>
   </mat-dialog-content>
   <mat-dialog-actions align="end">
     <button mat-button type="button" mat-dialog-close>{{ 'COMMON.CANCEL' | translate }}</button>

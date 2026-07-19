@@ -2,7 +2,7 @@ import { chromium } from 'playwright';
 import { mkdir } from 'fs/promises';
 import path from 'path';
 
-const BASE = 'http://127.0.0.1:4310';
+const BASE = 'http://127.0.0.1:4200';
 const OUT = path.resolve('visual-audit-screenshots');
 
 function fakeJwt() {

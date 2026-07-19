@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { NgFor, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
@@ -11,6 +12,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { TablePagerComponent } from '../../../shared/components/table-pager/table-pager.component';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatDialogModule } from '@angular/material/dialog';
+import { DeleteConfirmService } from '../../../core/services/delete-confirm.service';
 import { RmsDialogService } from '../../../shared/services/rms-dialog.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
@@ -27,7 +29,7 @@ import { ListLoadController } from '../../../shared/utils/list-load.util';
 
 @Component({
   selector: 'app-insurance-list', standalone: true,
-  imports: [NgFor, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault, FormsModule, TranslateModule, MatTableModule, MatButtonModule, MatIconModule, MatInputModule, MatFormFieldModule, MatProgressSpinnerModule, MatSelectModule, TablePagerComponent, MatTabsModule, MatDialogModule, PageHeaderComponent, RmsIconBtnComponent, EmptyStateComponent, HasPermissionDirective, TranslateKeyPipe],
+  imports: [MatTooltipModule, NgFor, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault, FormsModule, TranslateModule, MatTableModule, MatButtonModule, MatIconModule, MatInputModule, MatFormFieldModule, MatProgressSpinnerModule, MatSelectModule, TablePagerComponent, MatTabsModule, MatDialogModule, PageHeaderComponent, RmsIconBtnComponent, EmptyStateComponent, HasPermissionDirective, TranslateKeyPipe],
   templateUrl: './insurance-list.component.html',
   styleUrl: './insurance-list.component.scss'
 })
@@ -53,7 +55,12 @@ export class InsuranceListComponent implements OnInit {
   claimStatusOptions = ['PENDING', 'SUBMITTED', 'APPROVED', 'REJECTED'];
   providerColumns = ['name', 'contactPhone', 'contactEmail', 'actions'];
 
-  constructor(private readonly svc: InsuranceService, private readonly snack: SnackService, private readonly dialogs: RmsDialogService) {}
+  constructor(
+    private readonly svc: InsuranceService,
+    private readonly snack: SnackService,
+    private readonly dialogs: RmsDialogService,
+    private readonly deleteConfirm: DeleteConfirmService
+  ) {}
 
   ngOnInit(): void { this.loadClaims(); this.loadProviders(); }
 
@@ -108,9 +115,15 @@ export class InsuranceListComponent implements OnInit {
 
   onDeactivateProvider(p: InsuranceProvider): void {
     if (!p.id) return;
-    this.svc.deactivateProvider(p.id).subscribe({
-      next: () => { this.snack.success('MESSAGES.STATUS_UPDATED'); this.loadProviders(); },
-      error: (e) => this.snack.error(e.message)
+    this.deleteConfirm.openDeleteConfirm({
+      messageKey: 'INSURANCE.DEACTIVATE_PROVIDER_CONFIRM',
+      confirmLabelKey: 'COMMON.DEACTIVATE'
+    }).subscribe((ok) => {
+      if (!ok) return;
+      this.svc.deactivateProvider(p.id!).subscribe({
+        next: () => { this.snack.success('MESSAGES.STATUS_UPDATED'); this.loadProviders(); },
+        error: (e) => this.snack.error(e.message)
+      });
     });
   }
 

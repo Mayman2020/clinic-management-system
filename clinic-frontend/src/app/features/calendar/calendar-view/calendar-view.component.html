@@ -31,9 +31,9 @@
           </div>
           <span class="status-badge">{{ a.status | tk:'STATUS' }}</span>
           <div class="cal-actions">
-            <button *appCan="'appointments'; appCanAction: 'edit'" mat-icon-button type="button" (click)="onReschedule(a)" [disabled]="a.status === 'CANCELLED'"><span class="material-icons">event</span></button>
-            <button *appCan="'appointments'; appCanAction: 'approve'" mat-icon-button type="button" (click)="onConfirm(a)" [disabled]="a.status === 'CONFIRMED' || a.status === 'CANCELLED'"><span class="material-icons">check_circle</span></button>
-            <button *appCan="'appointments'; appCanAction: 'edit'" mat-icon-button type="button" (click)="onCancel(a)" [disabled]="a.status === 'CANCELLED'"><span class="material-icons">cancel</span></button>
+            <button *appCan="'appointments'; appCanAction: 'edit'" mat-icon-button type="button" (click)="onReschedule(a)" [disabled]="a.status === 'CANCELLED'" [matTooltip]="'APPOINTMENTS.RESCHEDULE' | translate" [attr.aria-label]="'APPOINTMENTS.RESCHEDULE' | translate"><span class="material-icons">event</span></button>
+            <button *appCan="'appointments'; appCanAction: 'approve'" mat-icon-button type="button" (click)="onConfirm(a)" [disabled]="a.status === 'CONFIRMED' || a.status === 'CANCELLED'" [matTooltip]="'APPOINTMENTS.CONFIRM' | translate" [attr.aria-label]="'APPOINTMENTS.CONFIRM' | translate"><span class="material-icons">check_circle</span></button>
+            <button *appCan="'appointments'; appCanAction: 'edit'" mat-icon-button type="button" (click)="onCancel(a)" [disabled]="a.status === 'CANCELLED'" [matTooltip]="'APPOINTMENTS.CANCEL' | translate" [attr.aria-label]="'APPOINTMENTS.CANCEL' | translate"><span class="material-icons">cancel</span></button>
             <button *appCan="'queue'; appCanAction: 'create'" mat-icon-button type="button" [matTooltip]="'WORKFLOW.CHECK_IN' | translate" (click)="onCheckIn(a)" [disabled]="!canCheckIn(a)"><span class="material-icons">how_to_reg</span></button>
             <button *appCan="'consultation'; appCanAction: 'create'" mat-icon-button type="button" [matTooltip]="'WORKFLOW.START_CONSULTATION' | translate" (click)="onStartConsultation(a)" [disabled]="!canConsult(a)"><span class="material-icons">medical_information</span></button>
           </div>

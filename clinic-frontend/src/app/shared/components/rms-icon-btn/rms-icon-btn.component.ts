@@ -15,10 +15,12 @@ import { TranslateModule } from '@ngx-translate/core';
       [class.rms-icon-btn--primary]="variant === 'primary'"
       [class.rms-icon-btn--gold]="variant === 'gold'"
       [class.rms-icon-btn--warn]="variant === 'warn'"
+      [class.rms-icon-btn--danger]="variant === 'danger'"
       [routerLink]="routerLink"
       [attr.aria-label]="ariaLabel || (tooltipKey | translate)"
       [matTooltip]="tooltip || (tooltipKey | translate)"
-      matTooltipPosition="below">
+      [matTooltipPosition]="tooltipPosition"
+      [matTooltipShowDelay]="200">
       <span class="material-icons">{{ icon }}</span>
     </a>
     <ng-template #actionBtn>
@@ -28,10 +30,12 @@ import { TranslateModule } from '@ngx-translate/core';
         [class.rms-icon-btn--primary]="variant === 'primary'"
         [class.rms-icon-btn--gold]="variant === 'gold'"
         [class.rms-icon-btn--warn]="variant === 'warn'"
+        [class.rms-icon-btn--danger]="variant === 'danger'"
         [disabled]="disabled"
         [attr.aria-label]="ariaLabel || (tooltipKey | translate)"
         [matTooltip]="tooltip || (tooltipKey | translate)"
-        matTooltipPosition="below"
+        [matTooltipPosition]="tooltipPosition"
+        [matTooltipShowDelay]="200"
         (click)="clicked.emit($event)">
         <span class="material-icons">{{ icon }}</span>
       </button>
@@ -43,7 +47,8 @@ export class RmsIconBtnComponent {
   @Input() tooltip = '';
   @Input() tooltipKey = '';
   @Input() ariaLabel = '';
-  @Input() variant: 'default' | 'primary' | 'gold' | 'warn' = 'default';
+  @Input() variant: 'default' | 'primary' | 'gold' | 'warn' | 'danger' = 'default';
+  @Input() tooltipPosition: 'above' | 'below' | 'left' | 'right' | 'before' | 'after' = 'below';
   @Input() disabled = false;
   @Input() routerLink: string | any[] | null = null;
   @Output() clicked = new EventEmitter<MouseEvent>();

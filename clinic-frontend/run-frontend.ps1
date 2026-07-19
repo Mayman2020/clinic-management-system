@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
     [switch]$SkipInstall,
-    [int]$Port = 4310
+    [int]$Port = 4200
 )
 
 $ErrorActionPreference = 'Stop'

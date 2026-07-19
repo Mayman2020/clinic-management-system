@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { NgFor, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
@@ -11,27 +12,27 @@ import { TablePagerComponent } from '../../../shared/components/table-pager/tabl
 import { MatDialogModule } from '@angular/material/dialog';
 import { RmsDialogService } from '../../../shared/services/rms-dialog.service';
 import { TranslateModule } from '@ngx-translate/core';
+import { firstValueFrom } from 'rxjs';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 import { RmsIconBtnComponent } from '../../../shared/components/rms-icon-btn/rms-icon-btn.component';
 import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
+import { TableExportToolbarComponent, ExportColumn } from '../../../shared/components/table-export-toolbar/table-export-toolbar.component';
+import { EstateLovSelectComponent, EstateLovOption } from '../../../shared/components/estate-lov-select/estate-lov-select.component';
 import { HasPermissionDirective } from '../../../shared/directives/has-permission.directive';
 import { TranslateKeyPipe } from '../../../shared/pipes/translate-key.pipe';
 import { DoctorService } from '../../../core/services/doctor.service';
+import { LookupService } from '../../../core/services/lookup.service';
 import { Doctor } from '../../../core/models/doctor.model';
 import { SnackService } from '../../../core/services/snack.service';
+import { I18nService } from '../../../core/i18n/i18n.service';
 import { DoctorDialogComponent } from '../doctor-dialog/doctor-dialog.component';
 import { DoctorScheduleDialogComponent } from '../doctor-schedule-dialog/doctor-schedule-dialog.component';
 import { ListLoadController } from '../../../shared/utils/list-load.util';
 
-const SPECIALTY_OPTIONS = [
-  'GENERAL_MEDICINE', 'PEDIATRICS', 'DENTAL', 'DERMATOLOGY', 'CARDIOLOGY', 'ORTHOPEDICS',
-  'OPHTHALMOLOGY', 'ENT', 'GYNECOLOGY', 'NEUROLOGY', 'PSYCHIATRY', 'UROLOGY', 'OTHER'
-];
-
 @Component({
   selector: 'app-doctor-list',
   standalone: true,
-  imports: [NgFor, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault, FormsModule, TranslateModule, MatTableModule, MatButtonModule, MatIconModule, MatInputModule, MatFormFieldModule, MatProgressSpinnerModule, TablePagerComponent, MatDialogModule, PageHeaderComponent, RmsIconBtnComponent, EmptyStateComponent, HasPermissionDirective, TranslateKeyPipe],
+  imports: [MatTooltipModule, NgFor, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault, FormsModule, TranslateModule, MatTableModule, MatButtonModule, MatIconModule, MatInputModule, MatFormFieldModule, MatProgressSpinnerModule, TablePagerComponent, MatDialogModule, PageHeaderComponent, RmsIconBtnComponent, EmptyStateComponent, TableExportToolbarComponent, EstateLovSelectComponent, HasPermissionDirective, TranslateKeyPipe],
   templateUrl: './doctor-list.component.html',
   styleUrl: './doctor-list.component.scss'
 })
@@ -41,16 +42,54 @@ export class DoctorListComponent implements OnInit {
   size = 10;
   total = 0;
   search = '';
-  specialtyFilter = '';
+  specialtyFilter: string | null = null;
   activeFilter = '';
-  specialtyOptions = SPECIALTY_OPTIONS;
+  specialtyOptions: EstateLovOption[] = [];
   rows: Doctor[] = [];
   displayedColumns = ['doctorCode', 'firstName', 'specialty', 'department', 'actions'];
   columns = [{ key: 'doctorCode', labelKey: 'DOCTORS.CODE' }, { key: 'firstName', labelKey: 'DOCTORS.NAME' }, { key: 'specialty', labelKey: 'DOCTORS.SPECIALTY' }, { key: 'department', labelKey: 'DOCTORS.DEPARTMENT' }];
 
-  constructor(private readonly svc: DoctorService, private readonly snack: SnackService, private readonly dialogs: RmsDialogService) {}
+  constructor(
+    private readonly svc: DoctorService,
+    private readonly lookupSvc: LookupService,
+    private readonly snack: SnackService,
+    private readonly dialogs: RmsDialogService,
+    private readonly i18n: I18nService
+  ) {}
 
-  ngOnInit(): void { this.load(); }
+  ngOnInit(): void {
+    this.lookupSvc.getByType('SPECIALTY').subscribe({
+      next: (res) => {
+        this.specialtyOptions = (res.data ?? []).map((item) => ({
+          value: item.code,
+          label: this.i18n.currentLang === 'ar' ? item.nameAr : item.nameEn
+        }));
+      }
+    });
+    this.load();
+  }
+
+  get exportColumns(): ExportColumn<Doctor>[] {
+    return [
+      { header: this.i18n.instant('DOCTORS.CODE'), value: 'doctorCode' },
+      { header: this.i18n.instant('DOCTORS.NAME'), value: 'firstName' },
+      { header: this.i18n.instant('DOCTORS.LAST_NAME'), value: 'lastName' },
+      {
+        header: this.i18n.instant('DOCTORS.SPECIALTY'),
+        value: (row) => row.specialty ? this.i18n.instant(`SPECIALTY.${row.specialty}`) : '-'
+      },
+      { header: this.i18n.instant('DOCTORS.DEPARTMENT'), value: (row) => row.department ?? '-' }
+    ];
+  }
+
+  loadExportRows = (): Promise<Doctor[]> => {
+    const params: Record<string, string | number | boolean> = {};
+    if (this.specialtyFilter) params['specialty'] = this.specialtyFilter;
+    if (this.activeFilter !== '') params['active'] = this.activeFilter === 'true';
+    return firstValueFrom(this.svc.list(0, 10000, this.search, params)).then(
+      (res) => res.data?.content ?? []
+    );
+  };
 
   load(): void {
     this.listLoad.begin();

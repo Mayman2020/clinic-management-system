@@ -12,12 +12,15 @@ import java.util.List;
 @ConfigurationProperties(prefix = "app.cors")
 public class CorsProperties {
 
+    private static final List<String> LOCAL_DEFAULTS =
+            List.of("http://localhost:[*]", "http://127.0.0.1:[*]");
+
     /** Comma-separated Spring CORS origin patterns (env: CORS_ALLOWED_ORIGINS). */
-    private String allowedOriginPatterns = "";
+    private String allowedOriginPatterns = "http://localhost:[*],http://127.0.0.1:[*]";
 
     public List<String> resolvedPatterns() {
         if (allowedOriginPatterns == null || allowedOriginPatterns.isBlank()) {
-            return List.of();
+            return LOCAL_DEFAULTS;
         }
         return Arrays.stream(allowedOriginPatterns.split(","))
                 .map(String::trim)

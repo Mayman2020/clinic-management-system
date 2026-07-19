@@ -3,4 +3,5 @@ export interface Patient {
   nationalId?: string; dateOfBirth?: string; gender?: string; phone?: string; email?: string;
   address?: string; allergies?: string; chronicDiseases?: string; isActive?: boolean;
   insuranceProviderId?: number; insurancePolicyNo?: string;
+  createdAt?: string; updatedAt?: string; createdBy?: number;
 }

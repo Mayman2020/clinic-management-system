@@ -24,10 +24,37 @@
     </a>
     <button class="tb-action-btn" [matMenuTriggerFor]="roleMenu" *ngIf="switchableRoles.length > 1"><span class="material-icons">manage_accounts</span></button>
     <mat-menu #roleMenu="matMenu"><button mat-menu-item *ngFor="let role of switchableRoles" (click)="switchRole(role)" [disabled]="isRoleActive(role)">{{ ('ROLE.' + role) | translate }}</button></mat-menu>
-    <button class="tb-user-btn" [matMenuTriggerFor]="userMenu"><div class="tb-avatar">{{ currentUser?.initials || ('COMMON.USER_INITIAL' | translate) }}</div><span class="tb-user-name">{{ currentUserDisplayName }}</span></button>
-    <mat-menu #userMenu="matMenu">
-      <a mat-menu-item routerLink="/admin/profile"><span class="material-icons">person</span>{{ 'NAV.PROFILE' | translate }}</a>
-      <button mat-menu-item (click)="logout()"><span class="material-icons">logout</span>{{ 'AUTH.LOGOUT' | translate }}</button>
+    <button class="tb-user-btn" #userMenuTrigger="matMenuTrigger" [matMenuTriggerFor]="userMenu">
+      <img
+        *ngIf="profileImageUrl as photo"
+        class="tb-avatar tb-avatar-img"
+        [src]="photo"
+        [attr.alt]="'PROFILE.AVATAR_ALT' | translate">
+      <div class="tb-avatar" *ngIf="!profileImageUrl">{{ currentUser?.initials || ('COMMON.USER_INITIAL' | translate) }}</div>
+      <span class="tb-user-copy">
+        <span class="tb-user-name">{{ currentUserDisplayName }}</span>
+        <span class="tb-user-role" *ngIf="roleKey">{{ roleKey | translate }}</span>
+      </span>
+    </button>
+    <mat-menu #userMenu="matMenu" class="tb-user-menu">
+      <ng-template matMenuContent>
+        <div class="user-menu-header">
+          <img
+            *ngIf="profileImageUrl as menuPhoto"
+            class="user-menu-avatar user-menu-avatar-img"
+            [src]="menuPhoto"
+            [attr.alt]="'PROFILE.AVATAR_ALT' | translate">
+          <div class="user-menu-avatar" *ngIf="!profileImageUrl">{{ currentUser?.initials || ('COMMON.USER_INITIAL' | translate) }}</div>
+          <div class="user-menu-copy">
+            <strong>{{ currentUserDisplayName || '-' }}</strong>
+            <span class="user-menu-role" *ngIf="roleKey">{{ roleKey | translate }}</span>
+            <span class="user-menu-email">{{ currentUser?.email }}</span>
+          </div>
+        </div>
+        <mat-divider></mat-divider>
+        <a mat-menu-item routerLink="/admin/profile" (click)="onMenuNav()"><span class="material-icons">person</span>{{ 'NAV.PROFILE' | translate }}</a>
+        <button mat-menu-item (click)="logout()"><span class="material-icons">logout</span>{{ 'AUTH.LOGOUT' | translate }}</button>
+      </ng-template>
     </mat-menu>
   </div>
 </header>

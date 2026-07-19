@@ -14,6 +14,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service @RequiredArgsConstructor
 public class PrescriptionService {
     private final PrescriptionRepository repository;
@@ -27,6 +29,10 @@ public class PrescriptionService {
 
     public PrescriptionResponse getById(Long id) {
         return toResponse(repository.findWithItemsById(id).orElseThrow(() -> AppException.notFound("Prescription not found")));
+    }
+
+    public List<PrescriptionResponse> listByPatient(Long patientId) {
+        return repository.findByPatientIdOrderByCreatedAtDesc(patientId).stream().map(this::toResponse).toList();
     }
 
     public PrescriptionPrintData getPrintData(Long id) {
@@ -58,9 +64,11 @@ public class PrescriptionService {
     public PrescriptionResponse toResponse(Prescription p) {
         String patientName = patientRepository.findById(p.getPatientId())
             .map(pt -> pt.getFirstName() + " " + pt.getLastName()).orElse(null);
+        String doctorName = doctorRepository.findById(p.getDoctorId())
+            .map(d -> d.getFirstName() + " " + d.getLastName()).orElse(null);
         return PrescriptionResponse.builder().id(p.getId()).prescriptionNo(p.getPrescriptionNo())
             .consultationId(p.getConsultationId()).patientId(p.getPatientId()).patientName(patientName)
-            .doctorId(p.getDoctorId())
+            .doctorId(p.getDoctorId()).doctorName(doctorName)
             .notes(p.getNotes()).status(p.getStatus()).createdAt(p.getCreatedAt())
             .items(p.getItems().stream().map(i -> PrescriptionItemResponse.builder().id(i.getId())
                 .medicineName(i.getMedicineName()).dosage(i.getDosage()).frequency(i.getFrequency())

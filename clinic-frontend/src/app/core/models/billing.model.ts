@@ -10,3 +10,26 @@ export interface Invoice {
 export interface Payment {
   id: number; invoiceId: number; amount: number; paymentMethod: string; referenceNo?: string; paidAt?: string;
 }
+
+export interface InvoicePrintData {
+  invoiceNo?: string;
+  patientName?: string;
+  status?: string;
+  subtotal?: number;
+  discount?: number;
+  tax?: number;
+  total?: number;
+  paidAmount?: number;
+  items?: InvoiceItem[];
+  createdAt?: string;
+  clinicName?: string;
+  clinicPhone?: string;
+  clinicAddress?: string;
+  consultationTitle?: string;
+  doctorName?: string;
+  doctorSpecialty?: string;
+  patientPhone?: string;
+  patientDob?: string;
+  patientAge?: string;
+  consultationDateTime?: string;
+}

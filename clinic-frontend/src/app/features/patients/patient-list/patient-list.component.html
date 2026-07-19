@@ -17,6 +17,15 @@
     messageKey="COMMON.NO_DATA">
   </app-empty-state>
 
+  <app-inline-state
+    *ngIf="listLoad.showSurface && rows.length === 0 && hasActiveFilters()"
+    icon="filter_alt"
+    titleKey="COMMON.NO_RESULTS"
+    messageKey="COMMON.CLEAR_FILTERS"
+    actionLabelKey="COMMON.CLEAR"
+    (action)="clearFilters()">
+  </app-inline-state>
+
   <div class="app-list-surface" [class.is-refreshing]="listLoad.refreshing"
     *ngIf="listLoad.showSurface && (rows.length > 0 || hasActiveFilters())">
     <div class="list-refresh-spinner" *ngIf="listLoad.refreshing">
@@ -43,10 +52,18 @@
           </div>
           <select class="estate-filter-select" [(ngModel)]="activeFilter" (ngModelChange)="onFilterChange()">
             <option value="">{{ 'COMMON.ALL' | translate }}</option>
-            <option value="true">{{ 'PATIENTS.ACTIVE' | translate }}</option>
+            <option value="true">{{ 'COMMON.ACTIVE' | translate }}</option>
             <option value="false">{{ 'COMMON.INACTIVE' | translate }}</option>
           </select>
           <rms-icon-btn icon="search" tooltipKey="COMMON.SEARCH" variant="primary" (clicked)="onSearch()"></rms-icon-btn>
+          <app-table-export-toolbar
+            [inline]="true"
+            permissionKey="patients"
+            [title]="'PATIENTS.TITLE' | translate"
+            fileName="patients"
+            [columns]="exportColumns"
+            [loadRows]="loadExportRows">
+          </app-table-export-toolbar>
         </div>
       </div>
       <div class="app-table-wrap">
@@ -63,10 +80,10 @@
           <ng-container matColumnDef="actions">
             <th mat-header-cell *matHeaderCellDef>{{ 'COMMON.ACTIONS' | translate }}</th>
             <td mat-cell *matCellDef="let row" class="action-cell">
-              <a mat-icon-button [routerLink]="['/admin/patients', row.id]" [attr.aria-label]="'PATIENTS.PATIENT_360' | translate"><span class="material-icons">person</span></a>
-              <button mat-icon-button type="button" *appCan="'consultation'; appCanAction: 'view'" (click)="onHistory(row)" [attr.aria-label]="'PATIENTS.CONSULTATION_HISTORY' | translate"><span class="material-icons">history</span></button>
-              <button mat-icon-button type="button" *appCan="'patients'; appCanAction: 'edit'" (click)="onEdit(row)"><span class="material-icons">edit</span></button>
-              <button mat-icon-button type="button" *appCan="'patients'; appCanAction: 'delete'" (click)="onArchive(row)"><span class="material-icons">archive</span></button>
+              <a mat-icon-button [routerLink]="['/admin/patients', row.id]" [matTooltip]="'PATIENTS.PATIENT_360' | translate" [attr.aria-label]="'PATIENTS.PATIENT_360' | translate"><span class="material-icons">person</span></a>
+              <button mat-icon-button type="button" *appCan="'consultation'; appCanAction: 'view'" (click)="onHistory(row)" [matTooltip]="'PATIENTS.CONSULTATION_HISTORY' | translate" [attr.aria-label]="'PATIENTS.CONSULTATION_HISTORY' | translate"><span class="material-icons">history</span></button>
+              <button mat-icon-button type="button" *appCan="'patients'; appCanAction: 'edit'" (click)="onEdit(row)" [matTooltip]="'COMMON.EDIT' | translate" [attr.aria-label]="'COMMON.EDIT' | translate"><span class="material-icons">edit</span></button>
+              <button mat-icon-button type="button" *appCan="'patients'; appCanAction: 'delete'" (click)="onArchive(row)" [matTooltip]="'COMMON.ARCHIVE' | translate" [attr.aria-label]="'COMMON.ARCHIVE' | translate"><span class="material-icons">archive</span></button>
             </td>
           </ng-container>
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

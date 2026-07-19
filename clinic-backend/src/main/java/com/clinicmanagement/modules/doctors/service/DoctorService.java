@@ -65,7 +65,7 @@ public class DoctorService {
             .firstName(d.getFirstName()).lastName(d.getLastName()).specialty(d.getSpecialty())
             .department(d.getDepartment()).phone(d.getPhone()).email(d.getEmail())
             .consultationFee(d.getConsultationFee()).bio(d.getBio()).active(d.isActive())
-            .schedules(listSchedules(d.getId())).createdAt(d.getCreatedAt()).build();
+            .schedules(listSchedules(d.getId())).createdAt(d.getCreatedAt()).updatedAt(d.getUpdatedAt()).build();
     }
 
     private DoctorScheduleResponse toScheduleResponse(DoctorSchedule s) {

@@ -12,6 +12,7 @@ public class PrescriptionResponse {
     private Long patientId;
     private String patientName;
     private Long doctorId;
+    private String doctorName;
     private String notes;
     private String status;
     private List<PrescriptionItemResponse> items;

@@ -69,9 +69,9 @@
         <div class="meta subtle" *ngIf="t.doctorName">{{ t.doctorName }}</div>
         <div class="status">{{ t.status | tk:'STATUS' }}</div>
         <div class="actions">
-          <button *ngIf="t.status === 'CALLED'" mat-icon-button type="button" (click)="setStatus(t, 'IN_SERVICE')" [attr.aria-label]="'QUEUE.START_SERVICE' | translate"><span class="material-icons">play_arrow</span></button>
-          <button *ngIf="t.status === 'CALLED' || t.status === 'IN_SERVICE'" mat-icon-button type="button" (click)="setStatus(t, 'COMPLETED')" [attr.aria-label]="'QUEUE.COMPLETE' | translate"><span class="material-icons">done</span></button>
-          <button mat-icon-button type="button" (click)="startConsultation(t)" [attr.aria-label]="'WORKFLOW.START_CONSULTATION' | translate"><span class="material-icons">medical_information</span></button>
+          <button *ngIf="t.status === 'CALLED'" mat-icon-button type="button" (click)="setStatus(t, 'IN_SERVICE')" [matTooltip]="'QUEUE.START_SERVICE' | translate" [attr.aria-label]="'QUEUE.START_SERVICE' | translate"><span class="material-icons">play_arrow</span></button>
+          <button *ngIf="t.status === 'CALLED' || t.status === 'IN_SERVICE'" mat-icon-button type="button" (click)="setStatus(t, 'COMPLETED')" [matTooltip]="'QUEUE.COMPLETE' | translate" [attr.aria-label]="'QUEUE.COMPLETE' | translate"><span class="material-icons">done</span></button>
+          <button mat-icon-button type="button" (click)="startConsultation(t)" [matTooltip]="'WORKFLOW.START_CONSULTATION' | translate" [attr.aria-label]="'WORKFLOW.START_CONSULTATION' | translate"><span class="material-icons">medical_information</span></button>
         </div>
       </article>
       <p *ngIf="!tokens.length" class="empty-state">{{ 'QUEUE.NO_TOKENS' | translate }}</p>

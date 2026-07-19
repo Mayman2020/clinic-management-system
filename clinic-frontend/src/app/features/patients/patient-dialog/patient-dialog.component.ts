@@ -13,20 +13,21 @@ import { InsuranceService } from '../../../core/services/insurance.service';
 import { Patient } from '../../../core/models/patient.model';
 import { InsuranceProvider } from '../../../core/models/insurance.model';
 import { SnackService } from '../../../core/services/snack.service';
-
+import { AuditTrailComponent } from '../../../shared/components/audit-trail/audit-trail.component';
 import { DateFieldComponent } from '../../../shared/components/date-field/date-field.component';
 
 interface PatientDocument { id: number; fileName: string; fileUrl: string; documentType: string; }
 
 @Component({
   selector: 'app-patient-dialog', standalone: true,
-  imports: [NgFor, NgIf, ReactiveFormsModule, MatDialogModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, TranslateModule, DateFieldComponent],
+  imports: [NgFor, NgIf, ReactiveFormsModule, MatDialogModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, TranslateModule, DateFieldComponent, AuditTrailComponent],
   templateUrl: './patient-dialog.component.html'
 })
 export class PatientDialogComponent implements OnInit {
   uploading = false;
   documents: PatientDocument[] = [];
   insuranceProviders: InsuranceProvider[] = [];
+  auditMeta: Pick<Patient, 'createdAt' | 'updatedAt' | 'createdBy'> = {};
   form = this.fb.group({
     firstName: ['', Validators.required], lastName: ['', Validators.required], phone: [''], email: [''],
     gender: [''], nationalId: [''], dateOfBirth: [''], address: [''], allergies: [''], chronicDiseases: [''], documentUrl: [''],
@@ -48,6 +49,18 @@ export class PatientDialogComponent implements OnInit {
       error: () => { /* optional */ }
     });
     if (this.data?.id) {
+      this.svc.getById(this.data.id).subscribe({
+        next: (res) => {
+          const patient = res.data;
+          if (patient) {
+            this.auditMeta = {
+              createdAt: patient.createdAt,
+              updatedAt: patient.updatedAt,
+              createdBy: patient.createdBy
+            };
+          }
+        }
+      });
       this.svc.getDocuments(this.data.id).subscribe({
         next: (r) => { this.documents = r.data ?? []; },
         error: () => { /* optional */ }

@@ -82,9 +82,21 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }
 
   get currentUser() { return this.auth.getCurrentUser(); }
+
+  get profileImageUrl(): string | null {
+    const u = this.currentUser;
+    const url = (u?.profileImageUrl || '').trim();
+    return url || null;
+  }
+
   get currentUserDisplayName(): string {
     const u = this.currentUser; if (!u) return '';
     return this.i18n.currentLang === 'ar' ? (u.fullNameAr || u.fullNameEn || u.fullName) : (u.fullNameEn || u.fullNameAr || u.fullName);
+  }
+
+  get roleKey(): string {
+    const role = this.auth.getRole();
+    return role ? `ROLE.${role}` : '';
   }
   get switchableRoles(): UserRole[] { return this.auth.getEffectiveRoles(); }
   get languages(): LanguageOption[] { return this.i18n.languages; }

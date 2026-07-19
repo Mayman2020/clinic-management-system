@@ -5,16 +5,19 @@ import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { TokenStorageService } from '../auth/token-storage.service';
 import { AppConstants } from '../constants/app-constants';
+import { AuthService } from '../services/auth.service';
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
   const tokenStorage = inject(TokenStorageService);
+  const auth = inject(AuthService);
   const translate = inject(TranslateService);
 
   return next(req).pipe(
     catchError((err: HttpErrorResponse) => {
       if (err.status === 401 && !req.url.includes(AppConstants.API.AUTH_LOGIN)) {
         tokenStorage.clearAll();
+        auth.storeReturnUrl(req.url.includes('http') ? new URL(req.url).pathname : req.url);
         void router.navigateByUrl('/auth/login');
       }
 

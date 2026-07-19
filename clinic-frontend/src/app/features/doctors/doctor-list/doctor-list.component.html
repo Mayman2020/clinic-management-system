@@ -29,16 +29,27 @@
             <span class="material-icons">search</span>
             <input [(ngModel)]="search" (keyup.enter)="onSearch()" [placeholder]="'COMMON.SEARCH' | translate">
           </div>
-          <select class="estate-filter-select" [(ngModel)]="specialtyFilter" (ngModelChange)="onFilterChange()">
-            <option value="">{{ 'DOCTORS.SPECIALTY' | translate }} — {{ 'COMMON.ALL' | translate }}</option>
-            <option *ngFor="let s of specialtyOptions" [value]="s">{{ s | tk:'SPECIALTY' }}</option>
-          </select>
+          <app-estate-lov-select
+            label="DOCTORS.SPECIALTY"
+            [options]="specialtyOptions"
+            [showAll]="true"
+            [(ngModel)]="specialtyFilter"
+            (valueChange)="onFilterChange()">
+          </app-estate-lov-select>
           <select class="estate-filter-select" [(ngModel)]="activeFilter" (ngModelChange)="onFilterChange()">
             <option value="">{{ 'COMMON.ALL' | translate }}</option>
             <option value="true">{{ 'COMMON.ACTIVE' | translate }}</option>
             <option value="false">{{ 'COMMON.INACTIVE' | translate }}</option>
           </select>
           <rms-icon-btn icon="search" tooltipKey="COMMON.SEARCH" variant="primary" (clicked)="onSearch()"></rms-icon-btn>
+          <app-table-export-toolbar
+            [inline]="true"
+            permissionKey="doctors"
+            [title]="'DOCTORS.TITLE' | translate"
+            fileName="doctors"
+            [columns]="exportColumns"
+            [loadRows]="loadExportRows">
+          </app-table-export-toolbar>
         </div>
       </div>
       <div class="app-table-wrap">
@@ -56,8 +67,8 @@
           <ng-container matColumnDef="actions">
             <th mat-header-cell *matHeaderCellDef>{{ 'COMMON.ACTIONS' | translate }}</th>
             <td mat-cell *matCellDef="let row">
-              <button *appCan="'doctors'; appCanAction: 'edit'" mat-icon-button type="button" (click)="onEdit(row)"><span class="material-icons">edit</span></button>
-              <button *appCan="'doctors'; appCanAction: 'edit'" mat-icon-button type="button" (click)="onSchedule(row)"><span class="material-icons">schedule</span></button>
+              <button *appCan="'doctors'; appCanAction: 'edit'" mat-icon-button type="button" (click)="onEdit(row)" [matTooltip]="'COMMON.EDIT' | translate" [attr.aria-label]="'COMMON.EDIT' | translate"><span class="material-icons">edit</span></button>
+              <button *appCan="'doctors'; appCanAction: 'edit'" mat-icon-button type="button" (click)="onSchedule(row)" [matTooltip]="'DOCTORS.SCHEDULES' | translate" [attr.aria-label]="'DOCTORS.SCHEDULES' | translate"><span class="material-icons">schedule</span></button>
             </td>
           </ng-container>
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

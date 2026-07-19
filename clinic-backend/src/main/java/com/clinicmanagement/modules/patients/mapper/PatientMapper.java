@@ -15,7 +15,7 @@ public class PatientMapper {
             .medicalHistory(p.getMedicalHistory()).allergies(p.getAllergies())
             .chronicDiseases(p.getChronicDiseases()).insuranceProviderId(p.getInsuranceProviderId())
             .insurancePolicyNo(p.getInsurancePolicyNo()).notes(p.getNotes()).active(p.isActive())
-            .createdAt(p.getCreatedAt()).build();
+            .createdBy(p.getCreatedBy()).createdAt(p.getCreatedAt()).updatedAt(p.getUpdatedAt()).build();
     }
     public PatientDocumentResponse toResponse(PatientDocument d) {
         return PatientDocumentResponse.builder().id(d.getId()).patientId(d.getPatientId())

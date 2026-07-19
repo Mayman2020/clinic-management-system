@@ -31,12 +31,34 @@ public class InvoicePdfService {
             clinic.setAlignment(Element.ALIGN_CENTER);
             doc.add(clinic);
 
+            if (inv.getClinicAddress() != null && !inv.getClinicAddress().isBlank()) {
+                doc.add(new Paragraph(inv.getClinicAddress(), SMALL));
+            }
+            if (inv.getClinicPhone() != null && !inv.getClinicPhone().isBlank()) {
+                doc.add(new Paragraph("Phone: " + inv.getClinicPhone(), SMALL));
+            }
+
             Paragraph invNo = new Paragraph("Invoice: " + inv.getInvoiceNo(), NORMAL);
             invNo.setSpacingBefore(12);
             doc.add(invNo);
             doc.add(new Paragraph("Patient: " + (inv.getPatientName() != null ? inv.getPatientName() : "—"), NORMAL));
+            if (inv.getPatientPhone() != null && !inv.getPatientPhone().isBlank()) {
+                doc.add(new Paragraph("Patient Phone: " + inv.getPatientPhone(), SMALL));
+            }
+            if (inv.getPatientAge() != null && !inv.getPatientAge().isBlank()) {
+                doc.add(new Paragraph("Age: " + inv.getPatientAge(), SMALL));
+            }
+            if (inv.getDoctorName() != null && !inv.getDoctorName().isBlank()) {
+                doc.add(new Paragraph("Doctor: " + inv.getDoctorName() + (inv.getDoctorSpecialty() != null && !inv.getDoctorSpecialty().isBlank() ? " — " + inv.getDoctorSpecialty() : ""), NORMAL));
+            }
+            if (inv.getConsultationTitle() != null && !inv.getConsultationTitle().isBlank()) {
+                doc.add(new Paragraph("Consultation: " + inv.getConsultationTitle(), SMALL));
+            }
+            if (inv.getConsultationDateTime() != null) {
+                doc.add(new Paragraph("Date/Time: " + inv.getConsultationDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")), SMALL));
+            }
             if (inv.getCreatedAt() != null) {
-                doc.add(new Paragraph("Date: " + inv.getCreatedAt().format(DateTimeFormatter.ISO_LOCAL_DATE), SMALL));
+                doc.add(new Paragraph("Issued: " + inv.getCreatedAt().format(DateTimeFormatter.ISO_LOCAL_DATE), SMALL));
             }
             doc.add(Chunk.NEWLINE);
 

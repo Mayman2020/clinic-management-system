@@ -10,11 +10,14 @@ spring:
 
 app:
   cors:
-    allowed-origin-patterns: ${CORS_ALLOWED_ORIGINS:http://localhost:[*],http://127.0.0.1:[*]}
+    allowed-origin-patterns: ${CORS_ALLOWED_ORIGINS:http://localhost:4200,http://127.0.0.1:4200}
+
+jwt:
+  secret: ${JWT_SECRET:DevOnly-Clinic-Local-JWT-Secret-Min32Chars!}
 
 clinic:
   mail:
     enabled: ${MAIL_ENABLED:false}
     from: ${MAIL_FROM:noreply@clinic.local}
   password-reset:
-    base-url: ${PASSWORD_RESET_BASE_URL:http://localhost:4310/auth/reset-password}
+    base-url: ${PASSWORD_RESET_BASE_URL:http://localhost:4200/auth/reset-password}

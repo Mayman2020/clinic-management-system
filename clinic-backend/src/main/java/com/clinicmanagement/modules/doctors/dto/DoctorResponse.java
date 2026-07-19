@@ -22,4 +22,5 @@ public class DoctorResponse {
     private boolean active;
     private List<DoctorScheduleResponse> schedules;
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

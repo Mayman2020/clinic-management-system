@@ -16,6 +16,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 import { RmsIconBtnComponent } from '../../../shared/components/rms-icon-btn/rms-icon-btn.component';
 import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
+import { InlineStateComponent } from '../../../shared/components/inline-state/inline-state.component';
 import { HasPermissionDirective } from '../../../shared/directives/has-permission.directive';
 import { TranslateKeyPipe } from '../../../shared/pipes/translate-key.pipe';
 import { AppointmentService } from '../../../core/services/appointment.service';
@@ -30,7 +31,7 @@ import { ListLoadController } from '../../../shared/utils/list-load.util';
 @Component({
   selector: 'app-appointment-list',
   standalone: true,
-  imports: [NgFor, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault, FormsModule, TranslateModule, MatTableModule, MatButtonModule, MatIconModule, MatInputModule, MatFormFieldModule, MatProgressSpinnerModule, TablePagerComponent, MatDialogModule, MatTooltipModule, PageHeaderComponent, RmsIconBtnComponent, EmptyStateComponent, HasPermissionDirective, TranslateKeyPipe],
+  imports: [NgFor, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault, FormsModule, TranslateModule, MatTableModule, MatButtonModule, MatIconModule, MatInputModule, MatFormFieldModule, MatProgressSpinnerModule, TablePagerComponent, MatDialogModule, MatTooltipModule, PageHeaderComponent, RmsIconBtnComponent, EmptyStateComponent, InlineStateComponent, HasPermissionDirective, TranslateKeyPipe],
   templateUrl: './appointment-list.component.html',
   styleUrl: './appointment-list.component.scss'
 })
@@ -88,6 +89,13 @@ export class AppointmentListComponent implements OnInit {
 
   hasActiveFilters(): boolean {
     return !!(this.search.trim() || this.statusFilter);
+  }
+
+  clearFilters(): void {
+    this.search = '';
+    this.statusFilter = '';
+    this.page = 0;
+    this.load();
   }
 
   onCreate(): void {

@@ -26,5 +26,7 @@ public class PatientResponse {
     private String insurancePolicyNo;
     private String notes;
     private boolean active;
+    private Long createdBy;
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

@@ -230,16 +230,37 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private loadNotifications(): void {
     this.notificationsSvc.list(0, 5).subscribe({
       next: (r) => {
-        this.notifications = (r.data?.content ?? []).map((n) => ({
+        const rows = (r.data?.content ?? []).map((n) => ({
           icon: this.notifIcon(n.type),
           type: (n.type || 'bell').toLowerCase(),
           title: this.i18n.instant(n.titleKey, this.parseVars(n.varsJson)),
           message: this.i18n.instant(n.bodyKey, this.parseVars(n.varsJson)),
           time: this.i18n.formatDateTime(n.createdAt)
         }));
+        this.notifications = rows.length ? rows : this.buildFallbackNotifications();
       },
-      error: () => { this.notifications = []; }
+      error: () => { this.notifications = this.buildFallbackNotifications(); }
     });
+  }
+
+  private buildFallbackNotifications(): NotifItem[] {
+    const role = this.role;
+    if (role === 'DOCTOR') {
+      return [
+        { icon: 'event', type: 'appointment', title: this.i18n.instant('DASHBOARD.TODAY_APPOINTMENTS'), message: this.i18n.instant('DASHBOARD.NO_APPOINTMENTS_HINT'), time: this.i18n.instant('COMMON.JUST_NOW') },
+        { icon: 'science', type: 'lab', title: this.i18n.instant('NAV.LAB'), message: this.i18n.instant('DASHBOARD.CHECK_LAB_RESULTS'), time: this.i18n.instant('COMMON.TODAY') }
+      ];
+    }
+    if (role === 'RECEPTIONIST') {
+      return [
+        { icon: 'event', type: 'appointment', title: this.i18n.instant('DASHBOARD.CHECK_IN_QUEUE'), message: this.i18n.instant('DASHBOARD.CHECK_IN_QUEUE_HINT'), time: this.i18n.instant('COMMON.TODAY') },
+        { icon: 'groups', type: 'patient', title: this.i18n.instant('DASHBOARD.NEW_PATIENTS'), message: this.i18n.instant('DASHBOARD.NEW_PATIENTS_HINT'), time: this.i18n.instant('COMMON.TODAY') }
+      ];
+    }
+    return [
+      { icon: 'event', type: 'appointment', title: this.i18n.instant('DASHBOARD.TODAY_APPOINTMENTS'), message: this.i18n.instant('DASHBOARD.NO_APPOINTMENTS_HINT'), time: this.i18n.instant('COMMON.TODAY') },
+      { icon: 'receipt_long', type: 'invoice', title: this.i18n.instant('NAV.BILLING'), message: this.i18n.instant('DASHBOARD.REVIEW_BILLING'), time: this.i18n.instant('COMMON.TODAY') }
+    ];
   }
 
   private parseVars(varsJson?: string): Record<string, string> {
@@ -277,19 +298,22 @@ export class DashboardComponent implements OnInit, OnDestroy {
         { icon: 'person_add', labelKey: 'DASHBOARD.ACTION_NEW_PATIENT', route: '/admin/patients' },
         { icon: 'event', labelKey: 'DASHBOARD.ACTION_BOOK_APPT', route: '/admin/appointments' },
         { icon: 'videocam', labelKey: 'LOGIN.FEATURE_CONSULT', route: '/admin/consultation' },
-        { icon: 'receipt_long', labelKey: 'NAV.BILLING', route: '/admin/billing' }
+        { icon: 'receipt_long', labelKey: 'NAV.BILLING', route: '/admin/billing' },
+        { icon: 'bar_chart', labelKey: 'NAV.REPORTS', route: '/admin/reports' }
       ],
       RECEPTIONIST: [
         { icon: 'event', labelKey: 'DASHBOARD.ACTION_BOOK_APPT', route: '/admin/appointments' },
         { icon: 'desk', labelKey: 'NAV.RECEPTION', route: '/admin/reception' },
         { icon: 'person_add', labelKey: 'DASHBOARD.ACTION_NEW_PATIENT', route: '/admin/patients' },
-        { icon: 'queue', labelKey: 'NAV.QUEUE', route: '/admin/queue' }
+        { icon: 'queue', labelKey: 'NAV.QUEUE', route: '/admin/queue' },
+        { icon: 'campaign', labelKey: 'DASHBOARD.CHECK_IN_QUEUE', route: '/admin/queue' }
       ],
       DOCTOR: [
         { icon: 'assignment', labelKey: 'NAV.CONSULTATION', route: '/admin/consultation' },
         { icon: 'medication', labelKey: 'NAV.PRESCRIPTION', route: '/admin/prescription' },
         { icon: 'groups', labelKey: 'NAV.PATIENTS', route: '/admin/patients' },
-        { icon: 'science', labelKey: 'NAV.LAB', route: '/admin/lab' }
+        { icon: 'science', labelKey: 'NAV.LAB', route: '/admin/lab' },
+        { icon: 'receipt_long', labelKey: 'NAV.BILLING', route: '/admin/billing' }
       ],
       NURSE: [
         { icon: 'queue', labelKey: 'NAV.QUEUE', route: '/admin/queue' },

@@ -23,7 +23,7 @@ docker compose up -d --build
 | Service | URL |
 |---------|-----|
 | Frontend | http://localhost:4200 |
-| Backend API | http://localhost:8082/api/v1 |
+| Backend API | http://localhost:8082/api/v1 (Docker) |
 | PostgreSQL | localhost:5432 |
 
 ### 2. Database only (Docker)
@@ -41,7 +41,7 @@ $env:JAVA_HOME = "C:\Program Files\Java\jdk-17"
 .\run-backend.ps1
 ```
 
-API: http://localhost:8082/api/v1
+API: http://localhost:8086/api/v1
 
 Flyway creates schema `clinic_mgmt` and seed data automatically.
 
@@ -81,6 +81,7 @@ clinic-management-system/
 | `DB_PASS` | `admin` |
 | `JWT_SECRET` | (see application.yml) |
 | `UPLOAD_DIR` | `D:/clinic-files` |
+| `SERVER_PORT` | `8086` for local backend runs |
 
 ## Build
 

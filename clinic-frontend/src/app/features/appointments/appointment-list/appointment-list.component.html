@@ -18,6 +18,15 @@
     messageKey="COMMON.NO_DATA">
   </app-empty-state>
 
+  <app-inline-state
+    *ngIf="listLoad.showSurface && rows.length === 0 && hasActiveFilters()"
+    icon="filter_alt"
+    titleKey="COMMON.NO_RESULTS"
+    messageKey="COMMON.CLEAR_FILTERS"
+    actionLabelKey="COMMON.CLEAR"
+    (action)="clearFilters()">
+  </app-inline-state>
+
   <div class="app-list-surface" [class.is-refreshing]="listLoad.refreshing"
     *ngIf="listLoad.showSurface && (rows.length > 0 || hasActiveFilters())">
     <div class="list-refresh-spinner" *ngIf="listLoad.refreshing">

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { map, Observable } from 'rxjs';
+import { HttpClient, HttpParams, HttpErrorResponse } from '@angular/common/http';
+import { catchError, map, Observable, throwError } from 'rxjs';
 import { timeout } from 'rxjs/operators';
 import { AppConstants } from '../constants/app-constants';
 import { normalizeFileUrl, normalizeFileUrlsInValue } from '../utils/file-url-utils';
@@ -48,6 +48,14 @@ export class ApiService {
     return httpParams;
   }
   private normalizeResponse<T>(response: Observable<T>): Observable<T> {
-    return response.pipe(map((value) => normalizeFileUrlsInValue(value)));
+    return response.pipe(
+      map((value) => normalizeFileUrlsInValue(value)),
+      catchError((error: HttpErrorResponse) => {
+        if (error.status === 0) {
+          return throwError(() => new Error('Unable to reach the clinic backend. Please check that the server is running.'));
+        }
+        return throwError(() => error);
+      })
+    );
   }
 }

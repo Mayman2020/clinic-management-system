@@ -6,6 +6,11 @@ import com.clinicmanagement.modules.billing.entity.*;
 import com.clinicmanagement.modules.billing.repository.InvoiceRepository;
 import com.clinicmanagement.modules.billing.repository.InvoiceItemRepository;
 import com.clinicmanagement.modules.billing.repository.PaymentRepository;
+import com.clinicmanagement.modules.consultation.entity.Consultation;
+import com.clinicmanagement.modules.consultation.repository.ConsultationRepository;
+import com.clinicmanagement.modules.doctors.entity.Doctor;
+import com.clinicmanagement.modules.doctors.repository.DoctorRepository;
+import com.clinicmanagement.modules.patients.entity.Patient;
 import com.clinicmanagement.modules.patients.repository.PatientRepository;
 import com.clinicmanagement.modules.settings.service.SettingsService;
 import com.clinicmanagement.shared.branch.BranchContextService;
@@ -26,6 +31,8 @@ public class BillingService {
     private final InvoiceItemRepository invoiceItemRepository;
     private final PaymentRepository paymentRepository;
     private final PatientRepository patientRepository;
+    private final ConsultationRepository consultationRepository;
+    private final DoctorRepository doctorRepository;
     private final SettingsService settingsService;
     private final BranchContextService branchContext;
 
@@ -47,10 +54,27 @@ public class BillingService {
 
     public InvoicePrintData getPrintData(Long id) {
         InvoiceResponse inv = getById(id);
+        Patient patient = inv.getPatientId() != null ? patientRepository.findById(inv.getPatientId()).orElse(null) : null;
+        Consultation consultation = inv.getConsultationId() != null ? consultationRepository.findById(inv.getConsultationId()).orElse(null) : null;
+        Doctor doctor = consultation != null && consultation.getDoctorId() != null ? doctorRepository.findById(consultation.getDoctorId()).orElse(null) : null;
+
+        String clinicName = settingsService.resolveValue("clinic_name", "Clinic Management System");
+        String clinicPhone = settingsService.resolveValue("clinic_phone", "");
+        String clinicAddress = settingsService.resolveValue("clinic_address", "");
+        String doctorName = doctor != null ? (doctor.getFirstName() + " " + doctor.getLastName()).trim() : null;
+        String doctorSpecialty = doctor != null && doctor.getSpecialty() != null ? doctor.getSpecialty().name() : null;
+        String patientPhone = patient != null ? patient.getPhone() : null;
+        String patientDob = patient != null ? patient.getDateOfBirth() != null ? patient.getDateOfBirth().toString() : null : null;
+        String patientAge = patient != null ? computeAge(patient.getDateOfBirth()) : null;
+        LocalDateTime consultationDateTime = consultation != null && consultation.getCreatedAt() != null ? consultation.getCreatedAt() : null;
+
         return InvoicePrintData.builder().invoiceNo(inv.getInvoiceNo()).patientName(inv.getPatientName())
             .status(inv.getStatus()).subtotal(inv.getSubtotal()).discount(inv.getDiscount()).tax(inv.getTax())
             .total(inv.getTotal()).paidAmount(inv.getPaidAmount()).items(inv.getItems())
-            .createdAt(inv.getCreatedAt()).clinicName(settingsService.resolveValue("clinic_name", "Clinic Management System")).build();
+            .createdAt(inv.getCreatedAt()).clinicName(clinicName).clinicPhone(clinicPhone)
+            .clinicAddress(clinicAddress).consultationTitle(consultation != null && consultation.getDiagnosis() != null ? consultation.getDiagnosis() : null)
+            .doctorName(doctorName).doctorSpecialty(doctorSpecialty).patientPhone(patientPhone)
+            .patientDob(patientDob).patientAge(patientAge).consultationDateTime(consultationDateTime).build();
     }
 
     @Transactional @Auditable(action = "CREATE", entityType = "Invoice")
@@ -196,6 +220,16 @@ public class BillingService {
         } catch (NumberFormatException e) {
             return fallback;
         }
+    }
+
+    private static String computeAge(java.time.LocalDate dob) {
+        if (dob == null) return null;
+        java.time.LocalDate today = java.time.LocalDate.now();
+        int age = today.getYear() - dob.getYear();
+        if (today.getMonthValue() < dob.getMonthValue() || (today.getMonthValue() == dob.getMonthValue() && today.getDayOfMonth() < dob.getDayOfMonth())) {
+            age--;
+        }
+        return age >= 0 ? String.valueOf(age) : null;
     }
 
     private static BigDecimal nz(BigDecimal v) { return v == null ? BigDecimal.ZERO : v; }

@@ -20,6 +20,7 @@ import { LabService } from '../../../core/services/lab.service';
 import { RadiologyService } from '../../../core/services/radiology.service';
 import { BillingService } from '../../../core/services/billing.service';
 import { InsuranceService } from '../../../core/services/insurance.service';
+import { PrescriptionService } from '../../../core/services/prescription.service';
 import { SnackService } from '../../../core/services/snack.service';
 import { Patient } from '../../../core/models/patient.model';
 import { Consultation } from '../../../core/models/consultation.model';
@@ -28,6 +29,7 @@ import { LabRequest } from '../../../core/models/lab.model';
 import { RadiologyRequest } from '../../../core/models/radiology.model';
 import { Invoice } from '../../../core/models/billing.model';
 import { InsuranceClaim } from '../../../core/models/insurance.model';
+import { Prescription } from '../../../core/models/prescription.model';
 import { AppointmentDialogComponent } from '../../appointments/appointment-dialog/appointment-dialog.component';
 import { InvoiceDialogComponent } from '../../billing/invoice-dialog/invoice-dialog.component';
 import { CheckInResultDialogComponent } from '../../appointments/check-in-result-dialog/check-in-result-dialog.component';
@@ -57,6 +59,7 @@ export class Patient360Component implements OnInit {
   radiologyRequests: RadiologyRequest[] = [];
   invoices: Invoice[] = [];
   insuranceClaims: InsuranceClaim[] = [];
+  prescriptions: Prescription[] = [];
   documents: PatientDocument[] = [];
 
   constructor(
@@ -69,6 +72,7 @@ export class Patient360Component implements OnInit {
     private readonly radiologySvc: RadiologyService,
     private readonly billingSvc: BillingService,
     private readonly insuranceSvc: InsuranceService,
+    private readonly prescriptionSvc: PrescriptionService,
     private readonly snack: SnackService,
     private readonly dialogs: RmsDialogService
   ) {}
@@ -89,9 +93,10 @@ export class Patient360Component implements OnInit {
       radiology: this.radiologySvc.getByPatient(id),
       billing: this.billingSvc.getByPatient(id),
       documents: this.patientSvc.getDocuments(id),
-      claims: this.insuranceSvc.listClaims(0, 100)
+      claims: this.insuranceSvc.listClaims(0, 100),
+      prescriptions: this.prescriptionSvc.listByPatient(id)
     }).subscribe({
-      next: ({ patient, consultations, appointments, lab, radiology, billing, documents, claims }) => {
+      next: ({ patient, consultations, appointments, lab, radiology, billing, documents, claims, prescriptions }) => {
         this.patient = patient.data;
         this.consultations = consultations.data ?? [];
         this.appointments = appointments.data ?? [];
@@ -100,6 +105,7 @@ export class Patient360Component implements OnInit {
         this.invoices = billing.data?.content ?? [];
         this.documents = documents.data ?? [];
         this.insuranceClaims = (claims.data?.content ?? []).filter((c) => c.patientId === id);
+        this.prescriptions = prescriptions.data ?? [];
         this.loading = false;
       },
       error: (e) => { this.snack.error(e.message); this.loading = false; }

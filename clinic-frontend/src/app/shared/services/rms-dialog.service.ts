@@ -27,12 +27,14 @@ export class RmsDialogService {
       .afterClosed();
   }
 
-  confirmDelete(messageKey = 'COMMON.CONFIRM_MESSAGE', titleKey = 'COMMON.CONFIRM_TITLE'): Observable<boolean | undefined> {
+  confirmDelete(messageKey = 'DIALOG.DELETE_GENERIC', titleKey = 'DIALOG.DELETE_TITLE'): Observable<boolean | undefined> {
     return this.confirm({
-      titleKey,
-      messageKey,
-      confirmKey: 'COMMON.DELETE',
-      cancelKey: 'COMMON.CANCEL'
+      title: titleKey,
+      message: messageKey,
+      confirmLabel: 'COMMON.DELETE',
+      cancelLabel: 'COMMON.CANCEL',
+      danger: true,
+      icon: 'warning'
     });
   }
 }

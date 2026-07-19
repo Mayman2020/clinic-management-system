@@ -18,4 +18,13 @@ public class InvoicePrintData {
     private List<InvoiceItemResponse> items;
     private LocalDateTime createdAt;
     private String clinicName;
+    private String clinicPhone;
+    private String clinicAddress;
+    private String consultationTitle;
+    private String doctorName;
+    private String doctorSpecialty;
+    private String patientPhone;
+    private String patientDob;
+    private String patientAge;
+    private LocalDateTime consultationDateTime;
 }

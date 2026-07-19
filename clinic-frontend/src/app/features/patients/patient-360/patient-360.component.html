@@ -111,7 +111,20 @@
         </div>
       </mat-tab>
       <mat-tab [label]="'NAV.PRESCRIPTION' | translate">
-        <div class="tab-panel"><p class="empty-state">{{ 'PATIENTS.NO_PRESCRIPTIONS_API' | translate }}</p></div>
+        <div class="tab-panel">
+          <div class="timeline-item" *ngFor="let p of prescriptions">
+            <div class="timeline-date">{{ p.createdAt | rmsDate:'date' }}</div>
+            <div class="timeline-body">
+              <strong>{{ p.prescriptionNo }}</strong>
+              <div class="timeline-meta">{{ p.doctorName || ('COMMON.UNKNOWN' | translate) }} · {{ p.status | tk:'STATUS' }}</div>
+              <ul class="doc-list" *ngIf="p.items?.length; else noPrescriptionItems">
+                <li *ngFor="let item of p.items">{{ item.medicineName }}{{ item.dosage ? ' · ' + item.dosage : '' }}</li>
+              </ul>
+              <ng-template #noPrescriptionItems><p class="empty-state">{{ 'COMMON.NO_DATA' | translate }}</p></ng-template>
+            </div>
+          </div>
+          <p *ngIf="!prescriptions.length" class="empty-state">{{ 'COMMON.NO_DATA' | translate }}</p>
+        </div>
       </mat-tab>
       <mat-tab [label]="'INSURANCE.CLAIMS' | translate">
         <div class="tab-panel">

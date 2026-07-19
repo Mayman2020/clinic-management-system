@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { NgFor, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
@@ -9,6 +10,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TablePagerComponent } from '../../../shared/components/table-pager/table-pager.component';
 import { MatDialogModule } from '@angular/material/dialog';
+import { DeleteConfirmService } from '../../../core/services/delete-confirm.service';
 import { RmsDialogService } from '../../../shared/services/rms-dialog.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
@@ -25,7 +27,7 @@ import { ListLoadController } from '../../../shared/utils/list-load.util';
 @Component({
   selector: 'app-user-list',
   standalone: true,
-  imports: [NgFor, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault, FormsModule, TranslateModule, MatTableModule, MatButtonModule, MatIconModule, MatInputModule, MatFormFieldModule, MatProgressSpinnerModule, TablePagerComponent, MatDialogModule, PageHeaderComponent, RmsIconBtnComponent, EmptyStateComponent, HasPermissionDirective, TranslateKeyPipe],
+  imports: [MatTooltipModule, NgFor, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault, FormsModule, TranslateModule, MatTableModule, MatButtonModule, MatIconModule, MatInputModule, MatFormFieldModule, MatProgressSpinnerModule, TablePagerComponent, MatDialogModule, PageHeaderComponent, RmsIconBtnComponent, EmptyStateComponent, HasPermissionDirective, TranslateKeyPipe],
   templateUrl: './user-list.component.html',
   styleUrl: './user-list.component.scss'
 })
@@ -41,7 +43,12 @@ export class UserListComponent implements OnInit {
   columns = [{ key: 'username', labelKey: 'USERS.USERNAME' }, { key: 'email', labelKey: 'AUTH.EMAIL' }, { key: 'role', labelKey: 'USERS.ROLE' }];
   roleOptions = ['ADMIN', 'RECEPTIONIST', 'DOCTOR', 'NURSE', 'LAB_TECHNICIAN', 'RADIOLOGY_STAFF', 'CASHIER'];
 
-  constructor(private readonly svc: UserService, private readonly snack: SnackService, private readonly dialogs: RmsDialogService) {}
+  constructor(
+    private readonly svc: UserService,
+    private readonly snack: SnackService,
+    private readonly dialogs: RmsDialogService,
+    private readonly deleteConfirm: DeleteConfirmService
+  ) {}
 
   ngOnInit(): void { this.load(); }
 
@@ -85,9 +92,14 @@ export class UserListComponent implements OnInit {
   }
 
   onToggle(row: User): void {
-    this.svc.toggleActive(row.id).subscribe({
-      next: () => { this.snack.success('MESSAGES.STATUS_UPDATED'); this.load(); },
-      error: (e) => this.snack.error(e.message)
+    const messageKey = row.isActive ? 'USERS.DEACTIVATE_CONFIRM' : 'USERS.ACTIVATE_CONFIRM';
+    const confirmLabelKey = row.isActive ? 'USERS.DEACTIVATE' : 'USERS.ACTIVATE';
+    this.deleteConfirm.openDeleteConfirm({ messageKey, confirmLabelKey }).subscribe((ok) => {
+      if (!ok) return;
+      this.svc.toggleActive(row.id).subscribe({
+        next: () => { this.snack.success('MESSAGES.STATUS_UPDATED'); this.load(); },
+        error: (e) => this.snack.error(e.message)
+      });
     });
   }
 
